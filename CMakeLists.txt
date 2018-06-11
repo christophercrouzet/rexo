@@ -75,6 +75,11 @@ rx_add_test(
     FILES tests/conformance.c
     DEPENDS rexo)
 
+rx_add_test(
+    NAME example
+    FILES tests/example.c
+    DEPENDS rexo)
+
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
 
 # ------------------------------------------------------------------------------
