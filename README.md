@@ -28,7 +28,7 @@ static const struct RxTestCase cases[]
     = {{"basics", testBasics}};
 
 static const struct RxTestSuite suites[]
-    = {{"example", sizeof cases / sizeof cases[0], cases, setUp, tearDown}};
+    = {{"example", sizeof cases / sizeof cases[0], cases, NULL, NULL}};
 
 int
 main(int argc, const char **ppArgv)
