@@ -63,575 +63,252 @@ struct RxContext;
 
 #define RX_FIXTURE pContext->pFixture
 
-#define RX_REQUIRE(condition, message)                                         \
+#define RXP_DEFINE_TEST(condition, expected, message, severity)                \
     rxpAssessTest(pContext,                                                    \
                   !!(condition),                                               \
-                  RXP_TRUE,                                                    \
+                  expected,                                                    \
                   message,                                                     \
                   __FILE__,                                                    \
                   __LINE__,                                                    \
-                  RX_FATAL)
+                  severity)
 
-#define RX_CHECK(condition, message)                                           \
-    rxpAssessTest(pContext,                                                    \
-                  !!(condition),                                               \
-                  RXP_TRUE,                                                    \
-                  message,                                                     \
-                  __FILE__,                                                    \
-                  __LINE__,                                                    \
-                  RX_NONFATAL)
+#define RXP_DEFINE_BOOL_TEST(condition, expected, severity)                    \
+    rxpAssessBooleanTest(pContext,                                             \
+                         !!(condition),                                        \
+                         expected,                                             \
+                         #condition,                                           \
+                         __FILE__,                                             \
+                         __LINE__,                                             \
+                         severity)
+
+#define RXP_DEFINE_INT_TEST(value1, value2, op, severity)                      \
+    rxpAssessIntegerComparisonTest(pContext,                                   \
+                                   (value1),                                   \
+                                   (value2),                                   \
+                                   op,                                         \
+                                   #value1,                                    \
+                                   #value2,                                    \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity)
+
+#define RXP_DEFINE_UINT_TEST(value1, value2, op, severity)                     \
+    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
+                                           (value1),                           \
+                                           (value2),                           \
+                                           op,                                 \
+                                           #value1,                            \
+                                           #value2,                            \
+                                           __FILE__,                           \
+                                           __LINE__,                           \
+                                           severity)
+
+#define RXP_DEFINE_FP_TEST(value1, value2, op, severity)                       \
+    rxpAssessFloatingPointComparisonTest(pContext,                             \
+                                         (value1),                             \
+                                         (value2),                             \
+                                         op,                                   \
+                                         #value1,                              \
+                                         #value2,                              \
+                                         __FILE__,                             \
+                                         __LINE__,                             \
+                                         severity)
+
+#define RXP_DEFINE_FP_FUZZY_TEST(value1, value2, tolerance, op, severity)      \
+    rxpAssessFloatingPointFuzzyComparisonTest(pContext,                        \
+                                              (value1),                        \
+                                              (value2),                        \
+                                              (tolerance),                     \
+                                              op,                              \
+                                              #value1,                         \
+                                              #value2,                         \
+                                              __FILE__,                        \
+                                              __LINE__,                        \
+                                              severity)
+#define RXP_DEFINE_STRING_TEST(str1, str2, stringCase, op, severity)           \
+    rxpAssessStringComparisonTest(pContext,                                    \
+                                  (str1),                                      \
+                                  (str2),                                      \
+                                  stringCase,                                  \
+                                  op,                                          \
+                                  #str1,                                       \
+                                  #str2,                                       \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity)
+
+#define RX_REQUIRE(condition, message)                                         \
+    RXP_DEFINE_TEST(condition, RXP_TRUE, message, RX_FATAL)
 
 #define RX_REQUIRE_TRUE(condition)                                             \
-    rxpAssessBooleanTest(pContext,                                             \
-                         !!(condition),                                        \
-                         RXP_TRUE,                                             \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         RX_FATAL)
-
-#define RX_CHECK_TRUE(condition)                                               \
-    rxpAssessBooleanTest(pContext,                                             \
-                         !!(condition),                                        \
-                         RXP_TRUE,                                             \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         RX_NONFATAL)
+    RXP_DEFINE_BOOL_TEST(condition, RXP_TRUE, RX_FATAL)
 
 #define RX_REQUIRE_FALSE(condition)                                            \
-    rxpAssessBooleanTest(pContext,                                             \
-                         !!(condition),                                        \
-                         RXP_FALSE,                                            \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         RX_FATAL)
-
-#define RX_CHECK_FALSE(condition)                                              \
-    rxpAssessBooleanTest(pContext,                                             \
-                         !!(condition),                                        \
-                         RXP_FALSE,                                            \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         RX_NONFATAL)
+    RXP_DEFINE_BOOL_TEST(condition, RXP_FALSE, RX_FATAL)
 
 #define RX_REQUIRE_INT_EQUAL(value1, value2)                                   \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_EQUAL,                               \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_EQUAL(value1, value2)                                     \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_EQUAL,                               \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_INT_NOT_EQUAL(value1, value2)                               \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_NOT_EQUAL,                           \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_NOT_EQUAL(value1, value2)                                 \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_NOT_EQUAL,                           \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_INT_GREATER(value1, value2)                                 \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_GREATER,                             \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_GREATER(value1, value2)                                   \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_GREATER,                             \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
 
 #define RX_REQUIRE_INT_LESSER(value1, value2)                                  \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_LESSER,                              \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_LESSER(value1, value2)                                    \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_LESSER,                              \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
 
 #define RX_REQUIRE_INT_GREATER_OR_EQUAL(value1, value2)                        \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_GREATER_OR_EQUAL,                    \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_GREATER_OR_EQUAL(value1, value2)                          \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_GREATER_OR_EQUAL,                    \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_INT_LESSER_OR_EQUAL(value1, value2)                         \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_LESSER_OR_EQUAL,                     \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_FATAL)
-
-#define RX_CHECK_INT_LESSER_OR_EQUAL(value1, value2)                           \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   RXP_OP_LESSER_OR_EQUAL,                     \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   RX_NONFATAL)
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_UINT_EQUAL(value1, value2)                                  \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_EQUAL,                       \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_EQUAL(value1, value2)                                    \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_EQUAL,                       \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_UINT_NOT_EQUAL(value1, value2)                              \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_NOT_EQUAL,                   \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_NOT_EQUAL(value1, value2)                                \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_NOT_EQUAL,                   \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_UINT_GREATER(value1, value2)                                \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_GREATER,                     \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_GREATER(value1, value2)                                  \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_GREATER,                     \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
 
 #define RX_REQUIRE_UINT_LESSER(value1, value2)                                 \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_LESSER,                      \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_LESSER(value1, value2)                                   \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_LESSER,                      \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
 
 #define RX_REQUIRE_UINT_GREATER_OR_EQUAL(value1, value2)                       \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_GREATER_OR_EQUAL,            \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_GREATER_OR_EQUAL(value1, value2)                         \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_GREATER_OR_EQUAL,            \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_UINT_LESSER_OR_EQUAL(value1, value2)                        \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_LESSER_OR_EQUAL,             \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_FATAL)
-
-#define RX_CHECK_UINT_LESSER_OR_EQUAL(value1, value2)                          \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           RXP_OP_LESSER_OR_EQUAL,             \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           RX_NONFATAL)
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_FP_EQUAL(value1, value2)                                    \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_EQUAL,                         \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
-
-#define RX_CHECK_FP_EQUAL(value1, value2)                                      \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_EQUAL,                         \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_FP_NOT_EQUAL(value1, value2)                                \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_NOT_EQUAL,                     \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
-
-#define RX_CHECK_FP_NOT_EQUAL(value1, value2)                                  \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_NOT_EQUAL,                     \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_FP_GREATER(value1, value2)                                  \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_GREATER,                       \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
-
-#define RX_CHECK_FP_GREATER(value1, value2)                                    \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_GREATER,                       \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
 
 #define RX_REQUIRE_FP_LESSER(value1, value2)                                   \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_LESSER,                        \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
-
-#define RX_CHECK_FP_LESSER(value1, value2)                                     \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_LESSER,                        \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
 
 #define RX_REQUIRE_FP_GREATER_OR_EQUAL(value1, value2)                         \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_GREATER_OR_EQUAL,              \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
-
-#define RX_CHECK_FP_GREATER_OR_EQUAL(value1, value2)                           \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_GREATER_OR_EQUAL,              \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_FP_LESSER_OR_EQUAL(value1, value2)                          \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_LESSER_OR_EQUAL,               \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_FATAL)
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_CHECK_FP_LESSER_OR_EQUAL(value1, value2)                            \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         RXP_OP_LESSER_OR_EQUAL,               \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         RX_NONFATAL)
+#define RX_REQUIRE_FP_ALMOST_EQUAL(value1, value2, tolerance)                  \
+    RXP_DEFINE_FP_FUZZY_TEST(value1, value2, tolerance, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_CHECK_FP_ALMOST_EQUAL(value1, value2, tolerance)                    \
-    rxpAssessFloatingPointFuzzyComparisonTest(pContext,                        \
-                                              (value1),                        \
-                                              (value2),                        \
-                                              (tolerance),                     \
-                                              RXP_OP_EQUAL,                    \
-                                              #value1,                         \
-                                              #value2,                         \
-                                              __FILE__,                        \
-                                              __LINE__,                        \
-                                              RX_NONFATAL)
-
-#define RX_CHECK_FP_NOT_ALMOST_EQUAL(value1, value2, tolerance)                \
-    rxpAssessFloatingPointFuzzyComparisonTest(pContext,                        \
-                                              (value1),                        \
-                                              (value2),                        \
-                                              (tolerance),                     \
-                                              RXP_OP_NOT_EQUAL,                \
-                                              #value1,                         \
-                                              #value2,                         \
-                                              __FILE__,                        \
-                                              __LINE__,                        \
-                                              RX_NONFATAL)
+#define RX_REQUIRE_FP_NOT_ALMOST_EQUAL(value1, value2, tolerance)              \
+    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+        value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_STRING_EQUAL(str1, str2)                                    \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_OBEY,                        \
-                                  RXP_OP_EQUAL,                                \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_FATAL)
-
-#define RX_CHECK_STRING_EQUAL(str1, str2)                                      \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_OBEY,                        \
-                                  RXP_OP_EQUAL,                                \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_NONFATAL)
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_STRING_NOT_EQUAL(str1, str2)                                \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_OBEY,                        \
-                                  RXP_OP_NOT_EQUAL,                            \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_FATAL)
-
-#define RX_CHECK_STRING_NOT_EQUAL(str1, str2)                                  \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_OBEY,                        \
-                                  RXP_OP_NOT_EQUAL,                            \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_NONFATAL)
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_STRING_EQUAL_NO_CASE(str1, str2)                            \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_IGNORE,                      \
-                                  RXP_OP_EQUAL,                                \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_FATAL)
-
-#define RX_CHECK_STRING_EQUAL_NO_CASE(str1, str2)                              \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_IGNORE,                      \
-                                  RXP_OP_EQUAL,                                \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_NONFATAL)
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_STRING_NOT_EQUAL_NO_CASE(str1, str2)                        \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_IGNORE,                      \
-                                  RXP_OP_NOT_EQUAL,                            \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_FATAL)
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_FATAL)
+
+#define RX_CHECK(condition, message)                                           \
+    RXP_DEFINE_TEST(condition, RXP_TRUE, message, RX_NONFATAL)
+
+#define RX_CHECK_TRUE(condition)                                               \
+    RXP_DEFINE_BOOL_TEST(condition, RXP_TRUE, RX_NONFATAL)
+
+#define RX_CHECK_FALSE(condition)                                              \
+    RXP_DEFINE_BOOL_TEST(condition, RXP_FALSE, RX_NONFATAL)
+
+#define RX_CHECK_INT_EQUAL(value1, value2)                                     \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_INT_NOT_EQUAL(value1, value2)                                 \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_INT_GREATER(value1, value2)                                   \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+
+#define RX_CHECK_INT_LESSER(value1, value2)                                    \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+
+#define RX_CHECK_INT_GREATER_OR_EQUAL(value1, value2)                          \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_INT_LESSER_OR_EQUAL(value1, value2)                           \
+    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_UINT_EQUAL(value1, value2)                                    \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_UINT_NOT_EQUAL(value1, value2)                                \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_UINT_GREATER(value1, value2)                                  \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+
+#define RX_CHECK_UINT_LESSER(value1, value2)                                   \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+
+#define RX_CHECK_UINT_GREATER_OR_EQUAL(value1, value2)                         \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_UINT_LESSER_OR_EQUAL(value1, value2)                          \
+    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_EQUAL(value1, value2)                                      \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_NOT_EQUAL(value1, value2)                                  \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_GREATER(value1, value2)                                    \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+
+#define RX_CHECK_FP_LESSER(value1, value2)                                     \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+
+#define RX_CHECK_FP_GREATER_OR_EQUAL(value1, value2)                           \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_LESSER_OR_EQUAL(value1, value2)                            \
+    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_ALMOST_EQUAL(value1, value2, tolerance)                    \
+    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+        value1, value2, tolerance, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_FP_NOT_ALMOST_EQUAL(value1, value2, tolerance)                \
+    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+        value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_STRING_EQUAL(str1, str2)                                      \
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_STRING_NOT_EQUAL(str1, str2)                                  \
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_STRING_EQUAL_NO_CASE(str1, str2)                              \
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_NONFATAL)
 
 #define RX_CHECK_STRING_NOT_EQUAL_NO_CASE(str1, str2)                          \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  RXP_STRING_CASE_IGNORE,                      \
-                                  RXP_OP_NOT_EQUAL,                            \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  RX_NONFATAL)
+    RXP_DEFINE_STRING_TEST(                                                    \
+        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
 enum RxLogLevel {
     RX_LOG_LEVEL_ERROR = 0,
@@ -649,7 +326,7 @@ enum RxStatus {
     RX_ERROR_MAX_SIZE_EXCEEDED = -4
 };
 
-enum RxFailureLevel { RX_NONFATAL = 0, RX_FATAL = 1 };
+enum RxSeverity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
 typedef void (*RxPfnTestCase)(RXP_TEST_CASE_PARAMETERS);
 typedef enum RxStatus (*RxPfnTestSuiteSetUp)(void **ppFixture);
@@ -671,7 +348,7 @@ struct RxTestSuite {
 struct RxTestFailure {
     const char *pFile;
     int line;
-    enum RxFailureLevel level;
+    enum RxSeverity severity;
     const char *pMessage;
     const char *pDiagnosticMessage;
 };
@@ -712,7 +389,7 @@ rxHandleTestResult(struct RxContext *pContext,
                    int result,
                    const char *pFile,
                    int line,
-                   enum RxFailureLevel failureLevel,
+                   enum RxSeverity severity,
                    const char *pFailureMessage,
                    const char *pDiagnosticMessage);
 
@@ -1528,7 +1205,7 @@ rxpAssessTest(struct RxContext *pContext,
               const char *pFailureMessage,
               const char *pFile,
               int line,
-              enum RxFailureLevel failureLevel)
+              enum RxSeverity severity)
 {
     int result;
 
@@ -1540,7 +1217,7 @@ rxpAssessTest(struct RxContext *pContext,
     result = ((value && expected) || (!value && !expected));
 
     if (rxHandleTestResult(
-            pContext, result, pFile, line, failureLevel, pFailureMessage, NULL)
+            pContext, result, pFile, line, severity, pFailureMessage, NULL)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the test "
                       "located at %s:%d\n",
@@ -1548,7 +1225,7 @@ rxpAssessTest(struct RxContext *pContext,
                       line);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -1560,7 +1237,7 @@ rxpAssessBooleanTest(struct RxContext *pContext,
                      const char *pExpression,
                      const char *pFile,
                      int line,
-                     enum RxFailureLevel failureLevel)
+                     enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1603,7 +1280,7 @@ rxpAssessBooleanTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -1621,7 +1298,7 @@ rxpAssessBooleanTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -1635,7 +1312,7 @@ rxpAssessIntegerComparisonTest(struct RxContext *pContext,
                                const char *pExpression2,
                                const char *pFile,
                                int line,
-                               enum RxFailureLevel failureLevel)
+                               enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1709,7 +1386,7 @@ rxpAssessIntegerComparisonTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -1727,7 +1404,7 @@ rxpAssessIntegerComparisonTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -1741,7 +1418,7 @@ rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
                                        const char *pExpression2,
                                        const char *pFile,
                                        int line,
-                                       enum RxFailureLevel failureLevel)
+                                       enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1815,7 +1492,7 @@ rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -1833,7 +1510,7 @@ rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -1847,7 +1524,7 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
                                      const char *pExpression2,
                                      const char *pFile,
                                      int line,
-                                     enum RxFailureLevel failureLevel)
+                                     enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1921,7 +1598,7 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -1939,7 +1616,7 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -1954,7 +1631,7 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
                                           const char *pExpression2,
                                           const char *pFile,
                                           int line,
-                                          enum RxFailureLevel failureLevel)
+                                          enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -2019,7 +1696,7 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -2037,7 +1714,7 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -2052,7 +1729,7 @@ rxpAssessStringComparisonTest(struct RxContext *pContext,
                               const char *pExpression2,
                               const char *pFile,
                               int line,
-                              enum RxFailureLevel failureLevel)
+                              enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -2127,7 +1804,7 @@ rxpAssessStringComparisonTest(struct RxContext *pContext,
                            result,
                            pFile,
                            line,
-                           failureLevel,
+                           severity,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
@@ -2145,7 +1822,7 @@ rxpAssessStringComparisonTest(struct RxContext *pContext,
         RX_FREE(pDiagnosticMessage);
     }
 
-    if (!result && failureLevel == RX_FATAL) {
+    if (!result && severity == RX_FATAL) {
         rxAbortTest(pContext);
     }
 }
@@ -2252,7 +1929,7 @@ rxHandleTestResult(struct RxContext *pContext,
                    int result,
                    const char *pFile,
                    int line,
-                   enum RxFailureLevel failureLevel,
+                   enum RxSeverity severity,
                    const char *pFailureMessage,
                    const char *pDiagnosticMessage)
 {
@@ -2301,7 +1978,7 @@ rxHandleTestResult(struct RxContext *pContext,
     }
 
     pFailure->line = line;
-    pFailure->level = failureLevel;
+    pFailure->severity = severity;
 
     if (pFailureMessage == NULL) {
         pFailure->pMessage = NULL;
@@ -2529,7 +2206,7 @@ rxPrintTestCaseRunSummary(const struct RxTestCaseReport *pReport)
                     "%s:%d: %s test failure: %s\n%s\n",
                     pFailure->pFile,
                     pFailure->line,
-                    pFailure->level == RX_FATAL ? "fatal" : "nonfatal",
+                    pFailure->severity == RX_FATAL ? "fatal" : "nonfatal",
                     pFailureMessage,
                     pFailure->pDiagnosticMessage);
         } else {
@@ -2537,7 +2214,7 @@ rxPrintTestCaseRunSummary(const struct RxTestCaseReport *pReport)
                     "%s:%d: %s test failure: %s\n",
                     pFailure->pFile,
                     pFailure->line,
-                    pFailure->level == RX_FATAL ? "fatal" : "nonfatal",
+                    pFailure->severity == RX_FATAL ? "fatal" : "nonfatal",
                     pFailureMessage);
         }
     }
