@@ -44,6 +44,38 @@ add_library(${PROJECT_NAME}::rexo ALIAS rexo)
 
 # ------------------------------------------------------------------------------
 
+set(RX_EXAMPLE_TARGETS)
+
+macro(rx_add_example)
+    set(RX_ADD_EXAMPLE_OPTIONS)
+    set(RX_ADD_EXAMPLE_SINGLE_VALUE_ARGS NAME)
+    set(RX_ADD_EXAMPLE_MULTI_VALUE_ARGS FILES DEPENDS)
+    cmake_parse_arguments(
+        RX_ADD_EXAMPLE
+        "${RX_ADD_EXAMPLE_OPTIONS}"
+        "${RX_ADD_EXAMPLE_SINGLE_VALUE_ARGS}"
+        "${RX_ADD_EXAMPLE_MULTI_VALUE_ARGS}"
+        ${ARGN})
+
+    add_executable(example-${RX_ADD_EXAMPLE_NAME} ${RX_ADD_EXAMPLE_FILES})
+    set_target_properties(example-${RX_ADD_EXAMPLE_NAME}
+        PROPERTIES
+            RUNTIME_OUTPUT_DIRECTORY bin/examples
+            OUTPUT_NAME ${RX_ADD_EXAMPLE_NAME})
+    target_link_libraries(example-${RX_ADD_EXAMPLE_NAME}
+        PRIVATE ${RX_ADD_EXAMPLE_DEPENDS})
+    list(APPEND RX_EXAMPLE_TARGETS example-${RX_ADD_EXAMPLE_NAME})
+endmacro()
+
+rx_add_example(
+    NAME fixture
+    FILES examples/fixture.c
+    DEPENDS rexo)
+
+add_custom_target(examples DEPENDS ${RX_EXAMPLE_TARGETS})
+
+# ------------------------------------------------------------------------------
+
 set(RX_TEST_TARGETS)
 
 macro(rx_add_test)
@@ -73,11 +105,6 @@ endmacro()
 rx_add_test(
     NAME conformance
     FILES tests/conformance.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME example
-    FILES tests/example.c
     DEPENDS rexo)
 
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})

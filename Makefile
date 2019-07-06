@@ -68,6 +68,16 @@ TIDY_FILES += $(wildcard include/$(PROJECT)/*.h)
 
 # ------------------------------------------------------------------------------
 
+examples: $(MAKE_FILES)
+	@ $(call rx_forward_rule,examples)
+
+.PHONY: examples
+
+FORMAT_FILES += $(wildcard examples/*.[ch])
+TIDY_FILES += $(wildcard examples/*.[ch])
+
+# ------------------------------------------------------------------------------
+
 tests: $(MAKE_FILES)
 	@ $(call rx_forward_rule,tests)
 
