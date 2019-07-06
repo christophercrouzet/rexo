@@ -2239,9 +2239,10 @@ rxRun(size_t suiteCount,
 
     RX_ASSERT(pSuites != NULL);
 
+    status = RX_SUCCESS;
+
     if (suiteCount == 0) {
         RXP_LOG_INFO("nothing to run\n");
-        status = RX_SUCCESS;
         goto exit;
     }
 
