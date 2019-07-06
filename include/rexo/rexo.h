@@ -125,7 +125,7 @@ struct RxContext;
                                               __FILE__,                        \
                                               __LINE__,                        \
                                               severity)
-#define RXP_DEFINE_STRING_TEST(str1, str2, stringCase, op, severity)           \
+#define RXP_DEFINE_STR_TEST(str1, str2, stringCase, op, severity)              \
     rxpAssessStringComparisonTest(pContext,                                    \
                                   (str1),                                      \
                                   (str2),                                      \
@@ -207,20 +207,20 @@ struct RxContext;
     RXP_DEFINE_FP_FUZZY_TEST(                                                  \
         value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STRING_EQUAL(str1, str2)                                    \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_REQUIRE_STR_EQUAL(str1, str2)                                       \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STRING_NOT_EQUAL(str1, str2)                                \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_REQUIRE_STR_NOT_EQUAL(str1, str2)                                   \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STRING_EQUAL_NO_CASE(str1, str2)                            \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_REQUIRE_STR_EQUAL_NO_CASE(str1, str2)                               \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STRING_NOT_EQUAL_NO_CASE(str1, str2)                        \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_REQUIRE_STR_NOT_EQUAL_NO_CASE(str1, str2)                           \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_CHECK(condition, message)                                           \
@@ -294,20 +294,20 @@ struct RxContext;
     RXP_DEFINE_FP_FUZZY_TEST(                                                  \
         value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STRING_EQUAL(str1, str2)                                      \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_CHECK_STR_EQUAL(str1, str2)                                         \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STRING_NOT_EQUAL(str1, str2)                                  \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_CHECK_STR_NOT_EQUAL(str1, str2)                                     \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STRING_EQUAL_NO_CASE(str1, str2)                              \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_CHECK_STR_EQUAL_NO_CASE(str1, str2)                                 \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STRING_NOT_EQUAL_NO_CASE(str1, str2)                          \
-    RXP_DEFINE_STRING_TEST(                                                    \
+#define RX_CHECK_STR_NOT_EQUAL_NO_CASE(str1, str2)                             \
+    RXP_DEFINE_STR_TEST(                                                       \
         str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
 enum RxLogLevel {

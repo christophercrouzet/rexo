@@ -172,28 +172,28 @@ RX_TEST_CASE(successfulStringEqual)
 {
     static const char *pString = "abc";
 
-    RX_CHECK_STRING_EQUAL(pString, "abc");
+    RX_CHECK_STR_EQUAL(pString, "abc");
 }
 
 RX_TEST_CASE(successfulStringNotEqual)
 {
     static const char *pString = "abcd";
 
-    RX_CHECK_STRING_NOT_EQUAL(pString, "abc");
+    RX_CHECK_STR_NOT_EQUAL(pString, "abc");
 }
 
 RX_TEST_CASE(successfulStringEqualNoCase)
 {
     static const char *pString = "AbC";
 
-    RX_CHECK_STRING_EQUAL_NO_CASE(pString, "abc");
+    RX_CHECK_STR_EQUAL_NO_CASE(pString, "abc");
 }
 
 RX_TEST_CASE(successfulStringNotEqualNoCase)
 {
     static const char *pString = "AbcD";
 
-    RX_CHECK_STRING_NOT_EQUAL_NO_CASE(pString, "abc");
+    RX_CHECK_STR_NOT_EQUAL_NO_CASE(pString, "abc");
 }
 
 RX_TEST_CASE(unsuccessfulCustomMessage)
@@ -337,28 +337,28 @@ RX_TEST_CASE(unsuccessfulStringEqual)
 {
     static const char *pString = "abc";
 
-    RX_CHECK_STRING_EQUAL(pString, "ABC");
+    RX_CHECK_STR_EQUAL(pString, "ABC");
 }
 
 RX_TEST_CASE(unsuccessfulStringNotEqual)
 {
     static const char *pString = "abcd";
 
-    RX_CHECK_STRING_NOT_EQUAL(pString, "abcd");
+    RX_CHECK_STR_NOT_EQUAL(pString, "abcd");
 }
 
 RX_TEST_CASE(unsuccessfulStringEqualNoCase)
 {
     static const char *pString = "AbC";
 
-    RX_CHECK_STRING_EQUAL_NO_CASE(pString, "AbCd");
+    RX_CHECK_STR_EQUAL_NO_CASE(pString, "AbCd");
 }
 
 RX_TEST_CASE(unsuccessfulStringNotEqualNoCase)
 {
     static const char *pString = "AbcD";
 
-    RX_CHECK_STRING_NOT_EQUAL_NO_CASE(pString, "abcd");
+    RX_CHECK_STR_NOT_EQUAL_NO_CASE(pString, "abcd");
 }
 
 enum RxStatus

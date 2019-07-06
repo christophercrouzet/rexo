@@ -42,7 +42,7 @@ RX_TEST_CASE(testBasics)
     RX_CHECK_UINT_EQUAL(pData->one, 1);
     RX_CHECK_FP_ALMOST_EQUAL(sin(PI), 0.0, 1.0e-6);
     RX_CHECK_FP_ALMOST_EQUAL(sin(PI * 0.5), 1.0, 1.0e-6);
-    RX_CHECK_STRING_EQUAL_NO_CASE("abc", "ABC");
+    RX_CHECK_STR_EQUAL_NO_CASE("abc", "ABC");
 }
 
 RX_TEST_CASE(testFailure)
