@@ -120,52 +120,52 @@ RX_TEST_CASE(successfulUnsignedIntegerLesserOrEqual)
     RX_CHECK_UINT_LESSER_OR_EQUAL((unsigned int)two(), 4);
 }
 
-RX_TEST_CASE(successfulFloatingPointEqual)
+RX_TEST_CASE(successfulRealEqual)
 {
-    RX_CHECK_FP_EQUAL(zerof(), 0.0f);
-    RX_CHECK_FP_EQUAL(2.0f, twof());
+    RX_CHECK_REAL_EQUAL(zerof(), 0.0f);
+    RX_CHECK_REAL_EQUAL(2.0f, twof());
 }
 
-RX_TEST_CASE(successfulFloatingPointNotEqual)
+RX_TEST_CASE(successfulRealNotEqual)
 {
-    RX_CHECK_FP_NOT_EQUAL(zerof(), 2.0f);
-    RX_CHECK_FP_NOT_EQUAL(0.0f, twof());
+    RX_CHECK_REAL_NOT_EQUAL(zerof(), 2.0f);
+    RX_CHECK_REAL_NOT_EQUAL(0.0f, twof());
 }
 
-RX_TEST_CASE(successfulFloatingPointGreater)
+RX_TEST_CASE(successfulRealGreater)
 {
-    RX_CHECK_FP_GREATER(twof(), 0.0f);
-    RX_CHECK_FP_GREATER(2.0f, zerof());
+    RX_CHECK_REAL_GREATER(twof(), 0.0f);
+    RX_CHECK_REAL_GREATER(2.0f, zerof());
 }
 
-RX_TEST_CASE(successfulFloatingPointLesser)
+RX_TEST_CASE(successfulRealLesser)
 {
-    RX_CHECK_FP_LESSER(zerof(), 2.0f);
-    RX_CHECK_FP_LESSER(0.0f, twof());
+    RX_CHECK_REAL_LESSER(zerof(), 2.0f);
+    RX_CHECK_REAL_LESSER(0.0f, twof());
 }
 
-RX_TEST_CASE(successfulFloatingPointGreaterOrEqual)
+RX_TEST_CASE(successfulRealGreaterOrEqual)
 {
-    RX_CHECK_FP_GREATER_OR_EQUAL(twof(), 2.0f);
-    RX_CHECK_FP_GREATER_OR_EQUAL(4.0f, twof());
+    RX_CHECK_REAL_GREATER_OR_EQUAL(twof(), 2.0f);
+    RX_CHECK_REAL_GREATER_OR_EQUAL(4.0f, twof());
 }
 
-RX_TEST_CASE(successfulFloatingPointLesserOrEqual)
+RX_TEST_CASE(successfulRealLesserOrEqual)
 {
-    RX_CHECK_FP_LESSER_OR_EQUAL(2.0f, twof());
-    RX_CHECK_FP_LESSER_OR_EQUAL(twof(), 4.0f);
+    RX_CHECK_REAL_LESSER_OR_EQUAL(2.0f, twof());
+    RX_CHECK_REAL_LESSER_OR_EQUAL(twof(), 4.0f);
 }
 
-RX_TEST_CASE(successfulFloatingPointAlmostEqual)
+RX_TEST_CASE(successfulRealAlmostEqual)
 {
-    RX_CHECK_FP_ALMOST_EQUAL(sin(PI), 0.0, 1.0e-6);
-    RX_CHECK_FP_ALMOST_EQUAL(1.0, sin(PI * 0.5), 1.0e-6);
+    RX_CHECK_REAL_ALMOST_EQUAL(sin(PI), 0.0, 1.0e-6);
+    RX_CHECK_REAL_ALMOST_EQUAL(1.0, sin(PI * 0.5), 1.0e-6);
 }
 
-RX_TEST_CASE(successfulFloatingPointAlmostNotEqual)
+RX_TEST_CASE(successfulRealAlmostNotEqual)
 {
-    RX_CHECK_FP_NOT_ALMOST_EQUAL(zerof(), 0.1, 1.0e-6);
-    RX_CHECK_FP_NOT_ALMOST_EQUAL(2.1, twof(), 1.0e-6);
+    RX_CHECK_REAL_NOT_ALMOST_EQUAL(zerof(), 0.1, 1.0e-6);
+    RX_CHECK_REAL_NOT_ALMOST_EQUAL(2.1, twof(), 1.0e-6);
 }
 
 RX_TEST_CASE(successfulStringEqual)
@@ -285,52 +285,52 @@ RX_TEST_CASE(unsuccessfulUnsignedIntegerLesserOrEqual)
     RX_CHECK_UINT_LESSER_OR_EQUAL(4, (unsigned int)two());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointEqual)
+RX_TEST_CASE(unsuccessfulRealEqual)
 {
-    RX_CHECK_FP_EQUAL(zerof(), 2.0f);
-    RX_CHECK_FP_EQUAL(0.0f, twof());
+    RX_CHECK_REAL_EQUAL(zerof(), 2.0f);
+    RX_CHECK_REAL_EQUAL(0.0f, twof());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointNotEqual)
+RX_TEST_CASE(unsuccessfulRealNotEqual)
 {
-    RX_CHECK_FP_NOT_EQUAL(zerof(), 0.0f);
-    RX_CHECK_FP_NOT_EQUAL(2.0f, twof());
+    RX_CHECK_REAL_NOT_EQUAL(zerof(), 0.0f);
+    RX_CHECK_REAL_NOT_EQUAL(2.0f, twof());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointGreater)
+RX_TEST_CASE(unsuccessfulRealGreater)
 {
-    RX_CHECK_FP_GREATER(twof(), 2.0f);
-    RX_CHECK_FP_GREATER(0.0f, zerof());
+    RX_CHECK_REAL_GREATER(twof(), 2.0f);
+    RX_CHECK_REAL_GREATER(0.0f, zerof());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointLesser)
+RX_TEST_CASE(unsuccessfulRealLesser)
 {
-    RX_CHECK_FP_LESSER(2.0f, zerof());
-    RX_CHECK_FP_LESSER(twof(), 0.0f);
+    RX_CHECK_REAL_LESSER(2.0f, zerof());
+    RX_CHECK_REAL_LESSER(twof(), 0.0f);
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointGreaterOrEqual)
+RX_TEST_CASE(unsuccessfulRealGreaterOrEqual)
 {
-    RX_CHECK_FP_GREATER_OR_EQUAL(twof(), 4.0f);
-    RX_CHECK_FP_GREATER_OR_EQUAL(0.0f, twof());
+    RX_CHECK_REAL_GREATER_OR_EQUAL(twof(), 4.0f);
+    RX_CHECK_REAL_GREATER_OR_EQUAL(0.0f, twof());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointLesserOrEqual)
+RX_TEST_CASE(unsuccessfulRealLesserOrEqual)
 {
-    RX_CHECK_FP_LESSER_OR_EQUAL(twof(), 0.0f);
-    RX_CHECK_FP_LESSER_OR_EQUAL(4.0f, twof());
+    RX_CHECK_REAL_LESSER_OR_EQUAL(twof(), 0.0f);
+    RX_CHECK_REAL_LESSER_OR_EQUAL(4.0f, twof());
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointAlmostEqual)
+RX_TEST_CASE(unsuccessfulRealAlmostEqual)
 {
-    RX_CHECK_FP_ALMOST_EQUAL(sin(PI), 1.0, 1.0e-6);
-    RX_CHECK_FP_ALMOST_EQUAL(0.0, sin(PI * 0.5), 1.0e-6);
+    RX_CHECK_REAL_ALMOST_EQUAL(sin(PI), 1.0, 1.0e-6);
+    RX_CHECK_REAL_ALMOST_EQUAL(0.0, sin(PI * 0.5), 1.0e-6);
 }
 
-RX_TEST_CASE(unsuccessfulFloatingPointAlmostNotEqual)
+RX_TEST_CASE(unsuccessfulRealAlmostNotEqual)
 {
-    RX_CHECK_FP_NOT_ALMOST_EQUAL(zerof(), 0.1f, 1.0e-6f);
-    RX_CHECK_FP_NOT_ALMOST_EQUAL(2.0f, twof(), 1.0e-6f);
+    RX_CHECK_REAL_NOT_ALMOST_EQUAL(zerof(), 0.1f, 1.0e-6f);
+    RX_CHECK_REAL_NOT_ALMOST_EQUAL(2.0f, twof(), 1.0e-6f);
 }
 
 RX_TEST_CASE(unsuccessfulStringEqual)
@@ -399,67 +399,66 @@ RX_TEST_CASE(fatalFailure)
     abort();
 }
 
-static const struct RxTestCase successfulCases[] = {
-    {"custom message", successfulCustomMessage},
-    {"boolean true", successfulBooleanTrue},
-    {"boolean false", successfulBooleanFalse},
-    {"integer equal", successfulIntegerEqual},
-    {"integer not equal", successfulIntegerNotEqual},
-    {"integer greater", successfulIntegerGreater},
-    {"integer lesser", successfulIntegerLesser},
-    {"integer greater or equal", successfulIntegerGreaterOrEqual},
-    {"integer lesser or equal", successfulIntegerLesserOrEqual},
-    {"unsigned integer equal", successfulUnsignedIntegerEqual},
-    {"unsigned integer not equal", successfulUnsignedIntegerNotEqual},
-    {"unsigned integer greater", successfulUnsignedIntegerGreater},
-    {"unsigned integer lesser", successfulUnsignedIntegerLesser},
-    {"unsigned integer greater or equal",
-     successfulUnsignedIntegerGreaterOrEqual},
-    {"unsigned integer lesser or equal",
-     successfulUnsignedIntegerLesserOrEqual},
-    {"floating-point equal", successfulFloatingPointEqual},
-    {"floating-point not equal", successfulFloatingPointNotEqual},
-    {"floating-point greater", successfulFloatingPointGreater},
-    {"floating-point lesser", successfulFloatingPointLesser},
-    {"floating-point greater or equal", successfulFloatingPointGreaterOrEqual},
-    {"floating-point lesser or equal", successfulFloatingPointLesserOrEqual},
-    {"floating-point equal", successfulFloatingPointAlmostEqual},
-    {"floating-point not equal", successfulFloatingPointAlmostNotEqual},
-    {"string equal", successfulStringEqual},
-    {"string not equal", successfulStringNotEqual},
-    {"string equal no case", successfulStringEqualNoCase},
-    {"string not equal no case", successfulStringNotEqualNoCase}};
-static const struct RxTestCase unsuccessfulCases[] = {
-    {"custom message", unsuccessfulCustomMessage},
-    {"boolean true", unsuccessfulBooleanTrue},
-    {"boolean false", unsuccessfulBooleanFalse},
-    {"integer equal", unsuccessfulIntegerEqual},
-    {"integer not equal", unsuccessfulIntegerNotEqual},
-    {"integer greater", unsuccessfulIntegerGreater},
-    {"integer lesser", unsuccessfulIntegerLesser},
-    {"integer greater or equal", unsuccessfulIntegerGreaterOrEqual},
-    {"integer lesser or equal", unsuccessfulIntegerLesserOrEqual},
-    {"unsigned integer equal", unsuccessfulUnsignedIntegerEqual},
-    {"unsigned integer not equal", unsuccessfulUnsignedIntegerNotEqual},
-    {"unsigned integer greater", unsuccessfulUnsignedIntegerGreater},
-    {"unsigned integer lesser", unsuccessfulUnsignedIntegerLesser},
-    {"unsigned integer greater or equal",
-     unsuccessfulUnsignedIntegerGreaterOrEqual},
-    {"unsigned integer lesser or equal",
-     unsuccessfulUnsignedIntegerLesserOrEqual},
-    {"floating-point equal", unsuccessfulFloatingPointEqual},
-    {"floating-point not equal", unsuccessfulFloatingPointNotEqual},
-    {"floating-point greater", unsuccessfulFloatingPointGreater},
-    {"floating-point lesser", unsuccessfulFloatingPointLesser},
-    {"floating-point greater or equal",
-     unsuccessfulFloatingPointGreaterOrEqual},
-    {"floating-point lesser or equal", unsuccessfulFloatingPointLesserOrEqual},
-    {"floating-point equal", unsuccessfulFloatingPointAlmostEqual},
-    {"floating-point not equal", unsuccessfulFloatingPointAlmostNotEqual},
-    {"string equal", unsuccessfulStringEqual},
-    {"string not equal", unsuccessfulStringNotEqual},
-    {"string equal no case", unsuccessfulStringEqualNoCase},
-    {"string not equal no case", unsuccessfulStringNotEqualNoCase}};
+static const struct RxTestCase successfulCases[]
+    = {{"custom message", successfulCustomMessage},
+       {"boolean true", successfulBooleanTrue},
+       {"boolean false", successfulBooleanFalse},
+       {"integer equal", successfulIntegerEqual},
+       {"integer not equal", successfulIntegerNotEqual},
+       {"integer greater", successfulIntegerGreater},
+       {"integer lesser", successfulIntegerLesser},
+       {"integer greater or equal", successfulIntegerGreaterOrEqual},
+       {"integer lesser or equal", successfulIntegerLesserOrEqual},
+       {"unsigned integer equal", successfulUnsignedIntegerEqual},
+       {"unsigned integer not equal", successfulUnsignedIntegerNotEqual},
+       {"unsigned integer greater", successfulUnsignedIntegerGreater},
+       {"unsigned integer lesser", successfulUnsignedIntegerLesser},
+       {"unsigned integer greater or equal",
+        successfulUnsignedIntegerGreaterOrEqual},
+       {"unsigned integer lesser or equal",
+        successfulUnsignedIntegerLesserOrEqual},
+       {"real equal", successfulRealEqual},
+       {"real not equal", successfulRealNotEqual},
+       {"real greater", successfulRealGreater},
+       {"real lesser", successfulRealLesser},
+       {"real greater or equal", successfulRealGreaterOrEqual},
+       {"real lesser or equal", successfulRealLesserOrEqual},
+       {"real equal", successfulRealAlmostEqual},
+       {"real not equal", successfulRealAlmostNotEqual},
+       {"string equal", successfulStringEqual},
+       {"string not equal", successfulStringNotEqual},
+       {"string equal no case", successfulStringEqualNoCase},
+       {"string not equal no case", successfulStringNotEqualNoCase}};
+static const struct RxTestCase unsuccessfulCases[]
+    = {{"custom message", unsuccessfulCustomMessage},
+       {"boolean true", unsuccessfulBooleanTrue},
+       {"boolean false", unsuccessfulBooleanFalse},
+       {"integer equal", unsuccessfulIntegerEqual},
+       {"integer not equal", unsuccessfulIntegerNotEqual},
+       {"integer greater", unsuccessfulIntegerGreater},
+       {"integer lesser", unsuccessfulIntegerLesser},
+       {"integer greater or equal", unsuccessfulIntegerGreaterOrEqual},
+       {"integer lesser or equal", unsuccessfulIntegerLesserOrEqual},
+       {"unsigned integer equal", unsuccessfulUnsignedIntegerEqual},
+       {"unsigned integer not equal", unsuccessfulUnsignedIntegerNotEqual},
+       {"unsigned integer greater", unsuccessfulUnsignedIntegerGreater},
+       {"unsigned integer lesser", unsuccessfulUnsignedIntegerLesser},
+       {"unsigned integer greater or equal",
+        unsuccessfulUnsignedIntegerGreaterOrEqual},
+       {"unsigned integer lesser or equal",
+        unsuccessfulUnsignedIntegerLesserOrEqual},
+       {"real equal", unsuccessfulRealEqual},
+       {"real not equal", unsuccessfulRealNotEqual},
+       {"real greater", unsuccessfulRealGreater},
+       {"real lesser", unsuccessfulRealLesser},
+       {"real greater or equal", unsuccessfulRealGreaterOrEqual},
+       {"real lesser or equal", unsuccessfulRealLesserOrEqual},
+       {"real equal", unsuccessfulRealAlmostEqual},
+       {"real not equal", unsuccessfulRealAlmostNotEqual},
+       {"string equal", unsuccessfulStringEqual},
+       {"string not equal", unsuccessfulStringNotEqual},
+       {"string equal no case", unsuccessfulStringEqualNoCase},
+       {"string not equal no case", unsuccessfulStringNotEqualNoCase}};
 static const struct RxTestCase miscCases[]
     = {{"fixture", fixture}, {"fatal failure", fatalFailure}};
 static const struct RxTestSuite suites[]

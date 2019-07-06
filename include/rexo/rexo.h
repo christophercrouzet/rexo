@@ -103,28 +103,28 @@ struct RxContext;
                                            __LINE__,                           \
                                            severity)
 
-#define RXP_DEFINE_FP_TEST(value1, value2, op, severity)                       \
-    rxpAssessFloatingPointComparisonTest(pContext,                             \
-                                         (value1),                             \
-                                         (value2),                             \
-                                         op,                                   \
-                                         #value1,                              \
-                                         #value2,                              \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         severity)
+#define RXP_DEFINE_REAL_TEST(value1, value2, op, severity)                     \
+    rxpAssessRealComparisonTest(pContext,                                      \
+                                (value1),                                      \
+                                (value2),                                      \
+                                op,                                            \
+                                #value1,                                       \
+                                #value2,                                       \
+                                __FILE__,                                      \
+                                __LINE__,                                      \
+                                severity)
 
-#define RXP_DEFINE_FP_FUZZY_TEST(value1, value2, tolerance, op, severity)      \
-    rxpAssessFloatingPointFuzzyComparisonTest(pContext,                        \
-                                              (value1),                        \
-                                              (value2),                        \
-                                              (tolerance),                     \
-                                              op,                              \
-                                              #value1,                         \
-                                              #value2,                         \
-                                              __FILE__,                        \
-                                              __LINE__,                        \
-                                              severity)
+#define RXP_DEFINE_REAL_FUZZY_TEST(value1, value2, tolerance, op, severity)    \
+    rxpAssessRealFuzzyComparisonTest(pContext,                                 \
+                                     (value1),                                 \
+                                     (value2),                                 \
+                                     (tolerance),                              \
+                                     op,                                       \
+                                     #value1,                                  \
+                                     #value2,                                  \
+                                     __FILE__,                                 \
+                                     __LINE__,                                 \
+                                     severity)
 #define RXP_DEFINE_STR_TEST(str1, str2, stringCase, op, severity)              \
     rxpAssessStringComparisonTest(pContext,                                    \
                                   (str1),                                      \
@@ -182,29 +182,30 @@ struct RxContext;
 #define RX_REQUIRE_UINT_LESSER_OR_EQUAL(value1, value2)                        \
     RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_EQUAL(value1, value2)                                    \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_EQUAL(value1, value2)                                  \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_NOT_EQUAL(value1, value2)                                \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_NOT_EQUAL(value1, value2)                              \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_GREATER(value1, value2)                                  \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
+#define RX_REQUIRE_REAL_GREATER(value1, value2)                                \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_FP_LESSER(value1, value2)                                   \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
+#define RX_REQUIRE_REAL_LESSER(value1, value2)                                 \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_FP_GREATER_OR_EQUAL(value1, value2)                         \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_GREATER_OR_EQUAL(value1, value2)                       \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_LESSER_OR_EQUAL(value1, value2)                          \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_LESSER_OR_EQUAL(value1, value2)                        \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_ALMOST_EQUAL(value1, value2, tolerance)                  \
-    RXP_DEFINE_FP_FUZZY_TEST(value1, value2, tolerance, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_ALMOST_EQUAL(value1, value2, tolerance)                \
+    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
+        value1, value2, tolerance, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_FP_NOT_ALMOST_EQUAL(value1, value2, tolerance)              \
-    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+#define RX_REQUIRE_REAL_NOT_ALMOST_EQUAL(value1, value2, tolerance)            \
+    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
         value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_REQUIRE_STR_EQUAL(str1, str2)                                       \
@@ -268,30 +269,30 @@ struct RxContext;
 #define RX_CHECK_UINT_LESSER_OR_EQUAL(value1, value2)                          \
     RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_EQUAL(value1, value2)                                      \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_EQUAL(value1, value2)                                    \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_NOT_EQUAL(value1, value2)                                  \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_NOT_EQUAL(value1, value2)                                \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_GREATER(value1, value2)                                    \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+#define RX_CHECK_REAL_GREATER(value1, value2)                                  \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_FP_LESSER(value1, value2)                                     \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+#define RX_CHECK_REAL_LESSER(value1, value2)                                   \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_FP_GREATER_OR_EQUAL(value1, value2)                           \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_GREATER_OR_EQUAL(value1, value2)                         \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_LESSER_OR_EQUAL(value1, value2)                            \
-    RXP_DEFINE_FP_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_LESSER_OR_EQUAL(value1, value2)                          \
+    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_ALMOST_EQUAL(value1, value2, tolerance)                    \
-    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+#define RX_CHECK_REAL_ALMOST_EQUAL(value1, value2, tolerance)                  \
+    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
         value1, value2, tolerance, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_FP_NOT_ALMOST_EQUAL(value1, value2, tolerance)                \
-    RXP_DEFINE_FP_FUZZY_TEST(                                                  \
+#define RX_CHECK_REAL_NOT_ALMOST_EQUAL(value1, value2, tolerance)              \
+    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
         value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
 #define RX_CHECK_STR_EQUAL(str1, str2)                                         \
@@ -1148,10 +1149,10 @@ rxpMakeStringCopy(char **ppString, const char *pOriginal)
 }
 
 static void
-rxpAreFloatingPointAlmostEqual(int *pResult,
-                               long double value1,
-                               long double value2,
-                               long double tolerance)
+rxpAreRealsAlmostEqual(int *pResult,
+                       long double value1,
+                       long double value2,
+                       long double tolerance)
 {
     long double difference;
 
@@ -1516,15 +1517,15 @@ rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
-                                     long double value1,
-                                     long double value2,
-                                     enum RxpComparisonOp op,
-                                     const char *pExpression1,
-                                     const char *pExpression2,
-                                     const char *pFile,
-                                     int line,
-                                     enum RxSeverity severity)
+rxpAssessRealComparisonTest(struct RxContext *pContext,
+                            long double value1,
+                            long double value2,
+                            enum RxpComparisonOp op,
+                            const char *pExpression1,
+                            const char *pExpression2,
+                            const char *pFile,
+                            int line,
+                            enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1576,8 +1577,8 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
                           pOpName,
                           pExpression2)
             != RX_SUCCESS) {
-            RXP_LOG_TRACE("failed to create the failure message for the "
-                          "floating-point comparison test located at %s:%d\n",
+            RXP_LOG_TRACE("failed to create the failure message for the real "
+                          "comparison test located at %s:%d\n",
                           pFile,
                           line);
             pFailureMessage = NULL;
@@ -1587,7 +1588,7 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
                 &pDiagnosticMessage, "%Lf %s %Lf", value1, pOpSymbol, value2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
-                          "floating-point comparison test located at %s:%d\n",
+                          "real comparison test located at %s:%d\n",
                           pFile,
                           line);
             pDiagnosticMessage = NULL;
@@ -1602,7 +1603,7 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to handle the test result for the floating-point "
+        RXP_LOG_TRACE("failed to handle the test result for the real "
                       "comparison test located at %s:%d\n",
                       pFile,
                       line);
@@ -1622,16 +1623,16 @@ rxpAssessFloatingPointComparisonTest(struct RxContext *pContext,
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
-                                          long double value1,
-                                          long double value2,
-                                          long double tolerance,
-                                          enum RxpComparisonOp op,
-                                          const char *pExpression1,
-                                          const char *pExpression2,
-                                          const char *pFile,
-                                          int line,
-                                          enum RxSeverity severity)
+rxpAssessRealFuzzyComparisonTest(struct RxContext *pContext,
+                                 long double value1,
+                                 long double value2,
+                                 long double tolerance,
+                                 enum RxpComparisonOp op,
+                                 const char *pExpression1,
+                                 const char *pExpression2,
+                                 const char *pFile,
+                                 int line,
+                                 enum RxSeverity severity)
 {
     int result;
     char *pFailureMessage;
@@ -1645,10 +1646,10 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
 
     switch (op) {
         case RXP_OP_EQUAL:
-            rxpAreFloatingPointAlmostEqual(&result, value1, value2, tolerance);
+            rxpAreRealsAlmostEqual(&result, value1, value2, tolerance);
             break;
         case RXP_OP_NOT_EQUAL:
-            rxpAreFloatingPointAlmostEqual(&result, value1, value2, tolerance);
+            rxpAreRealsAlmostEqual(&result, value1, value2, tolerance);
             result = !result;
             break;
         default:
@@ -1674,8 +1675,8 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
                           pExpression2,
                           tolerance)
             != RX_SUCCESS) {
-            RXP_LOG_TRACE("failed to create the failure message for the "
-                          "floating-point almost equal test located at %s:%d\n",
+            RXP_LOG_TRACE("failed to create the failure message for the real "
+                          "almost equal test located at %s:%d\n",
                           pFile,
                           line);
             pFailureMessage = NULL;
@@ -1685,7 +1686,7 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
                 &pDiagnosticMessage, "%Lf %s %Lf", value1, pOpSymbol, value2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
-                          "floating-point almost equal test located at %s:%d\n",
+                          "real almost equal test located at %s:%d\n",
                           pFile,
                           line);
             pDiagnosticMessage = NULL;
@@ -1700,7 +1701,7 @@ rxpAssessFloatingPointFuzzyComparisonTest(struct RxContext *pContext,
                            pFailureMessage,
                            pDiagnosticMessage)
         != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to handle the test result for the floating-point "
+        RXP_LOG_TRACE("failed to handle the test result for the real "
                       "almost equal test located at %s:%d\n",
                       pFile,
                       line);
