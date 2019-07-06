@@ -2077,7 +2077,7 @@ rxTerminateTestCaseReport(struct RxTestCaseReport *pReport)
             RX_FREE((void *)(uintptr_t)pFailure->pMessage);
         }
 
-        if (pFailure->pDiagnosticMessage) {
+        if (pFailure->pDiagnosticMessage != NULL) {
             RX_FREE((void *)(uintptr_t)pFailure->pDiagnosticMessage);
         }
     }
