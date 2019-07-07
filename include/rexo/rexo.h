@@ -991,6 +991,10 @@ rxpEnsureDynamicArrayHasEnoughCapacity(void **ppBlock,
     return RX_SUCCESS;
 }
 
+typedef intmax_t RxpInt;
+typedef uintmax_t RxpUInt;
+typedef long double RxpReal;
+
 enum RxpStringCase { RXP_STRING_CASE_OBEY = 0, RXP_STRING_CASE_IGNORE = 1 };
 
 enum RxpComparisonOp {
@@ -1150,11 +1154,11 @@ rxpMakeStringCopy(char **ppString, const char *pOriginal)
 
 static void
 rxpAreRealsAlmostEqual(int *pResult,
-                       long double value1,
-                       long double value2,
-                       long double tolerance)
+                       RxpReal value1,
+                       RxpReal value2,
+                       RxpReal tolerance)
 {
-    long double difference;
+    RxpReal difference;
 
     difference = fabsl(value1 - value2);
     if (difference <= tolerance) {
@@ -1306,8 +1310,8 @@ rxpAssessBooleanTest(struct RxContext *pContext,
 
 RXP_MAYBE_UNUSED static void
 rxpAssessIntegerComparisonTest(struct RxContext *pContext,
-                               intmax_t value1,
-                               intmax_t value2,
+                               RxpInt value1,
+                               RxpInt value2,
                                enum RxpComparisonOp op,
                                const char *pExpression1,
                                const char *pExpression2,
@@ -1412,8 +1416,8 @@ rxpAssessIntegerComparisonTest(struct RxContext *pContext,
 
 RXP_MAYBE_UNUSED static void
 rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
-                                       uintmax_t value1,
-                                       uintmax_t value2,
+                                       RxpUInt value1,
+                                       RxpUInt value2,
                                        enum RxpComparisonOp op,
                                        const char *pExpression1,
                                        const char *pExpression2,
@@ -1518,8 +1522,8 @@ rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
 
 RXP_MAYBE_UNUSED static void
 rxpAssessRealComparisonTest(struct RxContext *pContext,
-                            long double value1,
-                            long double value2,
+                            RxpReal value1,
+                            RxpReal value2,
                             enum RxpComparisonOp op,
                             const char *pExpression1,
                             const char *pExpression2,
@@ -1624,9 +1628,9 @@ rxpAssessRealComparisonTest(struct RxContext *pContext,
 
 RXP_MAYBE_UNUSED static void
 rxpAssessRealFuzzyComparisonTest(struct RxContext *pContext,
-                                 long double value1,
-                                 long double value2,
-                                 long double tolerance,
+                                 RxpReal value1,
+                                 RxpReal value2,
+                                 RxpReal tolerance,
                                  enum RxpComparisonOp op,
                                  const char *pExpression1,
                                  const char *pExpression2,
