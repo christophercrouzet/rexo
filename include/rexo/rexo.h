@@ -2177,7 +2177,7 @@ rxPrintTestCaseRunSummary(const struct RxTestCaseReport *pReport)
 
     passed = pReport->failureCount == 0;
 
-#ifdef RXP_LOG_STYLING
+#if RXP_LOG_STYLING
     if (isatty(fileno(stderr))) {
         rxpGetStyleAnsiCode(
             &pResultStyleStart,
