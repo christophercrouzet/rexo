@@ -459,7 +459,6 @@ rxRun(size_t suiteCount,
 #define RX_FREE free
 #endif /* RX_FREE */
 
-#define RXP_UNUSED(x) (void)(x)
 
 #if !defined(RX_DISABLE_LOG_STYLING) && defined(RXP_PLATFORM_UNIX)             \
     && defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 1
