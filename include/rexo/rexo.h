@@ -335,7 +335,7 @@ typedef void (*RxPfnTestSuiteTearDown)(void *pFixture);
 
 struct RxTestCase {
     const char *pName;
-    RxPfnTestCase pfn;
+    RxPfnTestCase pfnRun;
 };
 
 struct RxTestSuite {
@@ -1863,7 +1863,7 @@ rxpValidateTestCase(int *pValid, const struct RxTestCase *pCase)
         return;
     }
 
-    if (pCase->pfn == NULL) {
+    if (pCase->pfnRun == NULL) {
         RXP_LOG_TRACE("the member ‘pfn’ is NULL\n");
         return;
     }
@@ -2132,7 +2132,7 @@ rxRunTestCase(struct RxTestCaseReport *pReport,
     }
 
     if (setjmp(context.env) == 0) {
-        pCase->pfn(&context);
+        pCase->pfnRun(&context);
     }
 
     if (timeStart == (uint64_t)-1 || rxpGetRealTime(&timeEnd) != RX_SUCCESS) {
