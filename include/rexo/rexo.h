@@ -989,10 +989,6 @@ rxpEnsureDynamicArrayHasEnoughCapacity(void **ppBlock,
     return RX_SUCCESS;
 }
 
-typedef intmax_t RxpInt;
-typedef uintmax_t RxpUInt;
-typedef long double RxpReal;
-
 enum RxpStringCase { RXP_STRING_CASE_OBEY = 0, RXP_STRING_CASE_IGNORE = 1 };
 
 enum RxpComparisonOp {
@@ -1003,6 +999,10 @@ enum RxpComparisonOp {
     RXP_OP_GREATER_OR_EQUAL = 4,
     RXP_OP_LESSER_OR_EQUAL = 5
 };
+
+typedef intmax_t RxpInt;
+typedef uintmax_t RxpUInt;
+typedef long double RxpReal;
 
 RXP_MAKE_DYNAMIC_ARRAY(TestFailureArray, struct RxTestFailure)
 
