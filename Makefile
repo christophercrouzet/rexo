@@ -95,8 +95,15 @@ CLANG_VERSION := $(shell \
 CLANG_DIR := $(shell dirname $(shell which clang))
 CLANG_INCLUDE_DIR := $(CLANG_DIR)/../lib/clang/$(CLANG_VERSION)/include
 
+# Run the formatter on a file.
+# $(1): file.
+define rx_format =
+clang-format -style=file $(1) | diff --color -u $(1) -;
+endef
+
 format:
-	@ clang-format -i -style=file $(FORMAT_FILES)
+	@ $(foreach _file,$(FORMAT_FILES),$(call \
+		rx_format,$(_file)))
 
 tidy: $(MAKE_FILES)
 	@ clang-tidy $(TIDY_FILES) \
