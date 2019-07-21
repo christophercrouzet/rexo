@@ -101,7 +101,7 @@ format:
 tidy: $(MAKE_FILES)
 	@ clang-tidy $(TIDY_FILES) \
 		-p $(firstword $(BUILD_DIRS))/compile_commands.json \
-		-- -I$(CLANG_INCLUDE_DIR)
+		-- -I$(CLANG_INCLUDE_DIR) -Iinclude
 
 .PHONY: format tidy
 
