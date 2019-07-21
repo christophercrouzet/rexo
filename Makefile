@@ -45,7 +45,7 @@ endef
 # ------------------------------------------------------------------------------
 
 # Create a Makefile rule.
-# # $(1): configuration.
+# $(1): configuration.
 define rx_create_makefile =
 $$(OUT_DIR)/$(1)/Makefile:
 	@ mkdir -p $$(OUT_DIR)/$(1)
