@@ -2331,7 +2331,12 @@ rxRun(size_t suiteCount,
 
 suite_reports_cleanup:
     for (i = 0; i < allocatedCaseReportsCount; ++i) {
-        for (j = 0; j < initializedCaseReportCount; ++j) {
+        size_t testCaseReportCount;
+
+        testCaseReportCount = i == allocatedCaseReportsCount - 1
+                                  ? initializedCaseReportCount
+                                  : pSuiteReports[i].caseReportCount;
+        for (j = 0; j < testCaseReportCount; ++j) {
             rxTerminateTestCaseReport(&pSuiteReports[i].pCaseReports[j]);
         }
 
