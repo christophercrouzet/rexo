@@ -363,12 +363,6 @@ struct RxTestCaseReport {
     uint64_t elapsed;
 };
 
-struct RxTestSuiteReport {
-    const struct RxTestSuite *pSuite;
-    size_t caseReportCount;
-    struct RxTestCaseReport *pCaseReports;
-};
-
 struct RxContext {
     jmp_buf env;
     struct RxTestCaseReport *pCaseReport;
@@ -2232,10 +2226,7 @@ rxRun(size_t suiteCount,
     size_t i;
     size_t j;
     enum RxStatus status;
-    size_t allocatedCaseReportsCount;
-    size_t initializedCaseReportCount;
     int valid;
-    struct RxTestSuiteReport *pSuiteReports;
 
     RXP_UNUSED(argc);
     RXP_UNUSED(ppArgv);
@@ -2259,91 +2250,39 @@ rxRun(size_t suiteCount,
         }
     }
 
-    pSuiteReports = (struct RxTestSuiteReport *)RX_MALLOC(sizeof *pSuiteReports
-                                                          * suiteCount);
-    if (pSuiteReports == NULL) {
-        status = RX_ERROR_ALLOCATION;
-        RXP_LOG_ERROR("failed to allocate the test suite reports\n");
-        goto exit;
-    }
-
-    allocatedCaseReportsCount = 0;
     for (i = 0; i < suiteCount; ++i) {
         const struct RxTestSuite *pSuite;
-        struct RxTestSuiteReport *pSuiteReport;
 
         pSuite = &pSuites[i];
-        pSuiteReport = &pSuiteReports[i];
-
-        pSuiteReport->pSuite = pSuite;
-        pSuiteReport->caseReportCount = pSuite->caseCount;
-
-        if (pSuite->caseCount == 0) {
-            pSuiteReport->pCaseReports = NULL;
-            continue;
-        }
-
-        pSuiteReport->pCaseReports = (struct RxTestCaseReport *)RX_MALLOC(
-            sizeof *pSuiteReport->pCaseReports * pSuite->caseCount);
-        if (pSuiteReport->pCaseReports == NULL) {
-            status = RX_ERROR_ALLOCATION;
-            RXP_LOG_ERROR(
-                "failed to allocate the test case reports (suite: \"%s\")\n",
-                pSuite->pName);
-            goto suite_reports_cleanup;
-        }
-
-        ++allocatedCaseReportsCount;
-
-        initializedCaseReportCount = 0;
         for (j = 0; j < pSuite->caseCount; ++j) {
             const struct RxTestCase *pCase;
-            struct RxTestCaseReport *pCaseReport;
+            struct RxTestCaseReport caseReport;
 
             pCase = &pSuite->pCases[j];
-            pCaseReport = &pSuiteReport->pCaseReports[j];
-
-            status = rxInitializeTestCaseReport(pCaseReport, pSuite, pCase);
+            status = rxInitializeTestCaseReport(&caseReport, pSuite, pCase);
             if (status != RX_SUCCESS) {
                 RXP_LOG_ERROR("failed to initialize the test case report "
                               "(suite: \"%s\", case: \"%s\")\n",
                               pSuite->pName,
                               pCase->pName);
-                goto suite_reports_cleanup;
+                goto exit;
             }
 
-            ++initializedCaseReportCount;
-
-            status = rxRunTestCase(pCaseReport, pSuite, pCase);
+            status = rxRunTestCase(&caseReport, pSuite, pCase);
             if (status != RX_SUCCESS) {
                 RXP_LOG_ERROR(
                     "failed to run a test case (suite: \"%s\", case: \"%s\")\n",
                     pSuite->pName,
                     pCase->pName);
-                goto suite_reports_cleanup;
+                goto exit;
             }
 
-            rxPrintTestCaseRunSummary(pCaseReport);
+            rxPrintTestCaseRunSummary(&caseReport);
+            rxTerminateTestCaseReport(&caseReport);
         }
     }
 
     RX_ASSERT(status == RX_SUCCESS);
-
-suite_reports_cleanup:
-    for (i = 0; i < allocatedCaseReportsCount; ++i) {
-        size_t testCaseReportCount;
-
-        testCaseReportCount = i == allocatedCaseReportsCount - 1
-                                  ? initializedCaseReportCount
-                                  : pSuiteReports[i].caseReportCount;
-        for (j = 0; j < testCaseReportCount; ++j) {
-            rxTerminateTestCaseReport(&pSuiteReports[i].pCaseReports[j]);
-        }
-
-        RX_FREE(pSuiteReports[i].pCaseReports);
-    }
-
-    RX_FREE(pSuiteReports);
 
 exit:
     return status;
