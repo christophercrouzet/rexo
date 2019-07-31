@@ -797,7 +797,7 @@ rxpGetRealTime(uint64_t *pTime)
 #define RXP_DYNAMICARRAY_GET_BUFFER(pBlock)                                    \
     ((void *)&((struct RxpDynamicArrayHeader *)(pBlock))[1])
 #define RXP_DYNAMICARRAY_GET_CONST_BLOCK(pBuffer)                              \
-    ((const void *)&((const struct RxpDynamicArrayHeader *)pBuffer)[-1])
+    ((const void *)&((const struct RxpDynamicArrayHeader *)(pBuffer))[-1])
 #define RXP_DYNAMICARRAY_GET_CONST_HEADER(pBlock)                              \
     ((const struct RxpDynamicArrayHeader *)(pBlock))
 
