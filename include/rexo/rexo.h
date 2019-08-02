@@ -2241,24 +2241,20 @@ rxRun(size_t suiteCount,
     }
 
     for (i = 0; i < suiteCount; ++i) {
-        rxpValidateTestSuite(&valid, &pSuites[i]);
-        RX_ASSERT(valid);
-
-        for (j = 0; j < pSuites[i].caseCount; ++j) {
-            rxpValidateTestCase(&valid, &pSuites[i].pCases[j]);
-            RX_ASSERT(valid);
-        }
-    }
-
-    for (i = 0; i < suiteCount; ++i) {
         const struct RxTestSuite *pSuite;
 
         pSuite = &pSuites[i];
+        rxpValidateTestSuite(&valid, pSuite);
+        RX_ASSERT(valid);
+
         for (j = 0; j < pSuite->caseCount; ++j) {
             const struct RxTestCase *pCase;
             struct RxTestCaseReport caseReport;
 
             pCase = &pSuite->pCases[j];
+            rxpValidateTestCase(&valid, pCase);
+            RX_ASSERT(valid);
+
             status = rxInitializeTestCaseReport(&caseReport, pSuite, pCase);
             if (status != RX_SUCCESS) {
                 RXP_LOG_ERROR("failed to initialize the test case report "
