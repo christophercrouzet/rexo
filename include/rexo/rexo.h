@@ -362,9 +362,6 @@ extern "C" {
 #endif
 
 RXP_SCOPE void
-rxLogLevelGetName(const char **name, enum RxLogLevel level);
-
-RXP_SCOPE void
 rxAbortTest(struct RxContext *context);
 
 RXP_SCOPE enum RxStatus
@@ -1820,32 +1817,6 @@ rxpSummaryValidate(int *valid, const struct RxSummary *summary)
 
 /* Public API Implementation                                       O-(''Q)
    -------------------------------------------------------------------------- */
-
-RXP_MAYBE_UNUSED RXP_SCOPE void
-rxLogLevelGetName(const char **name, enum RxLogLevel level)
-{
-    RX_ASSERT(name != NULL);
-
-    switch (level) {
-        case RX_LOG_LEVEL_DEBUG:
-            *name = "debug";
-            return;
-        case RX_LOG_LEVEL_TRACE:
-            *name = "trace";
-            return;
-        case RX_LOG_LEVEL_INFO:
-            *name = "info";
-            return;
-        case RX_LOG_LEVEL_WARNING:
-            *name = "warning";
-            return;
-        case RX_LOG_LEVEL_ERROR:
-            *name = "error";
-            return;
-        default:
-            *name = "invalid";
-    }
-}
 
 RXP_MAYBE_UNUSED RXP_SCOPE void
 rxAbortTest(struct RxContext *context)
