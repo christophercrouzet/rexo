@@ -2136,11 +2136,9 @@ rxRun(size_t suiteCount,
 
     RX_ASSERT(testSuites != NULL);
 
-    status = RX_SUCCESS;
-
     if (suiteCount == 0) {
         RXP_LOG_INFO("nothing to run\n");
-        goto exit;
+        return RX_SUCCESS;
     }
 
     for (i = 0; i < suiteCount; ++i) {
@@ -2164,7 +2162,7 @@ rxRun(size_t suiteCount,
                               "(suite: \"%s\", case: \"%s\")\n",
                               testSuite->name,
                               testCase->name);
-                goto exit;
+                return status;
             }
 
             status = rxTestCaseRun(&summary, testCase, testSuite);
@@ -2173,7 +2171,7 @@ rxRun(size_t suiteCount,
                               "(suite: \"%s\", case: \"%s\")\n",
                               testSuite->name,
                               testCase->name);
-                goto exit;
+                return status;
             }
 
             rxSummaryPrint(&summary);
@@ -2181,10 +2179,7 @@ rxRun(size_t suiteCount,
         }
     }
 
-    RX_ASSERT(status == RX_SUCCESS);
-
-exit:
-    return status;
+    return RX_SUCCESS;
 }
 
 #endif /* REXO_REXO_H */
