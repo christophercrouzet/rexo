@@ -44,8 +44,6 @@
 #define RXP_SCOPE extern
 #endif /* RX_STATIC */
 
-#define RXP_UNUSED(x) (void)(x)
-
 #ifdef __GNUC__
 #define RXP_MAYBE_UNUSED __attribute__((unused))
 #else
@@ -57,88 +55,88 @@ struct RxContext;
 #define RXP_FALSE ((int)0)
 #define RXP_TRUE ((int)1)
 
-#define RXP_TEST_CASE_PARAMETERS struct RxContext *pContext RXP_MAYBE_UNUSED
+#define RXP_TEST_CASE_PARAMETERS struct RxContext *context RXP_MAYBE_UNUSED
 
 #define RX_TEST_CASE(name) static void name(RXP_TEST_CASE_PARAMETERS)
 
-#define RX_FIXTURE pContext->pFixture
+#define RX_FIXTURE context->fixture
 
-#define RXP_DEFINE_TEST(condition, expected, message, severity)                \
-    rxpAssessTest(pContext,                                                    \
+#define RXP_DEFINE_TEST(condition, expected, msg, severity)                    \
+    rxpAssessTest(context,                                                     \
                   !!(condition),                                               \
                   expected,                                                    \
-                  message,                                                     \
+                  msg,                                                         \
                   __FILE__,                                                    \
                   __LINE__,                                                    \
                   severity)
 
 #define RXP_DEFINE_BOOL_TEST(condition, expected, severity)                    \
-    rxpAssessBooleanTest(pContext,                                             \
-                         !!(condition),                                        \
-                         expected,                                             \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         severity)
+    rxpAssessBoolTest(context,                                                 \
+                      !!(condition),                                           \
+                      expected,                                                \
+                      #condition,                                              \
+                      __FILE__,                                                \
+                      __LINE__,                                                \
+                      severity)
 
-#define RXP_DEFINE_INT_TEST(value1, value2, op, severity)                      \
-    rxpAssessIntegerComparisonTest(pContext,                                   \
-                                   (value1),                                   \
-                                   (value2),                                   \
-                                   op,                                         \
-                                   #value1,                                    \
-                                   #value2,                                    \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   severity)
+#define RXP_DEFINE_INT_TEST(x1, x2, op, severity)                              \
+    rxpAssessIntComparisonTest(context,                                        \
+                               (x1),                                           \
+                               (x2),                                           \
+                               op,                                             \
+                               #x1,                                            \
+                               #x2,                                            \
+                               __FILE__,                                       \
+                               __LINE__,                                       \
+                               severity)
 
-#define RXP_DEFINE_UINT_TEST(value1, value2, op, severity)                     \
-    rxpAssessUnsignedIntegerComparisonTest(pContext,                           \
-                                           (value1),                           \
-                                           (value2),                           \
-                                           op,                                 \
-                                           #value1,                            \
-                                           #value2,                            \
-                                           __FILE__,                           \
-                                           __LINE__,                           \
-                                           severity)
+#define RXP_DEFINE_UINT_TEST(x1, x2, op, severity)                             \
+    rxpAssessUIntComparisonTest(context,                                       \
+                               (x1),                                           \
+                               (x2),                                           \
+                               op,                                             \
+                               #x1,                                            \
+                               #x2,                                            \
+                               __FILE__,                                       \
+                               __LINE__,                                       \
+                               severity)
 
-#define RXP_DEFINE_REAL_TEST(value1, value2, op, severity)                     \
-    rxpAssessRealComparisonTest(pContext,                                      \
-                                (value1),                                      \
-                                (value2),                                      \
+#define RXP_DEFINE_REAL_TEST(x1, x2, op, severity)                             \
+    rxpAssessRealComparisonTest(context,                                       \
+                                (x1),                                          \
+                                (x2),                                          \
                                 op,                                            \
-                                #value1,                                       \
-                                #value2,                                       \
+                                #x1,                                           \
+                                #x2,                                           \
                                 __FILE__,                                      \
                                 __LINE__,                                      \
                                 severity)
 
-#define RXP_DEFINE_REAL_FUZZY_TEST(value1, value2, tolerance, op, severity)    \
-    rxpAssessRealFuzzyComparisonTest(pContext,                                 \
-                                     (value1),                                 \
-                                     (value2),                                 \
-                                     (tolerance),                              \
+#define RXP_DEFINE_REAL_FUZZY_TEST(x1, x2, tol, op, severity)                  \
+    rxpAssessRealFuzzyComparisonTest(context,                                  \
+                                     (x1),                                     \
+                                     (x2),                                     \
+                                     (tol),                                    \
                                      op,                                       \
-                                     #value1,                                  \
-                                     #value2,                                  \
+                                     #x1,                                      \
+                                     #x2,                                      \
                                      __FILE__,                                 \
                                      __LINE__,                                 \
                                      severity)
-#define RXP_DEFINE_STR_TEST(str1, str2, stringCase, op, severity)              \
-    rxpAssessStringComparisonTest(pContext,                                    \
-                                  (str1),                                      \
-                                  (str2),                                      \
-                                  stringCase,                                  \
-                                  op,                                          \
-                                  #str1,                                       \
-                                  #str2,                                       \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  severity)
+#define RXP_DEFINE_STR_TEST(s1, s2, strCase, op, severity)                     \
+    rxpAssessStrComparisonTest(context,                                        \
+                               (s1),                                           \
+                               (s2),                                           \
+                               strCase,                                        \
+                               op,                                             \
+                               #s1,                                            \
+                               #s2,                                            \
+                               __FILE__,                                       \
+                               __LINE__,                                       \
+                               severity)
 
-#define RX_REQUIRE(condition, message)                                         \
-    RXP_DEFINE_TEST(condition, RXP_TRUE, message, RX_FATAL)
+#define RX_REQUIRE(condition, msg)                                             \
+    RXP_DEFINE_TEST(condition, RXP_TRUE, msg, RX_FATAL)
 
 #define RX_REQUIRE_TRUE(condition)                                             \
     RXP_DEFINE_BOOL_TEST(condition, RXP_TRUE, RX_FATAL)
@@ -146,86 +144,80 @@ struct RxContext;
 #define RX_REQUIRE_FALSE(condition)                                            \
     RXP_DEFINE_BOOL_TEST(condition, RXP_FALSE, RX_FATAL)
 
-#define RX_REQUIRE_INT_EQUAL(value1, value2)                                   \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_INT_EQUAL(x1, x2)                                           \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_NOT_EQUAL(value1, value2)                               \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_INT_NOT_EQUAL(x1, x2)                                       \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_GREATER(value1, value2)                                 \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
+#define RX_REQUIRE_INT_GREATER(x1, x2)                                         \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_INT_LESSER(value1, value2)                                  \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
+#define RX_REQUIRE_INT_LESSER(x1, x2)                                          \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_INT_GREATER_OR_EQUAL(value1, value2)                        \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_INT_GREATER_OR_EQUAL(x1, x2)                                \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_LESSER_OR_EQUAL(value1, value2)                         \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_INT_LESSER_OR_EQUAL(x1, x2)                                 \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_EQUAL(value1, value2)                                  \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_UINT_EQUAL(x1, x2)                                          \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_NOT_EQUAL(value1, value2)                              \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_UINT_NOT_EQUAL(x1, x2)                                      \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_GREATER(value1, value2)                                \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
+#define RX_REQUIRE_UINT_GREATER(x1, x2)                                        \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_UINT_LESSER(value1, value2)                                 \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
+#define RX_REQUIRE_UINT_LESSER(x1, x2)                                         \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_UINT_GREATER_OR_EQUAL(value1, value2)                       \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_UINT_GREATER_OR_EQUAL(x1, x2)                               \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_LESSER_OR_EQUAL(value1, value2)                        \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_UINT_LESSER_OR_EQUAL(x1, x2)                                \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_EQUAL(value1, value2)                                  \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_EQUAL(x1, x2)                                          \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_NOT_EQUAL(value1, value2)                              \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_NOT_EQUAL(x1, x2)                                      \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_GREATER(value1, value2)                                \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER, RX_FATAL)
+#define RX_REQUIRE_REAL_GREATER(x1, x2)                                        \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_REAL_LESSER(value1, value2)                                 \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER, RX_FATAL)
+#define RX_REQUIRE_REAL_LESSER(x1, x2)                                         \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_REAL_GREATER_OR_EQUAL(value1, value2)                       \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_GREATER_OR_EQUAL(x1, x2)                               \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_LESSER_OR_EQUAL(value1, value2)                        \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_LESSER_OR_EQUAL(x1, x2)                                \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_ALMOST_EQUAL(value1, value2, tolerance)                \
-    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
-        value1, value2, tolerance, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_ALMOST_EQUAL(x1, x2, tol)                              \
+    RXP_DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_NOT_ALMOST_EQUAL(value1, value2, tolerance)            \
-    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
-        value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_REAL_NOT_ALMOST_EQUAL(x1, x2, tol)                          \
+    RXP_DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_EQUAL(str1, str2)                                       \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_STR_EQUAL(s1, s2)                                           \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_OBEY, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_NOT_EQUAL(str1, str2)                                   \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_STR_NOT_EQUAL(s1, s2)                                       \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_EQUAL_NO_CASE(str1, str2)                               \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_FATAL)
+#define RX_REQUIRE_STR_EQUAL_NO_CASE(s1, s2)                                   \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_IGNORE, RXP_OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_NOT_EQUAL_NO_CASE(str1, str2)                           \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_FATAL)
+#define RX_REQUIRE_STR_NOT_EQUAL_NO_CASE(s1, s2)                               \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_CHECK(condition, message)                                           \
-    RXP_DEFINE_TEST(condition, RXP_TRUE, message, RX_NONFATAL)
+#define RX_CHECK(condition, msg)                                               \
+    RXP_DEFINE_TEST(condition, RXP_TRUE, msg, RX_NONFATAL)
 
 #define RX_CHECK_TRUE(condition)                                               \
     RXP_DEFINE_BOOL_TEST(condition, RXP_TRUE, RX_NONFATAL)
@@ -233,83 +225,79 @@ struct RxContext;
 #define RX_CHECK_FALSE(condition)                                              \
     RXP_DEFINE_BOOL_TEST(condition, RXP_FALSE, RX_NONFATAL)
 
-#define RX_CHECK_INT_EQUAL(value1, value2)                                     \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+#define RX_CHECK_INT_EQUAL(x1, x2)                                             \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_NOT_EQUAL(value1, value2)                                 \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_INT_NOT_EQUAL(x1, x2)                                         \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_GREATER(value1, value2)                                   \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+#define RX_CHECK_INT_GREATER(x1, x2)                                           \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_INT_LESSER(value1, value2)                                    \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+#define RX_CHECK_INT_LESSER(x1, x2)                                            \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_INT_GREATER_OR_EQUAL(value1, value2)                          \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_INT_GREATER_OR_EQUAL(x1, x2)                                  \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_LESSER_OR_EQUAL(value1, value2)                           \
-    RXP_DEFINE_INT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_INT_LESSER_OR_EQUAL(x1, x2)                                   \
+    RXP_DEFINE_INT_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_EQUAL(value1, value2)                                    \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+#define RX_CHECK_UINT_EQUAL(x1, x2)                                            \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_NOT_EQUAL(value1, value2)                                \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_UINT_NOT_EQUAL(x1, x2)                                        \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_GREATER(value1, value2)                                  \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+#define RX_CHECK_UINT_GREATER(x1, x2)                                          \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_UINT_LESSER(value1, value2)                                   \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+#define RX_CHECK_UINT_LESSER(x1, x2)                                           \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_UINT_GREATER_OR_EQUAL(value1, value2)                         \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_UINT_GREATER_OR_EQUAL(x1, x2)                                 \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_LESSER_OR_EQUAL(value1, value2)                          \
-    RXP_DEFINE_UINT_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_UINT_LESSER_OR_EQUAL(x1, x2)                                  \
+    RXP_DEFINE_UINT_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_EQUAL(value1, value2)                                    \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_EQUAL(x1, x2)                                            \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_NOT_EQUAL(value1, value2)                                \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_NOT_EQUAL(x1, x2)                                        \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_GREATER(value1, value2)                                  \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER, RX_NONFATAL)
+#define RX_CHECK_REAL_GREATER(x1, x2)                                          \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_REAL_LESSER(value1, value2)                                   \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER, RX_NONFATAL)
+#define RX_CHECK_REAL_LESSER(x1, x2)                                           \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_REAL_GREATER_OR_EQUAL(value1, value2)                         \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_GREATER_OR_EQUAL(x1, x2)                                 \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_LESSER_OR_EQUAL(value1, value2)                          \
-    RXP_DEFINE_REAL_TEST(value1, value2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_LESSER_OR_EQUAL(x1, x2)                                  \
+    RXP_DEFINE_REAL_TEST(x1, x2, RXP_OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_ALMOST_EQUAL(value1, value2, tolerance)                  \
-    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
-        value1, value2, tolerance, RXP_OP_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_ALMOST_EQUAL(x1, x2, tol)                                \
+    RXP_DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_NOT_ALMOST_EQUAL(value1, value2, tolerance)              \
-    RXP_DEFINE_REAL_FUZZY_TEST(                                                \
-        value1, value2, tolerance, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_REAL_NOT_ALMOST_EQUAL(x1, x2, tol)                            \
+    RXP_DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_EQUAL(str1, str2)                                         \
+#define RX_CHECK_STR_EQUAL(s1, s2)                                             \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_OBEY, RXP_OP_EQUAL, RX_NONFATAL)
+
+#define RX_CHECK_STR_NOT_EQUAL(s1, s2)                                         \
     RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_EQUAL, RX_NONFATAL)
+        s1, s2, RXP_STR_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_NOT_EQUAL(str1, str2)                                     \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_OBEY, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_CHECK_STR_EQUAL_NO_CASE(s1, s2)                                     \
+    RXP_DEFINE_STR_TEST(s1, s2, RXP_STR_CASE_IGNORE, RXP_OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_EQUAL_NO_CASE(str1, str2)                                 \
+#define RX_CHECK_STR_NOT_EQUAL_NO_CASE(s1, s2)                                 \
     RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_EQUAL, RX_NONFATAL)
-
-#define RX_CHECK_STR_NOT_EQUAL_NO_CASE(str1, str2)                             \
-    RXP_DEFINE_STR_TEST(                                                       \
-        str1, str2, RXP_STRING_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_NONFATAL)
+        s1, s2, RXP_STR_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
 enum RxLogLevel {
     RX_LOG_LEVEL_ERROR = 0,
@@ -329,44 +317,44 @@ enum RxStatus {
 
 enum RxSeverity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
-typedef void (*RxPfnTestCase)(RXP_TEST_CASE_PARAMETERS);
-typedef enum RxStatus (*RxPfnTestSuiteSetUp)(void **ppFixture);
-typedef void (*RxPfnTestSuiteTearDown)(void *pFixture);
+typedef void (*RxTestCaseRunFn)(RXP_TEST_CASE_PARAMETERS);
+typedef enum RxStatus (*RxTestSuiteSetUpFn)(void **fixture);
+typedef void (*RxTestSuiteTearDownFn)(void *fixture);
 
 struct RxTestCase {
-    const char *pName;
-    RxPfnTestCase pfnRun;
+    const char *name;
+    RxTestCaseRunFn run;
 };
 
 struct RxTestSuite {
-    const char *pName;
-    size_t caseCount;
-    const struct RxTestCase *pCases;
-    RxPfnTestSuiteSetUp pfnSetUp;
-    RxPfnTestSuiteTearDown pfnTearDown;
+    const char *name;
+    size_t testCaseCount;
+    const struct RxTestCase *testCases;
+    RxTestSuiteSetUpFn setUp;
+    RxTestSuiteTearDownFn tearDown;
 };
 
-struct RxTestFailure {
-    const char *pFile;
+struct RxFailure {
+    const char *file;
     int line;
     enum RxSeverity severity;
-    const char *pMessage;
-    const char *pDiagnosticMessage;
+    const char *msg;
+    const char *diagnosticMsg;
 };
 
-struct RxTestCaseReport {
-    const struct RxTestSuite *pSuite;
-    const struct RxTestCase *pCase;
+struct RxSummary {
+    const struct RxTestSuite *testSuite;
+    const struct RxTestCase *testCase;
     size_t testCount;
     size_t failureCount;
-    struct RxTestFailure *pFailures;
+    struct RxFailure *failures;
     uint64_t elapsed;
 };
 
 struct RxContext {
     jmp_buf env;
-    struct RxTestCaseReport *pCaseReport;
-    void *pFixture;
+    struct RxSummary *summary;
+    void *fixture;
 };
 
 #ifdef __cplusplus
@@ -374,45 +362,48 @@ extern "C" {
 #endif
 
 RXP_SCOPE void
-rxGetLogLevelName(const char **ppString, enum RxLogLevel level);
+rxLogLevelGetName(const char **name, enum RxLogLevel level);
 
 RXP_SCOPE void
-rxAbortTest(struct RxContext *pContext);
+rxAbortTest(struct RxContext *context);
 
 RXP_SCOPE enum RxStatus
-rxHandleTestResult(struct RxContext *pContext,
+rxHandleTestResult(struct RxContext *context,
                    int result,
-                   const char *pFile,
+                   const char *file,
                    int line,
                    enum RxSeverity severity,
-                   const char *pFailureMessage,
-                   const char *pDiagnosticMessage);
+                   const char *failureMsg,
+                   const char *diagnosticMsg);
 
 RXP_SCOPE enum RxStatus
-rxInitializeTestCaseReport(struct RxTestCaseReport *pReport,
-                           const struct RxTestSuite *pSuite,
-                           const struct RxTestCase *pCase);
+rxSummaryInitialize(struct RxSummary *summary,
+                    const struct RxTestSuite *testSuite,
+                    const struct RxTestCase *testCase);
 
 RXP_SCOPE void
-rxTerminateTestCaseReport(struct RxTestCaseReport *pReport);
+rxSummaryTerminate(struct RxSummary *summary);
+
+RXP_SCOPE void
+rxSummaryPrint(const struct RxSummary *summary);
 
 RXP_SCOPE enum RxStatus
-rxRunTestCase(struct RxTestCaseReport *pReport,
-              const struct RxTestSuite *pSuite,
-              const struct RxTestCase *pCase);
-
-RXP_SCOPE void
-rxPrintTestCaseRunSummary(const struct RxTestCaseReport *pReport);
+rxTestCaseRun(struct RxSummary *summary,
+              const struct RxTestCase *testCase,
+              const struct RxTestSuite *testSuite);
 
 RXP_SCOPE enum RxStatus
 rxRun(size_t suiteCount,
-      const struct RxTestSuite *pSuites,
+      const struct RxTestSuite *testSuites,
       int argc,
-      const char **ppArgv);
+      const char **argv);
 
 #ifdef __cplusplus
 }
 #endif
+
+/* Internal Implementation                                         O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #if defined(RX_ENABLE_DEBUGGING)                                               \
     || (!defined(RX_DISABLE_DEBUGGING)                                         \
@@ -452,6 +443,11 @@ rxRun(size_t suiteCount,
 #include <stdlib.h>
 #define RX_FREE free
 #endif /* RX_FREE */
+
+#define RXP_UNUSED(x) (void)(x)
+
+/* Logger                                                          O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #if !defined(RX_DISABLE_LOG_STYLING) && defined(RXP_PLATFORM_UNIX)             \
     && defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 1
@@ -505,45 +501,45 @@ rxRun(size_t suiteCount,
 #define RXP_LOG_ERROR(...) RX_LOG(RX_LOG_LEVEL_ERROR, __VA_ARGS__)
 
 #if RXP_LOG_STYLING
-enum RxpLoggerStyle {
-    RXP_STYLE_RESET = 0,
-    RXP_STYLE_BLACK = 1,
-    RXP_STYLE_RED = 2,
-    RXP_STYLE_GREEN = 3,
-    RXP_STYLE_YELLOW = 4,
-    RXP_STYLE_BLUE = 5,
-    RXP_STYLE_MAGENTA = 6,
-    RXP_STYLE_CYAN = 7,
-    RXP_STYLE_BRIGHT_BLACK = 8,
-    RXP_STYLE_BRIGHT_RED = 9,
-    RXP_STYLE_BRIGHT_GREEN = 10,
-    RXP_STYLE_BRIGHT_YELLOW = 11,
-    RXP_STYLE_BRIGHT_BLUE = 12,
-    RXP_STYLE_BRIGHT_MAGENTA = 13,
-    RXP_STYLE_BRIGHT_CYAN = 14
+enum RxpLogStyle {
+    RXP_LOG_STYLE_RESET = 0,
+    RXP_LOG_STYLE_BLACK = 1,
+    RXP_LOG_STYLE_RED = 2,
+    RXP_LOG_STYLE_GREEN = 3,
+    RXP_LOG_STYLE_YELLOW = 4,
+    RXP_LOG_STYLE_BLUE = 5,
+    RXP_LOG_STYLE_MAGENTA = 6,
+    RXP_LOG_STYLE_CYAN = 7,
+    RXP_LOG_STYLE_BRIGHT_BLACK = 8,
+    RXP_LOG_STYLE_BRIGHT_RED = 9,
+    RXP_LOG_STYLE_BRIGHT_GREEN = 10,
+    RXP_LOG_STYLE_BRIGHT_YELLOW = 11,
+    RXP_LOG_STYLE_BRIGHT_BLUE = 12,
+    RXP_LOG_STYLE_BRIGHT_MAGENTA = 13,
+    RXP_LOG_STYLE_BRIGHT_CYAN = 14
 };
 #endif /* RXP_LOG_STYLING */
 
 static void
-rxpGetLogLevelName(const char **ppName, enum RxLogLevel level)
+rxpLogLevelGetName(const char **name, enum RxLogLevel level)
 {
-    RX_ASSERT(ppName != NULL);
+    RX_ASSERT(name != NULL);
 
     switch (level) {
         case RX_LOG_LEVEL_ERROR:
-            *ppName = "error";
+            *name = "error";
             return;
         case RX_LOG_LEVEL_WARNING:
-            *ppName = "warning";
+            *name = "warning";
             return;
         case RX_LOG_LEVEL_INFO:
-            *ppName = "info";
+            *name = "info";
             return;
         case RX_LOG_LEVEL_TRACE:
-            *ppName = "trace";
+            *name = "trace";
             return;
         case RX_LOG_LEVEL_DEBUG:
-            *ppName = "debug";
+            *name = "debug";
             return;
         default:
             RX_ASSERT(0);
@@ -552,25 +548,25 @@ rxpGetLogLevelName(const char **ppName, enum RxLogLevel level)
 
 #if RXP_LOG_STYLING
 static void
-rxpGetLogLevelStyle(enum RxpLoggerStyle *pStyle, enum RxLogLevel level)
+rxpLogLevelGetStyle(enum RxpLogStyle *style, enum RxLogLevel level)
 {
-    RX_ASSERT(pStyle != NULL);
+    RX_ASSERT(style != NULL);
 
     switch (level) {
         case RX_LOG_LEVEL_ERROR:
-            *pStyle = RXP_STYLE_BRIGHT_RED;
+            *style = RXP_LOG_STYLE_BRIGHT_RED;
             return;
         case RX_LOG_LEVEL_WARNING:
-            *pStyle = RXP_STYLE_BRIGHT_YELLOW;
+            *style = RXP_LOG_STYLE_BRIGHT_YELLOW;
             return;
         case RX_LOG_LEVEL_INFO:
-            *pStyle = RXP_STYLE_BRIGHT_GREEN;
+            *style = RXP_LOG_STYLE_BRIGHT_GREEN;
             return;
         case RX_LOG_LEVEL_TRACE:
-            *pStyle = RXP_STYLE_BRIGHT_CYAN;
+            *style = RXP_LOG_STYLE_BRIGHT_CYAN;
             return;
         case RX_LOG_LEVEL_DEBUG:
-            *pStyle = RXP_STYLE_BRIGHT_MAGENTA;
+            *style = RXP_LOG_STYLE_BRIGHT_MAGENTA;
             return;
         default:
             RX_ASSERT(0);
@@ -578,55 +574,55 @@ rxpGetLogLevelStyle(enum RxpLoggerStyle *pStyle, enum RxLogLevel level)
 }
 
 static void
-rxpGetStyleAnsiCode(const char **ppCode, enum RxpLoggerStyle style)
+rxpLogStyleGetAnsiCode(const char **code, enum RxpLogStyle style)
 {
-    RX_ASSERT(ppCode != NULL);
+    RX_ASSERT(code != NULL);
 
     switch (style) {
-        case RXP_STYLE_RESET:
-            *ppCode = "\x1b[0m";
+        case RXP_LOG_STYLE_RESET:
+            *code = "\x1b[0m";
             return;
-        case RXP_STYLE_BLACK:
-            *ppCode = "\x1b[30m";
+        case RXP_LOG_STYLE_BLACK:
+            *code = "\x1b[30m";
             return;
-        case RXP_STYLE_RED:
-            *ppCode = "\x1b[31m";
+        case RXP_LOG_STYLE_RED:
+            *code = "\x1b[31m";
             return;
-        case RXP_STYLE_GREEN:
-            *ppCode = "\x1b[32m";
+        case RXP_LOG_STYLE_GREEN:
+            *code = "\x1b[32m";
             return;
-        case RXP_STYLE_YELLOW:
-            *ppCode = "\x1b[33m";
+        case RXP_LOG_STYLE_YELLOW:
+            *code = "\x1b[33m";
             return;
-        case RXP_STYLE_BLUE:
-            *ppCode = "\x1b[34m";
+        case RXP_LOG_STYLE_BLUE:
+            *code = "\x1b[34m";
             return;
-        case RXP_STYLE_MAGENTA:
-            *ppCode = "\x1b[35m";
+        case RXP_LOG_STYLE_MAGENTA:
+            *code = "\x1b[35m";
             return;
-        case RXP_STYLE_CYAN:
-            *ppCode = "\x1b[36m";
+        case RXP_LOG_STYLE_CYAN:
+            *code = "\x1b[36m";
             return;
-        case RXP_STYLE_BRIGHT_BLACK:
-            *ppCode = "\x1b[1;30m";
+        case RXP_LOG_STYLE_BRIGHT_BLACK:
+            *code = "\x1b[1;30m";
             return;
-        case RXP_STYLE_BRIGHT_RED:
-            *ppCode = "\x1b[1;31m";
+        case RXP_LOG_STYLE_BRIGHT_RED:
+            *code = "\x1b[1;31m";
             return;
-        case RXP_STYLE_BRIGHT_GREEN:
-            *ppCode = "\x1b[1;32m";
+        case RXP_LOG_STYLE_BRIGHT_GREEN:
+            *code = "\x1b[1;32m";
             return;
-        case RXP_STYLE_BRIGHT_YELLOW:
-            *ppCode = "\x1b[1;33m";
+        case RXP_LOG_STYLE_BRIGHT_YELLOW:
+            *code = "\x1b[1;33m";
             return;
-        case RXP_STYLE_BRIGHT_BLUE:
-            *ppCode = "\x1b[1;34m";
+        case RXP_LOG_STYLE_BRIGHT_BLUE:
+            *code = "\x1b[1;34m";
             return;
-        case RXP_STYLE_BRIGHT_MAGENTA:
-            *ppCode = "\x1b[1;35m";
+        case RXP_LOG_STYLE_BRIGHT_MAGENTA:
+            *code = "\x1b[1;35m";
             return;
-        case RXP_STYLE_BRIGHT_CYAN:
-            *ppCode = "\x1b[1;36m";
+        case RXP_LOG_STYLE_BRIGHT_CYAN:
+            *code = "\x1b[1;36m";
             return;
         default:
             RX_ASSERT(0);
@@ -635,47 +631,46 @@ rxpGetStyleAnsiCode(const char **ppCode, enum RxpLoggerStyle style)
 #endif /* RXP_LOG_STYLING */
 
 static void
-rxpLog(enum RxLogLevel level,
-       const char *pFile,
-       int line,
-       const char *pFormat,
-       ...)
+rxpLog(enum RxLogLevel level, const char *file, int line, const char *fmt, ...)
 {
-    const char *pLevelName;
-    const char *pLevelStyleStart;
-    const char *pLevelStyleEnd;
+    const char *levelName;
+    const char *levelStyleStart;
+    const char *levelStyleEnd;
     va_list args;
 
-    RX_ASSERT(pFile != NULL);
-    RX_ASSERT(pFormat != NULL);
+    RX_ASSERT(file != NULL);
+    RX_ASSERT(fmt != NULL);
 
-    rxpGetLogLevelName(&pLevelName, level);
+    rxpLogLevelGetName(&levelName, level);
 
 #if RXP_LOG_STYLING
     if (isatty(fileno(stderr))) {
-        enum RxpLoggerStyle levelStyle;
+        enum RxpLogStyle levelStyle;
 
-        rxpGetLogLevelStyle(&levelStyle, level);
-        rxpGetStyleAnsiCode(&pLevelStyleStart, levelStyle);
-        rxpGetStyleAnsiCode(&pLevelStyleEnd, RXP_STYLE_RESET);
+        rxpLogLevelGetStyle(&levelStyle, level);
+        rxpLogStyleGetAnsiCode(&levelStyleStart, levelStyle);
+        rxpLogStyleGetAnsiCode(&levelStyleEnd, RXP_LOG_STYLE_RESET);
     } else {
-        pLevelStyleStart = pLevelStyleEnd = "";
+        levelStyleStart = levelStyleEnd = "";
     }
 #else
-    pLevelStyleStart = pLevelStyleEnd = "";
+    levelStyleStart = levelStyleEnd = "";
 #endif /* RXP_LOG_STYLING */
 
-    va_start(args, pFormat);
+    va_start(args, fmt);
     fprintf(stderr,
             "%s:%d: %s%s%s: ",
-            pFile,
+            file,
             line,
-            pLevelStyleStart,
-            pLevelName,
-            pLevelStyleEnd);
-    vfprintf(stderr, pFormat, args);
+            levelStyleStart,
+            levelName,
+            levelStyleEnd);
+    vfprintf(stderr, fmt, args);
     va_end(args);
 }
+
+/* Timer                                                           O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #define RXP_TICKS_PER_SECOND 1000000000ull
 
@@ -689,30 +684,30 @@ rxpLog(enum RxLogLevel level,
 #include <sys/resource.h>
 #if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 199309L
 #include <time.h>
-#define RXP_TIMER_USE_CLOCK_GETTIME
+#define RXP_USE_CLOCK_GETTIME
 #if defined(CLOCK_MONOTONIC_RAW)
-#define RXP_TIMER_CLOCK_ID CLOCK_MONOTONIC_RAW
+#define RXP_CLOCK_ID CLOCK_MONOTONIC_RAW
 #elif defined(CLOCK_MONOTONIC)
-#define RXP_TIMER_CLOCK_ID CLOCK_MONOTONIC
+#define RXP_CLOCK_ID CLOCK_MONOTONIC
 #else
-#define RXP_TIMER_CLOCK_ID CLOCK_REALTIME
+#define RXP_CLOCK_ID CLOCK_REALTIME
 #endif
 #else
 #include <sys/time.h>
 #endif
 #else
-typedef char rxp_timer_unsupported_platform[-1];
+typedef char rxp_unsupported_platform[-1];
 #endif
 
 static enum RxStatus
-rxpGetRealTime(uint64_t *pTime)
+rxpGetRealTime(uint64_t *time)
 {
-    RX_ASSERT(pTime != NULL);
+    RX_ASSERT(time != NULL);
 
 #if defined(RXP_PLATFORM_WINDOWS)
     {
         static double timeToNano;
-        LARGE_INTEGER time;
+        LARGE_INTEGER counter;
 
         if (timeToNano == 0.0) {
             LARGE_INTEGER frequency;
@@ -725,12 +720,12 @@ rxpGetRealTime(uint64_t *pTime)
             timeToNano = (double)RXP_TICKS_PER_SECOND / frequency.QuadPart;
         }
 
-        if (!QueryPerformanceCounter(&time)) {
+        if (!QueryPerformanceCounter(&counter)) {
             RXP_LOG_ERROR("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
-        *pTime = time.QuadPart * timeToNano;
+        *time = counter.QuadPart * timeToNano;
         return RX_SUCCESS;
     }
 #elif defined(RXP_PLATFORM_DARWIN)
@@ -754,33 +749,33 @@ rxpGetRealTime(uint64_t *pTime)
             timeToNano = (double)info.numer / info.denom;
         }
 
-        *pTime = mach_absolute_time() * timeToNano;
+        *time = mach_absolute_time() * timeToNano;
         return RX_SUCCESS;
     }
 #elif defined(RXP_PLATFORM_UNIX)
-#if defined(RXP_TIMER_USE_CLOCK_GETTIME)
+#if defined(RXP_USE_CLOCK_GETTIME)
     {
-        struct timespec time;
+        struct timespec t;
 
-        if (clock_gettime(RXP_TIMER_CLOCK_ID, &time) != 0) {
+        if (clock_gettime(RXP_CLOCK_ID, &t) != 0) {
             RXP_LOG_ERROR("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
-        *pTime = (uint64_t)time.tv_sec * 1000000000ull + (uint64_t)time.tv_nsec;
+        *time = (uint64_t)t.tv_sec * 1000000000ull + (uint64_t)t.tv_nsec;
         return RX_SUCCESS;
     }
 #else
     {
-        struct timeval time;
+        struct timeval t;
 
-        if (gettimeofday(&time, NULL) != 0) {
+        if (gettimeofday(&t, NULL) != 0) {
             RXP_LOG_ERROR("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
-        *pTime = (uint64_t)time.tv_sec * 1000000000ull
-                 + (uint64_t)time.tv_usec * 1000ull;
+        *time = (uint64_t)t.tv_sec * 1000000000ull
+                + (uint64_t)t.tv_usec * 1000ull;
         return RX_SUCCESS;
     }
 #endif
@@ -790,170 +785,57 @@ rxpGetRealTime(uint64_t *pTime)
     return RX_ERROR;
 }
 
-#define RXP_DYNAMICARRAY_GET_BLOCK(pBuffer)                                    \
-    ((void *)&((struct RxpDynamicArrayHeader *)(pBuffer))[-1])
-#define RXP_DYNAMICARRAY_GET_HEADER(pBlock)                                    \
-    ((struct RxpDynamicArrayHeader *)(pBlock))
-#define RXP_DYNAMICARRAY_GET_BUFFER(pBlock)                                    \
-    ((void *)&((struct RxpDynamicArrayHeader *)(pBlock))[1])
-#define RXP_DYNAMICARRAY_GET_CONST_BLOCK(pBuffer)                              \
-    ((const void *)&((const struct RxpDynamicArrayHeader *)(pBuffer))[-1])
-#define RXP_DYNAMICARRAY_GET_CONST_HEADER(pBlock)                              \
-    ((const struct RxpDynamicArrayHeader *)(pBlock))
+/* Dynamic Array                                                   O-(''Q)
+   -------------------------------------------------------------------------- */
 
-#define RXP_DYNAMICARRAY_DEFINE_MAX_CAPACITY(name, type)                       \
-    static const size_t rxpMax##name##Capacity                                 \
-        = (((size_t)-1 - sizeof(struct RxpDynamicArrayHeader))                 \
-           / sizeof(type));
+#define RXP_DYNARRAY_GET_BLOCK(buffer)                                         \
+    ((void *)&((struct RxpDynArrayHeader *)(buffer))[-1])
+#define RXP_DYNARRAY_GET_HEADER(block)                                         \
+    ((struct RxpDynArrayHeader *)(block))
+#define RXP_DYNARRAY_GET_BUFFER(block)                                         \
+    ((void *)&((struct RxpDynArrayHeader *)(block))[1])
+#define RXP_DYNARRAY_GET_CONST_BLOCK(buffer)                                   \
+    ((const void *)&((const struct RxpDynArrayHeader *)(buffer))[-1])
+#define RXP_DYNARRAY_GET_CONST_HEADER(block)                                   \
+    ((const struct RxpDynArrayHeader *)(block))
 
-#define RXP_DYNAMICARRAY_DEFINE_CREATE_FUNCTION(name, type)                    \
-    static enum RxStatus rxpCreate##name(type **ppArray, size_t size)          \
-    {                                                                          \
-        enum RxStatus status;                                                  \
-        void *pBlock;                                                          \
-                                                                               \
-        RX_ASSERT(ppArray != NULL);                                            \
-                                                                               \
-        pBlock = NULL;                                                         \
-                                                                               \
-        status = rxpEnsureDynamicArrayHasEnoughCapacity(                       \
-            &pBlock, 0, (size_t)size, rxpMax##name##Capacity, sizeof(type));   \
-        if (status != RX_SUCCESS) {                                            \
-            RXP_LOG_ERROR("failed to reserve a large enough capacity for the " \
-                          "type ‘" #type "’ (requested capacity: %zu)\n",      \
-                          (size_t)size);                                       \
-            return status;                                                     \
-        }                                                                      \
-                                                                               \
-        RX_ASSERT(pBlock != NULL);                                             \
-                                                                               \
-        RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size = (size_t)size;              \
-        RXP_DYNAMICARRAY_GET_HEADER(pBlock)->capacity = (size_t)size;          \
-        *ppArray = (type *)RXP_DYNAMICARRAY_GET_BUFFER(pBlock);                \
-        return RX_SUCCESS;                                                     \
-    }
-
-#define RXP_DYNAMICARRAY_DEFINE_DESTROY_FUNCTION(name, type)                   \
-    static void rxpDestroy##name(type *pArray)                                 \
-    {                                                                          \
-        if (pArray == NULL) {                                                  \
-            return;                                                            \
-        }                                                                      \
-                                                                               \
-        RX_FREE(RXP_DYNAMICARRAY_GET_BLOCK(pArray));                           \
-    }
-
-#define RXP_DYNAMICARRAY_DEFINE_GET_SIZE_FUNCTION(name, type)                  \
-    static void rxpGet##name##Size(size_t *pSize, const type *pArray)          \
-    {                                                                          \
-        RX_ASSERT(pArray != NULL);                                             \
-                                                                               \
-        *pSize = (size_t)RXP_DYNAMICARRAY_GET_CONST_HEADER(                    \
-                     RXP_DYNAMICARRAY_GET_CONST_BLOCK(pArray))                 \
-                     ->size;                                                   \
-    }
-
-#define RXP_DYNAMICARRAY_DEFINE_EXTEND_FUNCTION(name, type)                    \
-    static enum RxStatus rxpExtend##name(                                      \
-        type **ppSlice, type **ppArray, size_t position, size_t size)          \
-    {                                                                          \
-        enum RxStatus status;                                                  \
-        void *pBlock;                                                          \
-                                                                               \
-        RX_ASSERT(ppArray != NULL);                                            \
-        RX_ASSERT(*ppArray != NULL);                                           \
-                                                                               \
-        pBlock = RXP_DYNAMICARRAY_GET_BLOCK(*ppArray);                         \
-                                                                               \
-        if (position > RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size) {            \
-            position = (size_t)RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size;      \
-        }                                                                      \
-                                                                               \
-        status = rxpEnsureDynamicArrayHasEnoughCapacity(                       \
-            &pBlock,                                                           \
-            RXP_DYNAMICARRAY_GET_HEADER(pBlock)->capacity,                     \
-            RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size + (size_t)size,          \
-            rxpMax##name##Capacity,                                            \
-            sizeof(type));                                                     \
-        if (status != RX_SUCCESS) {                                            \
-            RXP_LOG_ERROR(                                                     \
-                "failed to reserve a large enough capacity for the "           \
-                "type ‘" #type "’ (requested capacity: %zu)\n",                \
-                RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size + (size_t)size);     \
-            return status;                                                     \
-        }                                                                      \
-                                                                               \
-        RX_ASSERT(pBlock != NULL);                                             \
-                                                                               \
-        *ppArray = (type *)RXP_DYNAMICARRAY_GET_BUFFER(pBlock);                \
-                                                                               \
-        memmove(&(*ppArray)[(size_t)position + (size_t)size],                  \
-                &(*ppArray)[(size_t)position],                                 \
-                sizeof(type)                                                   \
-                    * (RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size               \
-                       - (size_t)position));                                   \
-                                                                               \
-        if (ppSlice != NULL) {                                                 \
-            *ppSlice = &(*ppArray)[position];                                  \
-        }                                                                      \
-                                                                               \
-        RXP_DYNAMICARRAY_GET_HEADER(pBlock)->size += (size_t)size;             \
-        return RX_SUCCESS;                                                     \
-    }
-
-#define RXP_DYNAMICARRAY_DEFINE_EXTEND_BACK_FUNCTION(name, type)               \
-    static enum RxStatus rxpExtend##name##Back(                                \
-        type **ppSlice, type **ppArray, size_t size)                           \
-    {                                                                          \
-        return rxpExtend##name(ppSlice,                                        \
-                               ppArray,                                        \
-                               (size_t)RXP_DYNAMICARRAY_GET_HEADER(            \
-                                   RXP_DYNAMICARRAY_GET_BLOCK(*ppArray))       \
-                                   ->size,                                     \
-                               size);                                          \
-    }
-
-#define RXP_MAKE_DYNAMIC_ARRAY(name, type)                                     \
-    RXP_DYNAMICARRAY_DEFINE_MAX_CAPACITY(name, type)                           \
-    RXP_DYNAMICARRAY_DEFINE_CREATE_FUNCTION(name, type)                        \
-    RXP_DYNAMICARRAY_DEFINE_DESTROY_FUNCTION(name, type)                       \
-    RXP_DYNAMICARRAY_DEFINE_GET_SIZE_FUNCTION(name, type)                      \
-    RXP_DYNAMICARRAY_DEFINE_EXTEND_FUNCTION(name, type)                        \
-    RXP_DYNAMICARRAY_DEFINE_EXTEND_BACK_FUNCTION(name, type)
-
-struct RxpDynamicArrayHeader {
+struct RxpDynArrayHeader {
     size_t size;
     size_t capacity;
 };
 
+static const size_t rxpTestFailureArrayMaxCapacity
+    = (((size_t)-1 - sizeof(struct RxpDynArrayHeader))
+       / sizeof(struct RxFailure));
+
 static void
-rxpGetDynamicArrayNewCapacity(size_t *pNewCapacity,
-                              size_t current,
-                              size_t requested,
-                              size_t max)
+rxpDynArrayGetNewCapacity(size_t *newCapacity,
+                          size_t current,
+                          size_t requested,
+                          size_t max)
 {
-    *pNewCapacity = current + current / 2 + 1;
-    if (*pNewCapacity < current) {
-        *pNewCapacity = max;
+    *newCapacity = current + current / 2 + 1;
+    if (*newCapacity < current) {
+        *newCapacity = max;
         return;
     }
 
-    if (*pNewCapacity < requested) {
-        *pNewCapacity = requested;
+    if (*newCapacity < requested) {
+        *newCapacity = requested;
     }
 }
 
 static enum RxStatus
-rxpEnsureDynamicArrayHasEnoughCapacity(void **ppBlock,
-                                       size_t currentCapacity,
-                                       size_t requestedCapacity,
-                                       size_t maxCapacity,
-                                       size_t elementSize)
+rxpDynArrayEnsureHasEnoughCapacity(void **block,
+                                   size_t currentCapacity,
+                                   size_t requestedCapacity,
+                                   size_t maxCapacity,
+                                   size_t elementSize)
 {
-    void *pBlock;
+    void *buffer;
     size_t newCapacity;
 
-    RX_ASSERT(ppBlock != NULL);
+    RX_ASSERT(block != NULL);
     RX_ASSERT(elementSize > 0);
 
     if (requestedCapacity > maxCapacity) {
@@ -961,31 +843,124 @@ rxpEnsureDynamicArrayHasEnoughCapacity(void **ppBlock,
         return RX_ERROR_MAX_SIZE_EXCEEDED;
     }
 
-    if (*ppBlock != NULL && currentCapacity >= requestedCapacity) {
+    if (*block != NULL && currentCapacity >= requestedCapacity) {
         return RX_SUCCESS;
     }
 
-    rxpGetDynamicArrayNewCapacity(
+    rxpDynArrayGetNewCapacity(
         &newCapacity, currentCapacity, requestedCapacity, maxCapacity);
     RX_ASSERT(newCapacity >= requestedCapacity);
     RX_ASSERT(newCapacity <= maxCapacity);
 
-    pBlock = RX_REALLOC(
-        *ppBlock,
-        sizeof(struct RxpDynamicArrayHeader) + elementSize * newCapacity);
-    if (pBlock == NULL) {
+    buffer = RX_REALLOC(
+        *block, sizeof(struct RxpDynArrayHeader) + elementSize * newCapacity);
+    if (buffer == NULL) {
         RXP_LOG_TRACE("failed to reallocate the block\n");
         return RX_ERROR_ALLOCATION;
     }
 
-    RXP_DYNAMICARRAY_GET_HEADER(pBlock)->capacity = newCapacity;
-    *ppBlock = pBlock;
+    RXP_DYNARRAY_GET_HEADER(buffer)->capacity = newCapacity;
+    *block = buffer;
     return RX_SUCCESS;
 }
 
-enum RxpStringCase { RXP_STRING_CASE_OBEY = 0, RXP_STRING_CASE_IGNORE = 1 };
+static enum RxStatus
+rxpTestFailureArrayCreate(struct RxFailure **array, size_t size)
+{
+    enum RxStatus status;
+    void *block;
 
-enum RxpComparisonOp {
+    RX_ASSERT(array != NULL);
+
+    block = NULL;
+
+    status = rxpDynArrayEnsureHasEnoughCapacity(&block,
+                                                0,
+                                                (size_t)size,
+                                                rxpTestFailureArrayMaxCapacity,
+                                                sizeof(struct RxFailure));
+    if (status != RX_SUCCESS) {
+        RXP_LOG_ERROR("failed to reserve a large enough capacity for the "
+                      "test failure array (requested capacity: %zu)\n",
+                      (size_t)size);
+        return status;
+    }
+
+    RX_ASSERT(block != NULL);
+
+    RXP_DYNARRAY_GET_HEADER(block)->size = (size_t)size;
+    RXP_DYNARRAY_GET_HEADER(block)->capacity = (size_t)size;
+    *array = (struct RxFailure *)RXP_DYNARRAY_GET_BUFFER(block);
+    return RX_SUCCESS;
+}
+
+static void
+rxpTestFailureArrayDestroy(struct RxFailure *array)
+{
+    if (array == NULL) {
+        return;
+    }
+
+    RX_FREE(RXP_DYNARRAY_GET_BLOCK(array));
+}
+
+static void
+rxpTestFailureArrayGetSize(size_t *size, const struct RxFailure *array)
+{
+    RX_ASSERT(array != NULL);
+
+    *size = (size_t)RXP_DYNARRAY_GET_CONST_HEADER(
+        RXP_DYNARRAY_GET_CONST_BLOCK(array))->size;
+}
+
+static enum RxStatus
+rxpTestFailureArrayExtendBack(struct RxFailure **slice,
+                              struct RxFailure **array,
+                              size_t size)
+{
+    enum RxStatus status;
+    void *block;
+    size_t pos;
+
+    RX_ASSERT(array != NULL);
+    RX_ASSERT(*array != NULL);
+
+    block = RXP_DYNARRAY_GET_BLOCK(*array);
+    status = rxpDynArrayEnsureHasEnoughCapacity(
+        &block,
+        RXP_DYNARRAY_GET_HEADER(block)->capacity,
+        RXP_DYNARRAY_GET_HEADER(block)->size + (size_t)size,
+        rxpTestFailureArrayMaxCapacity,
+        sizeof(struct RxFailure));
+    if (status != RX_SUCCESS) {
+        RXP_LOG_ERROR("failed to reserve a large enough capacity for the "
+                      "test failure array (requested capacity: %zu)\n",
+                      RXP_DYNARRAY_GET_HEADER(block)->size + (size_t)size);
+        return status;
+    }
+
+    RX_ASSERT(block != NULL);
+
+    *array = (struct RxFailure *)RXP_DYNARRAY_GET_BUFFER(block);
+
+    pos = (size_t)RXP_DYNARRAY_GET_HEADER(block)->size;
+    memmove(&(*array)[(size_t)pos + (size_t)size],
+            &(*array)[(size_t)pos],
+            sizeof(struct RxFailure)
+                * (RXP_DYNARRAY_GET_HEADER(block)->size - (size_t)pos));
+
+    if (slice != NULL) {
+        *slice = &(*array)[pos];
+    }
+
+    RXP_DYNARRAY_GET_HEADER(block)->size += (size_t)size;
+    return RX_SUCCESS;
+}
+
+/* Internals                                                       O-(''Q)
+   -------------------------------------------------------------------------- */
+
+enum RxpOp {
     RXP_OP_EQUAL = 0,
     RXP_OP_NOT_EQUAL = 1,
     RXP_OP_GREATER = 2,
@@ -994,104 +969,101 @@ enum RxpComparisonOp {
     RXP_OP_LESSER_OR_EQUAL = 5
 };
 
+enum RxpStrCase { RXP_STR_CASE_OBEY = 0, RXP_STR_CASE_IGNORE = 1 };
+
 typedef intmax_t RxpInt;
 typedef uintmax_t RxpUInt;
 typedef long double RxpReal;
 
-RXP_MAKE_DYNAMIC_ARRAY(TestFailureArray, struct RxTestFailure)
-
 static void
-rxpGetStringCaseType(const char **ppString, enum RxpStringCase stringCase)
+rxpOpGetSymbol(const char **symbol, enum RxpOp op)
 {
-    RX_ASSERT(ppString != NULL);
+    RX_ASSERT(symbol != NULL);
 
-    switch (stringCase) {
-        case RXP_STRING_CASE_OBEY:
-            *ppString = "obey";
+    switch (op) {
+        case RXP_OP_EQUAL:
+            *symbol = "==";
             return;
-        case RXP_STRING_CASE_IGNORE:
-            *ppString = "ignore";
+        case RXP_OP_NOT_EQUAL:
+            *symbol = "!=";
+            return;
+        case RXP_OP_GREATER:
+            *symbol = ">";
+            return;
+        case RXP_OP_LESSER:
+            *symbol = "<";
+            return;
+        case RXP_OP_GREATER_OR_EQUAL:
+            *symbol = ">=";
+            return;
+        case RXP_OP_LESSER_OR_EQUAL:
+            *symbol = "<=";
             return;
         default:
             RX_ASSERT(0);
-            *ppString = "invalid";
     }
 }
 
 static void
-rxpGetComparisonOpSymbol(const char **ppString, enum RxpComparisonOp op)
+rxpOpGetName(const char **name, enum RxpOp op)
 {
-    RX_ASSERT(ppString != NULL);
+    RX_ASSERT(name != NULL);
 
     switch (op) {
         case RXP_OP_EQUAL:
-            *ppString = "==";
+            *name = "equal to";
             return;
         case RXP_OP_NOT_EQUAL:
-            *ppString = "!=";
+            *name = "not equal to";
             return;
         case RXP_OP_GREATER:
-            *ppString = ">";
+            *name = "greater than";
             return;
         case RXP_OP_LESSER:
-            *ppString = "<";
+            *name = "less than";
             return;
         case RXP_OP_GREATER_OR_EQUAL:
-            *ppString = ">=";
+            *name = "greater than or equal to";
             return;
         case RXP_OP_LESSER_OR_EQUAL:
-            *ppString = "<=";
+            *name = "less than or equal to";
             return;
         default:
             RX_ASSERT(0);
-            *ppString = "invalid";
     }
 }
 
 static void
-rxpGetComparisonOpName(const char **ppString, enum RxpComparisonOp op)
+rxpStrCaseGetType(const char **type, enum RxpStrCase strCase)
 {
-    RX_ASSERT(ppString != NULL);
+    RX_ASSERT(type != NULL);
 
-    switch (op) {
-        case RXP_OP_EQUAL:
-            *ppString = "equal to";
+    switch (strCase) {
+        case RXP_STR_CASE_OBEY:
+            *type = "obey";
             return;
-        case RXP_OP_NOT_EQUAL:
-            *ppString = "not equal to";
-            return;
-        case RXP_OP_GREATER:
-            *ppString = "greater than";
-            return;
-        case RXP_OP_LESSER:
-            *ppString = "less than";
-            return;
-        case RXP_OP_GREATER_OR_EQUAL:
-            *ppString = "greater than or equal to";
-            return;
-        case RXP_OP_LESSER_OR_EQUAL:
-            *ppString = "less than or equal to";
+        case RXP_STR_CASE_IGNORE:
+            *type = "ignore";
             return;
         default:
             RX_ASSERT(0);
-            *ppString = "invalid";
     }
 }
 
 static enum RxStatus
-rxpMakeString(char **ppString, const char *pFormat, ...)
+rxpStrCreate(char **s, const char *fmt, ...)
 {
     enum RxStatus status;
     va_list args;
     int size;
 
-    RX_ASSERT(ppString != NULL);
-    RX_ASSERT(pFormat != NULL);
+    RX_ASSERT(s != NULL);
+    RX_ASSERT(fmt != NULL);
 
     status = RX_SUCCESS;
 
-    va_start(args, pFormat);
-    size = vsnprintf(NULL, 0, pFormat, args);
+    va_start(args, fmt);
+    size = vsnprintf(NULL, 0, fmt, args);
     va_end(args);
     if (size < 0) {
         RXP_LOG_TRACE("invalid string formatting\n");
@@ -1099,16 +1071,16 @@ rxpMakeString(char **ppString, const char *pFormat, ...)
         goto exit;
     }
 
-    *ppString = (char *)RX_MALLOC(sizeof **ppString * ((size_t)size + 1));
-    if (*ppString == NULL) {
+    *s = (char *)RX_MALLOC(sizeof **s * ((size_t)size + 1));
+    if (*s == NULL) {
         RXP_LOG_TRACE("failed to allocate the string (%zu bytes)\n",
-                      sizeof **ppString * ((size_t)size + 1));
+                      sizeof **s * ((size_t)size + 1));
         status = RX_ERROR_ALLOCATION;
         goto exit;
     }
 
-    va_start(args, pFormat);
-    size = vsnprintf(*ppString, (size_t)size + 1, pFormat, args);
+    va_start(args, fmt);
+    size = vsnprintf(*s, (size_t)size + 1, fmt, args);
     va_end(args);
     if (size < 0) {
         RXP_LOG_TRACE("unexpected string formatting error\n");
@@ -1120,225 +1092,215 @@ rxpMakeString(char **ppString, const char *pFormat, ...)
     goto exit;
 
 undo:
-    RX_FREE(*ppString);
+    RX_FREE(*s);
 
 exit:
     return status;
 }
 
 static enum RxStatus
-rxpMakeStringCopy(char **ppString, const char *pOriginal)
+rxpStrCopy(char **s, const char *original)
 {
     size_t size;
 
-    size = strlen(pOriginal) + 1;
+    size = strlen(original) + 1;
 
-    *ppString = (char *)RX_MALLOC(sizeof **ppString * size);
-    if (*ppString == NULL) {
+    *s = (char *)RX_MALLOC(sizeof **s * size);
+    if (*s == NULL) {
         RXP_LOG_TRACE("failed to allocate the string (%zu bytes)\n",
-                      sizeof **ppString * size);
+                      sizeof **s * size);
         return RX_ERROR_ALLOCATION;
     }
 
-    memcpy(*ppString, pOriginal, size);
+    memcpy(*s, original, size);
     return RX_SUCCESS;
 }
 
 static void
-rxpAreRealsAlmostEqual(int *pResult,
-                       RxpReal value1,
-                       RxpReal value2,
-                       RxpReal tolerance)
+rxpStrAreEqual(int *result, const char *a, const char *b)
 {
-    RxpReal difference;
+    while (*a != '\0') {
+        if (*a != *b) {
+            *result = 0;
+            return;
+        }
 
-    difference = fabsl(value1 - value2);
-    if (difference <= tolerance) {
-        *pResult = 1;
+        ++a;
+        ++b;
+    }
+
+    *result = *a == *b;
+}
+
+static void
+rxpStrAreEqualNoCase(int *result, const char *a, const char *b)
+{
+    while (*a != '\0') {
+        if (tolower(*a) != tolower(*b)) {
+            *result = 0;
+            return;
+        }
+
+        ++a;
+        ++b;
+    }
+
+    *result = tolower(*a) == tolower(*b);
+}
+
+static void
+rxpRealAreAlmostEqual(int *result, RxpReal a, RxpReal b, RxpReal tol)
+{
+    RxpReal diff;
+
+    diff = fabsl(a - b);
+    if (diff <= tol) {
+        *result = 1;
         return;
     }
 
-    *pResult = difference <= fmaxl(fabsl(value1), fabsl(value2)) * tolerance;
-}
-
-static void
-rxpAreStringsEqual(int *pResult, const char *pString1, const char *pString2)
-{
-    while (*pString1 != '\0') {
-        if (*pString1 != *pString2) {
-            *pResult = 0;
-            return;
-        }
-
-        ++pString1;
-        ++pString2;
-    }
-
-    *pResult = *pString1 == *pString2;
-}
-
-static void
-rxpAreStringsEqualNoCase(int *pResult,
-                         const char *pString1,
-                         const char *pString2)
-{
-    while (*pString1 != '\0') {
-        if (tolower(*pString1) != tolower(*pString2)) {
-            *pResult = 0;
-            return;
-        }
-
-        ++pString1;
-        ++pString2;
-    }
-
-    *pResult = tolower(*pString1) == tolower(*pString2);
+    *result = diff <= fmaxl(fabsl(a), fabsl(b)) * tol;
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessTest(struct RxContext *pContext,
+rxpAssessTest(struct RxContext *context,
               int value,
               int expected,
-              const char *pFailureMessage,
-              const char *pFile,
+              const char *failureMsg,
+              const char *file,
               int line,
               enum RxSeverity severity)
 {
     int result;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pFailureMessage != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(failureMsg != NULL);
+    RX_ASSERT(file != NULL);
 
     result = ((value && expected) || (!value && !expected));
 
     if (rxHandleTestResult(
-            pContext, result, pFile, line, severity, pFailureMessage, NULL)
+            context, result, file, line, severity, failureMsg, NULL)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the test "
                       "located at %s:%d\n",
-                      pFile,
+                      file,
                       line);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessBooleanTest(struct RxContext *pContext,
-                     int value,
-                     int expected,
-                     const char *pExpression,
-                     const char *pFile,
-                     int line,
-                     enum RxSeverity severity)
+rxpAssessBoolTest(struct RxContext *context,
+                  int x,
+                  int expected,
+                  const char *expr,
+                  const char *file,
+                  int line,
+                  enum RxSeverity severity)
 {
     int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
+    char *failureMsg;
+    char *diagnosticMsg;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pExpression != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(expr != NULL);
+    RX_ASSERT(file != NULL);
 
-    result = ((value && expected) || (!value && !expected));
+    result = ((x && expected) || (!x && !expected));
 
     if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
     } else {
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be %s",
-                          pExpression,
-                          expected ? "true" : "false")
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be %s",
+                         expr,
+                         expected ? "true" : "false")
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the failure message for the "
                           "boolean test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pFailureMessage = NULL;
+            failureMsg = NULL;
         }
 
-        if (rxpMakeString(&pDiagnosticMessage, "%d == %d", value, expected)
+        if (rxpStrCreate(&diagnosticMsg, "%d == %d", x, expected)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
                           "boolean test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pDiagnosticMessage = NULL;
+            diagnosticMsg = NULL;
         }
     }
 
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the boolean test "
                       "located at %s:%d\n",
-                      pFile,
+                      file,
                       line);
     }
 
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
     }
 
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessIntegerComparisonTest(struct RxContext *pContext,
-                               RxpInt value1,
-                               RxpInt value2,
-                               enum RxpComparisonOp op,
-                               const char *pExpression1,
-                               const char *pExpression2,
-                               const char *pFile,
-                               int line,
-                               enum RxSeverity severity)
+rxpAssessIntComparisonTest(struct RxContext *context,
+                           RxpInt x1,
+                           RxpInt x2,
+                           enum RxpOp op,
+                           const char *expr1,
+                           const char *expr2,
+                           const char *file,
+                           int line,
+                           enum RxSeverity severity)
 {
     int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
+    char *failureMsg;
+    char *diagnosticMsg;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pExpression1 != NULL);
-    RX_ASSERT(pExpression2 != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
 
     switch (op) {
         case RXP_OP_EQUAL:
-            result = value1 == value2;
+            result = x1 == x2;
             break;
         case RXP_OP_NOT_EQUAL:
-            result = value1 != value2;
+            result = x1 != x2;
             break;
         case RXP_OP_GREATER:
-            result = value1 > value2;
+            result = x1 > x2;
             break;
         case RXP_OP_LESSER:
-            result = value1 < value2;
+            result = x1 < x2;
             break;
         case RXP_OP_GREATER_OR_EQUAL:
-            result = value1 >= value2;
+            result = x1 >= x2;
             break;
         case RXP_OP_LESSER_OR_EQUAL:
-            result = value1 <= value2;
+            result = x1 <= x2;
             break;
         default:
             RX_ASSERT(0);
@@ -1346,211 +1308,99 @@ rxpAssessIntegerComparisonTest(struct RxContext *pContext,
     }
 
     if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
     } else {
-        const char *pOpName;
-        const char *pOpSymbol;
+        const char *opName;
+        const char *opSymbol;
 
-        rxpGetComparisonOpName(&pOpName, op);
-        rxpGetComparisonOpSymbol(&pOpSymbol, op);
+        rxpOpGetName(&opName, op);
+        rxpOpGetSymbol(&opSymbol, op);
 
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be %s ‘%s’",
-                          pExpression1,
-                          pOpName,
-                          pExpression2)
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be %s ‘%s’",
+                         expr1,
+                         opName,
+                         expr2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the failure message for the "
                           "integer comparison test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pFailureMessage = NULL;
+            failureMsg = NULL;
         }
 
-        if (rxpMakeString(
-                &pDiagnosticMessage, "%jd %s %jd", value1, pOpSymbol, value2)
+        if (rxpStrCreate(&diagnosticMsg, "%jd %s %jd", x1, opSymbol, x2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
                           "integer comparison test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pDiagnosticMessage = NULL;
+            diagnosticMsg = NULL;
         }
     }
 
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the integer "
                       "comparison test located at %s:%d\n",
-                      pFile,
+                      file,
                       line);
     }
 
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
     }
 
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessUnsignedIntegerComparisonTest(struct RxContext *pContext,
-                                       RxpUInt value1,
-                                       RxpUInt value2,
-                                       enum RxpComparisonOp op,
-                                       const char *pExpression1,
-                                       const char *pExpression2,
-                                       const char *pFile,
-                                       int line,
-                                       enum RxSeverity severity)
-{
-    int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
-
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pExpression1 != NULL);
-    RX_ASSERT(pExpression2 != NULL);
-    RX_ASSERT(pFile != NULL);
-
-    switch (op) {
-        case RXP_OP_EQUAL:
-            result = value1 == value2;
-            break;
-        case RXP_OP_NOT_EQUAL:
-            result = value1 != value2;
-            break;
-        case RXP_OP_GREATER:
-            result = value1 > value2;
-            break;
-        case RXP_OP_LESSER:
-            result = value1 < value2;
-            break;
-        case RXP_OP_GREATER_OR_EQUAL:
-            result = value1 >= value2;
-            break;
-        case RXP_OP_LESSER_OR_EQUAL:
-            result = value1 <= value2;
-            break;
-        default:
-            RX_ASSERT(0);
-            break;
-    }
-
-    if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
-    } else {
-        const char *pOpName;
-        const char *pOpSymbol;
-
-        rxpGetComparisonOpName(&pOpName, op);
-        rxpGetComparisonOpSymbol(&pOpSymbol, op);
-
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be %s ‘%s’",
-                          pExpression1,
-                          pOpName,
-                          pExpression2)
-            != RX_SUCCESS) {
-            RXP_LOG_TRACE("failed to create the failure message for the "
-                          "unsigned integer comparison test located at %s:%d\n",
-                          pFile,
-                          line);
-            pFailureMessage = NULL;
-        }
-
-        if (rxpMakeString(
-                &pDiagnosticMessage, "%ju %s %ju", value1, pOpSymbol, value2)
-            != RX_SUCCESS) {
-            RXP_LOG_TRACE("failed to create the diagnostic message for the "
-                          "unsigned integer comparison test located at %s:%d\n",
-                          pFile,
-                          line);
-            pDiagnosticMessage = NULL;
-        }
-    }
-
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
-        != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to handle the test result for the unsigned "
-                      "integer comparison test located at %s:%d\n",
-                      pFile,
-                      line);
-    }
-
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
-    }
-
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
-    }
-
-    if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
-    }
-}
-
-RXP_MAYBE_UNUSED static void
-rxpAssessRealComparisonTest(struct RxContext *pContext,
-                            RxpReal value1,
-                            RxpReal value2,
-                            enum RxpComparisonOp op,
-                            const char *pExpression1,
-                            const char *pExpression2,
-                            const char *pFile,
+rxpAssessUIntComparisonTest(struct RxContext *context,
+                            RxpUInt x1,
+                            RxpUInt x2,
+                            enum RxpOp op,
+                            const char *expr1,
+                            const char *expr2,
+                            const char *file,
                             int line,
                             enum RxSeverity severity)
 {
     int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
+    char *failureMsg;
+    char *diagnosticMsg;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pExpression1 != NULL);
-    RX_ASSERT(pExpression2 != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
 
     switch (op) {
         case RXP_OP_EQUAL:
-            result = value1 == value2;
+            result = x1 == x2;
             break;
         case RXP_OP_NOT_EQUAL:
-            result = value1 != value2;
+            result = x1 != x2;
             break;
         case RXP_OP_GREATER:
-            result = value1 > value2;
+            result = x1 > x2;
             break;
         case RXP_OP_LESSER:
-            result = value1 < value2;
+            result = x1 < x2;
             break;
         case RXP_OP_GREATER_OR_EQUAL:
-            result = value1 >= value2;
+            result = x1 >= x2;
             break;
         case RXP_OP_LESSER_OR_EQUAL:
-            result = value1 <= value2;
+            result = x1 <= x2;
             break;
         default:
             RX_ASSERT(0);
@@ -1558,94 +1408,188 @@ rxpAssessRealComparisonTest(struct RxContext *pContext,
     }
 
     if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
     } else {
-        const char *pOpName;
-        const char *pOpSymbol;
+        const char *opName;
+        const char *opSymbol;
 
-        rxpGetComparisonOpName(&pOpName, op);
-        rxpGetComparisonOpSymbol(&pOpSymbol, op);
+        rxpOpGetName(&opName, op);
+        rxpOpGetSymbol(&opSymbol, op);
 
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be %s ‘%s’",
-                          pExpression1,
-                          pOpName,
-                          pExpression2)
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be %s ‘%s’",
+                         expr1,
+                         opName,
+                         expr2)
             != RX_SUCCESS) {
-            RXP_LOG_TRACE("failed to create the failure message for the real "
-                          "comparison test located at %s:%d\n",
-                          pFile,
+            RXP_LOG_TRACE("failed to create the failure message for the "
+                          "unsigned integer comparison test located at %s:%d\n",
+                          file,
                           line);
-            pFailureMessage = NULL;
+            failureMsg = NULL;
         }
 
-        if (rxpMakeString(
-                &pDiagnosticMessage, "%Lf %s %Lf", value1, pOpSymbol, value2)
+        if (rxpStrCreate(&diagnosticMsg, "%ju %s %ju", x1, opSymbol, x2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
-                          "real comparison test located at %s:%d\n",
-                          pFile,
+                          "unsigned integer comparison test located at %s:%d\n",
+                          file,
                           line);
-            pDiagnosticMessage = NULL;
+            diagnosticMsg = NULL;
         }
     }
 
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
         != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to handle the test result for the real "
-                      "comparison test located at %s:%d\n",
-                      pFile,
+        RXP_LOG_TRACE("failed to handle the test result for the unsigned "
+                      "integer comparison test located at %s:%d\n",
+                      file,
                       line);
     }
 
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
     }
 
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessRealFuzzyComparisonTest(struct RxContext *pContext,
-                                 RxpReal value1,
-                                 RxpReal value2,
-                                 RxpReal tolerance,
-                                 enum RxpComparisonOp op,
-                                 const char *pExpression1,
-                                 const char *pExpression2,
-                                 const char *pFile,
+rxpAssessRealComparisonTest(struct RxContext *context,
+                            RxpReal x1,
+                            RxpReal x2,
+                            enum RxpOp op,
+                            const char *expr1,
+                            const char *expr2,
+                            const char *file,
+                            int line,
+                            enum RxSeverity severity)
+{
+    int result;
+    char *failureMsg;
+    char *diagnosticMsg;
+
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
+
+    switch (op) {
+        case RXP_OP_EQUAL:
+            result = x1 == x2;
+            break;
+        case RXP_OP_NOT_EQUAL:
+            result = x1 != x2;
+            break;
+        case RXP_OP_GREATER:
+            result = x1 > x2;
+            break;
+        case RXP_OP_LESSER:
+            result = x1 < x2;
+            break;
+        case RXP_OP_GREATER_OR_EQUAL:
+            result = x1 >= x2;
+            break;
+        case RXP_OP_LESSER_OR_EQUAL:
+            result = x1 <= x2;
+            break;
+        default:
+            RX_ASSERT(0);
+            break;
+    }
+
+    if (result) {
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
+    } else {
+        const char *opName;
+        const char *opSymbol;
+
+        rxpOpGetName(&opName, op);
+        rxpOpGetSymbol(&opSymbol, op);
+
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be %s ‘%s’",
+                         expr1,
+                         opName,
+                         expr2)
+            != RX_SUCCESS) {
+            RXP_LOG_TRACE("failed to create the failure message for the real "
+                          "comparison test located at %s:%d\n",
+                          file,
+                          line);
+            failureMsg = NULL;
+        }
+
+        if (rxpStrCreate(&diagnosticMsg, "%Lf %s %Lf", x1, opSymbol, x2)
+            != RX_SUCCESS) {
+            RXP_LOG_TRACE("failed to create the diagnostic message for the "
+                          "real comparison test located at %s:%d\n",
+                          file,
+                          line);
+            diagnosticMsg = NULL;
+        }
+    }
+
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
+        != RX_SUCCESS) {
+        RXP_LOG_TRACE("failed to handle the test result for the real "
+                      "comparison test located at %s:%d\n",
+                      file,
+                      line);
+    }
+
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
+    }
+
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
+    }
+
+    if (!result && severity == RX_FATAL) {
+        rxAbortTest(context);
+    }
+}
+
+RXP_MAYBE_UNUSED static void
+rxpAssessRealFuzzyComparisonTest(struct RxContext *context,
+                                 RxpReal x1,
+                                 RxpReal x2,
+                                 RxpReal tol,
+                                 enum RxpOp op,
+                                 const char *expr1,
+                                 const char *expr2,
+                                 const char *file,
                                  int line,
                                  enum RxSeverity severity)
 {
     int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
+    char *failureMsg;
+    char *diagnosticMsg;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pExpression1 != NULL);
-    RX_ASSERT(pExpression2 != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
 
     switch (op) {
         case RXP_OP_EQUAL:
-            rxpAreRealsAlmostEqual(&result, value1, value2, tolerance);
+            rxpRealAreAlmostEqual(&result, x1, x2, tol);
             break;
         case RXP_OP_NOT_EQUAL:
-            rxpAreRealsAlmostEqual(&result, value1, value2, tolerance);
+            rxpRealAreAlmostEqual(&result, x1, x2, tol);
             result = !result;
             break;
         default:
@@ -1654,102 +1598,96 @@ rxpAssessRealFuzzyComparisonTest(struct RxContext *pContext,
     }
 
     if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
     } else {
-        const char *pOpName;
-        const char *pOpSymbol;
+        const char *opName;
+        const char *opSymbol;
 
-        rxpGetComparisonOpName(&pOpName, op);
-        rxpGetComparisonOpSymbol(&pOpSymbol, op);
+        rxpOpGetName(&opName, op);
+        rxpOpGetSymbol(&opSymbol, op);
 
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be almost %s ‘%s’ (tolerance: "
-                          "%Lf)",
-                          pExpression1,
-                          pOpName,
-                          pExpression2,
-                          tolerance)
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be almost %s ‘%s’ "
+                         "(tolerance: %Lf)",
+                         expr1,
+                         opName,
+                         expr2,
+                         tol)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the failure message for the real "
                           "almost equal test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pFailureMessage = NULL;
+            failureMsg = NULL;
         }
 
-        if (rxpMakeString(
-                &pDiagnosticMessage, "%Lf %s %Lf", value1, pOpSymbol, value2)
+        if (rxpStrCreate(&diagnosticMsg, "%Lf %s %Lf", x1, opSymbol, x2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
                           "real almost equal test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pDiagnosticMessage = NULL;
+            diagnosticMsg = NULL;
         }
     }
 
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the real "
                       "almost equal test located at %s:%d\n",
-                      pFile,
+                      file,
                       line);
     }
 
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
     }
 
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 RXP_MAYBE_UNUSED static void
-rxpAssessStringComparisonTest(struct RxContext *pContext,
-                              const char *pStr1,
-                              const char *pStr2,
-                              enum RxpStringCase stringCase,
-                              enum RxpComparisonOp op,
-                              const char *pExpression1,
-                              const char *pExpression2,
-                              const char *pFile,
-                              int line,
-                              enum RxSeverity severity)
+rxpAssessStrComparisonTest(struct RxContext *context,
+                           const char *s1,
+                           const char *s2,
+                           enum RxpStrCase strCase,
+                           enum RxpOp op,
+                           const char *expr1,
+                           const char *expr2,
+                           const char *file,
+                           int line,
+                           enum RxSeverity severity)
 {
     int result;
-    char *pFailureMessage;
-    char *pDiagnosticMessage;
+    char *failureMsg;
+    char *diagnosticMsg;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pContext->pCaseReport != NULL);
-    RX_ASSERT(pStr1 != NULL);
-    RX_ASSERT(pStr2 != NULL);
-    RX_ASSERT(pExpression1 != NULL);
-    RX_ASSERT(pExpression2 != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(s1 != NULL);
+    RX_ASSERT(s2 != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
 
     switch (op) {
         case RXP_OP_EQUAL:
-            stringCase == RXP_STRING_CASE_OBEY
-                ? rxpAreStringsEqual(&result, pStr1, pStr2)
-                : rxpAreStringsEqualNoCase(&result, pStr1, pStr2);
+            strCase == RXP_STR_CASE_OBEY
+                ? rxpStrAreEqual(&result, s1, s2)
+                : rxpStrAreEqualNoCase(&result, s1, s2);
             break;
         case RXP_OP_NOT_EQUAL:
-            stringCase == RXP_STRING_CASE_OBEY
-                ? rxpAreStringsEqual(&result, pStr1, pStr2)
-                : rxpAreStringsEqualNoCase(&result, pStr1, pStr2);
+            strCase == RXP_STR_CASE_OBEY
+                ? rxpStrAreEqual(&result, s1, s2)
+                : rxpStrAreEqualNoCase(&result, s1, s2);
             result = !result;
             break;
         default:
@@ -1758,256 +1696,250 @@ rxpAssessStringComparisonTest(struct RxContext *pContext,
     }
 
     if (result) {
-        pFailureMessage = NULL;
-        pDiagnosticMessage = NULL;
+        failureMsg = NULL;
+        diagnosticMsg = NULL;
     } else {
-        const char *pStringCaseType;
-        const char *pOpName;
-        const char *pOpSymbol;
+        const char *strCaseType;
+        const char *opName;
+        const char *opSymbol;
 
-        rxpGetStringCaseType(&pStringCaseType, stringCase);
-        rxpGetComparisonOpName(&pOpName, op);
-        rxpGetComparisonOpSymbol(&pOpSymbol, op);
+        rxpStrCaseGetType(&strCaseType, strCase);
+        rxpOpGetName(&opName, op);
+        rxpOpGetSymbol(&opSymbol, op);
 
-        if (rxpMakeString(&pFailureMessage,
-                          "‘%s’ is expected to be %s ‘%s’ (case: %s)",
-                          pExpression1,
-                          pOpName,
-                          pExpression2,
-                          pStringCaseType)
+        if (rxpStrCreate(&failureMsg,
+                         "‘%s’ is expected to be %s ‘%s’ (case: %s)",
+                         expr1,
+                         opName,
+                         expr2,
+                         strCaseType)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the failure message for the "
                           "string comparison test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pFailureMessage = NULL;
+            failureMsg = NULL;
         }
 
-        if (rxpMakeString(&pDiagnosticMessage,
-                          "\"%s\" %s \"%s\"",
-                          pStr1,
-                          pOpSymbol,
-                          pStr2)
+        if (rxpStrCreate(&diagnosticMsg, "\"%s\" %s \"%s\"", s1, opSymbol, s2)
             != RX_SUCCESS) {
             RXP_LOG_TRACE("failed to create the diagnostic message for the "
                           "string comparison test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
-            pDiagnosticMessage = NULL;
+            diagnosticMsg = NULL;
         }
     }
 
-    if (rxHandleTestResult(pContext,
-                           result,
-                           pFile,
-                           line,
-                           severity,
-                           pFailureMessage,
-                           pDiagnosticMessage)
+    if (rxHandleTestResult(
+            context, result, file, line, severity, failureMsg, diagnosticMsg)
         != RX_SUCCESS) {
         RXP_LOG_TRACE("failed to handle the test result for the string "
                       "comparison test located at %s:%d\n",
-                      pFile,
+                      file,
                       line);
     }
 
-    if (pFailureMessage != NULL) {
-        RX_FREE(pFailureMessage);
+    if (failureMsg != NULL) {
+        RX_FREE(failureMsg);
     }
 
-    if (pDiagnosticMessage != NULL) {
-        RX_FREE(pDiagnosticMessage);
+    if (diagnosticMsg != NULL) {
+        RX_FREE(diagnosticMsg);
     }
 
     if (!result && severity == RX_FATAL) {
-        rxAbortTest(pContext);
+        rxAbortTest(context);
     }
 }
 
 static void
-rxpValidateTestSuite(int *pValid, const struct RxTestSuite *pSuite)
+rxpTestSuiteValidate(int *valid, const struct RxTestSuite *testSuite)
 {
-    RX_ASSERT(pSuite != NULL);
+    RX_ASSERT(testSuite != NULL);
 
-    *pValid = RXP_FALSE;
+    *valid = RXP_FALSE;
 
-    if (pSuite->pName == NULL) {
-        RXP_LOG_TRACE("the member ‘pName’ is NULL\n");
+    if (testSuite->name == NULL) {
+        RXP_LOG_TRACE("the member ‘name’ is NULL\n");
         return;
     }
 
-    if (pSuite->caseCount > 0 && pSuite->pCases == NULL) {
-        RXP_LOG_TRACE(
-            "the member ‘pCases’ is NULL when ‘caseCount’ is not zero\n");
+    if (testSuite->testCaseCount > 0 && testSuite->testCases == NULL) {
+        RXP_LOG_TRACE("the member ‘testCases’ is NULL when ‘testCaseCount’ is "
+                      "not zero\n");
         return;
     }
 
-    *pValid = RXP_TRUE;
+    *valid = RXP_TRUE;
 }
 
 static void
-rxpValidateTestCase(int *pValid, const struct RxTestCase *pCase)
+rxpTestCaseValidate(int *valid, const struct RxTestCase *testCase)
 {
-    RX_ASSERT(pCase != NULL);
+    RX_ASSERT(testCase != NULL);
 
-    *pValid = RXP_FALSE;
+    *valid = RXP_FALSE;
 
-    if (pCase->pName == NULL) {
-        RXP_LOG_TRACE("the member ‘pName’ is NULL\n");
+    if (testCase->name == NULL) {
+        RXP_LOG_TRACE("the member ‘name’ is NULL\n");
         return;
     }
 
-    if (pCase->pfnRun == NULL) {
+    if (testCase->run == NULL) {
         RXP_LOG_TRACE("the member ‘pfn’ is NULL\n");
         return;
     }
 
-    *pValid = RXP_TRUE;
+    *valid = RXP_TRUE;
 }
 
 static void
-rxpValidateTestCaseReport(int *pValid, const struct RxTestCaseReport *pReport)
+rxpSummaryValidate(int *valid, const struct RxSummary *summary)
 {
     size_t failureCount;
 
-    RX_ASSERT(pReport != NULL);
+    RX_ASSERT(summary != NULL);
 
-    *pValid = RXP_FALSE;
+    *valid = RXP_FALSE;
 
-    if (pReport->pFailures == NULL) {
-        RXP_LOG_TRACE("the member ‘pFailures’ is NULL\n");
+    if (summary->failures == NULL) {
+        RXP_LOG_TRACE("the member ‘failures’ is NULL\n");
         return;
     }
 
-    rxpGetTestFailureArraySize(&failureCount, pReport->pFailures);
-    if (pReport->failureCount != failureCount) {
+    rxpTestFailureArrayGetSize(&failureCount, summary->failures);
+    if (summary->failureCount != failureCount) {
         RXP_LOG_TRACE("the member ‘failureCount’ is different from the size of "
-                      "the array ‘pFailures’\n");
+                      "the array ‘failures’\n");
         return;
     }
 
-    *pValid = RXP_TRUE;
+    *valid = RXP_TRUE;
 }
 
+/* Public API Implementation                                       O-(''Q)
+   -------------------------------------------------------------------------- */
+
 RXP_MAYBE_UNUSED RXP_SCOPE void
-rxGetLogLevelName(const char **ppString, enum RxLogLevel level)
+rxLogLevelGetName(const char **name, enum RxLogLevel level)
 {
-    RX_ASSERT(ppString != NULL);
+    RX_ASSERT(name != NULL);
 
     switch (level) {
         case RX_LOG_LEVEL_DEBUG:
-            *ppString = "debug";
+            *name = "debug";
             return;
         case RX_LOG_LEVEL_TRACE:
-            *ppString = "trace";
+            *name = "trace";
             return;
         case RX_LOG_LEVEL_INFO:
-            *ppString = "info";
+            *name = "info";
             return;
         case RX_LOG_LEVEL_WARNING:
-            *ppString = "warning";
+            *name = "warning";
             return;
         case RX_LOG_LEVEL_ERROR:
-            *ppString = "error";
+            *name = "error";
             return;
         default:
-            *ppString = "invalid";
+            *name = "invalid";
     }
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE void
-rxAbortTest(struct RxContext *pContext)
+rxAbortTest(struct RxContext *context)
 {
-    longjmp(pContext->env, 1);
+    longjmp(context->env, 1);
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE enum RxStatus
-rxHandleTestResult(struct RxContext *pContext,
+rxHandleTestResult(struct RxContext *context,
                    int result,
-                   const char *pFile,
+                   const char *file,
                    int line,
                    enum RxSeverity severity,
-                   const char *pFailureMessage,
-                   const char *pDiagnosticMessage)
+                   const char *failureMsg,
+                   const char *diagnosticMsg)
 {
     enum RxStatus status;
     int valid;
-    struct RxTestCaseReport *pReport;
-    struct RxTestFailure *pFailure;
+    struct RxSummary *summary;
+    struct RxFailure *failure;
 
-    RX_ASSERT(pContext != NULL);
-    RX_ASSERT(pFile != NULL);
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(file != NULL);
 
-    rxpValidateTestCaseReport(&valid, pContext->pCaseReport);
+    rxpSummaryValidate(&valid, context->summary);
     RX_ASSERT(valid);
 
-    pReport = pContext->pCaseReport;
+    summary = context->summary;
 
-    ++pReport->testCount;
+    ++summary->testCount;
 
     if (result) {
         return RX_SUCCESS;
     }
 
-    status = rxpExtendTestFailureArrayBack(&pFailure, &pReport->pFailures, 1);
+    status = rxpTestFailureArrayExtendBack(&failure, &summary->failures, 1);
     if (status != RX_SUCCESS) {
         RXP_LOG_WARNING("failed to extend the test failure array for the test "
                         "located at %s:%d\n",
-                        pFile,
+                        file,
                         line);
         return status;
     }
 
-    rxpGetTestFailureArraySize(&pReport->failureCount, pReport->pFailures);
+    rxpTestFailureArrayGetSize(&summary->failureCount, summary->failures);
 
     {
-        char *pBuffer;
+        char *buffer;
 
-        status = rxpMakeStringCopy(&pBuffer, pFile);
+        status = rxpStrCopy(&buffer, file);
         if (status != RX_SUCCESS) {
             RXP_LOG_ERROR("failed to allocate the file name for the "
                           "test located at %s:%d\n",
-                          pFile,
+                          file,
                           line);
         }
 
-        pFailure->pFile = pBuffer;
+        failure->file = buffer;
     }
 
-    pFailure->line = line;
-    pFailure->severity = severity;
+    failure->line = line;
+    failure->severity = severity;
 
-    if (pFailureMessage == NULL) {
-        pFailure->pMessage = NULL;
+    if (failureMsg == NULL) {
+        failure->msg = NULL;
     } else {
-        char *pBuffer;
+        char *buffer;
 
-        status = rxpMakeStringCopy(&pBuffer, pFailureMessage);
+        status = rxpStrCopy(&buffer, failureMsg);
         if (status != RX_SUCCESS) {
             RXP_LOG_WARNING("failed to allocate the failure message for the "
                             "test located at %s:%d\n",
-                            pFile,
+                            file,
                             line);
-            pFailure->pMessage = NULL;
+            failure->msg = NULL;
         } else {
-            pFailure->pMessage = pBuffer;
+            failure->msg = buffer;
         }
     }
 
-    if (pDiagnosticMessage == NULL) {
-        pFailure->pDiagnosticMessage = NULL;
+    if (diagnosticMsg == NULL) {
+        failure->diagnosticMsg = NULL;
     } else {
-        char *pBuffer;
+        char *buffer;
 
-        status = rxpMakeStringCopy(&pBuffer, pDiagnosticMessage);
+        status = rxpStrCopy(&buffer, diagnosticMsg);
         if (status != RX_SUCCESS) {
             RXP_LOG_WARNING("failed to allocate the diagnostic message for the "
                             "test located at %s:%d\n",
-                            pFile,
+                            file,
                             line);
-            pFailure->pDiagnosticMessage = NULL;
+            failure->diagnosticMsg = NULL;
         } else {
-            pFailure->pDiagnosticMessage = pBuffer;
+            failure->diagnosticMsg = buffer;
         }
     }
 
@@ -2015,77 +1947,147 @@ rxHandleTestResult(struct RxContext *pContext,
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE enum RxStatus
-rxInitializeTestCaseReport(struct RxTestCaseReport *pReport,
-                           const struct RxTestSuite *pSuite,
-                           const struct RxTestCase *pCase)
+rxSummaryInitialize(struct RxSummary *summary,
+                    const struct RxTestSuite *testSuite,
+                    const struct RxTestCase *testCase)
 {
     enum RxStatus status;
 
-    RX_ASSERT(pReport != NULL);
-    RX_ASSERT(pSuite != NULL);
-    RX_ASSERT(pCase != NULL);
+    RX_ASSERT(summary != NULL);
+    RX_ASSERT(testSuite != NULL);
+    RX_ASSERT(testCase != NULL);
 
-    pReport->pSuite = pSuite;
-    pReport->pCase = pCase;
-    pReport->testCount = 0;
-    pReport->elapsed = 0;
+    summary->testSuite = testSuite;
+    summary->testCase = testCase;
+    summary->testCount = 0;
+    summary->elapsed = 0;
 
-    status = rxpCreateTestFailureArray(&pReport->pFailures, 0);
+    status = rxpTestFailureArrayCreate(&summary->failures, 0);
     if (status != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to create the test failure array (suite: \"%s\", "
-                      "case: \"%s\")\n",
-                      pSuite->pName,
-                      pCase->pName);
+        RXP_LOG_TRACE("failed to create the test failure array "
+                      "(suite: \"%s\", case: \"%s\")\n",
+                      testSuite->name,
+                      testCase->name);
         return status;
     }
 
-    rxpGetTestFailureArraySize(&pReport->failureCount, pReport->pFailures);
-    RX_ASSERT(pReport->failureCount == 0);
+    rxpTestFailureArrayGetSize(&summary->failureCount, summary->failures);
+    RX_ASSERT(summary->failureCount == 0);
 
     RX_ASSERT(status == RX_SUCCESS);
     return status;
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE void
-rxTerminateTestCaseReport(struct RxTestCaseReport *pReport)
+rxSummaryTerminate(struct RxSummary *summary)
 {
     size_t i;
     int valid;
 
-    if (pReport == NULL) {
-        RXP_LOG_WARNING("invalid argument ‘pReport’ (NULL)\n");
+    if (summary == NULL) {
+        RXP_LOG_WARNING("invalid argument ‘summary’ (NULL)\n");
         return;
     }
 
-    rxpValidateTestCaseReport(&valid, pReport);
+    rxpSummaryValidate(&valid, summary);
     if (!valid) {
-        RXP_LOG_WARNING("invalid argument ‘pReport’\n");
+        RXP_LOG_WARNING("invalid argument ‘summary’\n");
         return;
     }
 
-    for (i = 0; i < pReport->failureCount; ++i) {
-        const struct RxTestFailure *pFailure;
+    for (i = 0; i < summary->failureCount; ++i) {
+        const struct RxFailure *failure;
 
-        pFailure = &pReport->pFailures[i];
+        failure = &summary->failures[i];
 
-        RX_FREE((void *)(uintptr_t)pFailure->pFile);
+        RX_FREE((void *)(uintptr_t)failure->file);
 
-        if (pFailure->pMessage != NULL) {
-            RX_FREE((void *)(uintptr_t)pFailure->pMessage);
+        if (failure->msg != NULL) {
+            RX_FREE((void *)(uintptr_t)failure->msg);
         }
 
-        if (pFailure->pDiagnosticMessage != NULL) {
-            RX_FREE((void *)(uintptr_t)pFailure->pDiagnosticMessage);
+        if (failure->diagnosticMsg != NULL) {
+            RX_FREE((void *)(uintptr_t)failure->diagnosticMsg);
         }
     }
 
-    rxpDestroyTestFailureArray(pReport->pFailures);
+    rxpTestFailureArrayDestroy(summary->failures);
+}
+
+RXP_MAYBE_UNUSED RXP_SCOPE void
+rxSummaryPrint(const struct RxSummary *summary)
+{
+    size_t i;
+    int valid;
+    int passed;
+    const char *styleStart;
+    const char *styleEnd;
+
+    if (summary == NULL) {
+        RXP_LOG_WARNING("invalid argument ‘summary’ (NULL)\n");
+        return;
+    }
+
+    rxpSummaryValidate(&valid, summary);
+    if (!valid) {
+        RXP_LOG_WARNING("invalid argument ‘summary’\n");
+        return;
+    }
+
+    passed = summary->failureCount == 0;
+
+#if RXP_LOG_STYLING
+    if (isatty(fileno(stderr))) {
+        rxpLogStyleGetAnsiCode(
+            &styleStart,
+            passed ? RXP_LOG_STYLE_BRIGHT_GREEN : RXP_LOG_STYLE_BRIGHT_RED);
+        rxpLogStyleGetAnsiCode(&styleEnd, RXP_LOG_STYLE_RESET);
+    } else {
+        styleStart = styleEnd = "";
+    }
+#else
+    styleStart = styleEnd = "";
+#endif /* RXP_LOG_STYLING */
+
+    fprintf(stderr,
+            "[%s%s%s] \"%s\" / \"%s\" (%f ms)\n",
+            styleStart,
+            passed ? "PASSED" : "FAILED",
+            styleEnd,
+            summary->testSuite->name,
+            summary->testCase->name,
+            (double)summary->elapsed * (1000.0 / RXP_TICKS_PER_SECOND));
+
+    for (i = 0; i < summary->failureCount; ++i) {
+        const struct RxFailure *failure;
+        const char *failureMsg;
+
+        failure = &summary->failures[i];
+        failureMsg = failure->msg == NULL ? "" : failure->msg;
+
+        if (failure->diagnosticMsg != NULL) {
+            fprintf(stderr,
+                    "%s:%d: %s test failure: %s\n%s\n",
+                    failure->file,
+                    failure->line,
+                    failure->severity == RX_FATAL ? "fatal" : "nonfatal",
+                    failureMsg,
+                    failure->diagnosticMsg);
+        } else {
+            fprintf(stderr,
+                    "%s:%d: %s test failure: %s\n",
+                    failure->file,
+                    failure->line,
+                    failure->severity == RX_FATAL ? "fatal" : "nonfatal",
+                    failureMsg);
+        }
+    }
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE enum RxStatus
-rxRunTestCase(struct RxTestCaseReport *pReport,
-              const struct RxTestSuite *pSuite,
-              const struct RxTestCase *pCase)
+rxTestCaseRun(struct RxSummary *summary,
+              const struct RxTestCase *testCase,
+              const struct RxTestSuite *testSuite)
 {
     enum RxStatus status;
     int valid;
@@ -2093,32 +2095,32 @@ rxRunTestCase(struct RxTestCaseReport *pReport,
     uint64_t timeStart;
     uint64_t timeEnd;
 
-    RX_ASSERT(pReport != NULL);
-    RX_ASSERT(pSuite != NULL);
-    RX_ASSERT(pCase != NULL);
+    RX_ASSERT(summary != NULL);
+    RX_ASSERT(testCase != NULL);
+    RX_ASSERT(testSuite != NULL);
 
-    rxpValidateTestCaseReport(&valid, pReport);
+    rxpSummaryValidate(&valid, summary);
     RX_ASSERT(valid);
 
-    rxpValidateTestSuite(&valid, pSuite);
+    rxpTestCaseValidate(&valid, testCase);
     RX_ASSERT(valid);
 
-    rxpValidateTestCase(&valid, pCase);
+    rxpTestSuiteValidate(&valid, testSuite);
     RX_ASSERT(valid);
 
-    context.pCaseReport = pReport;
+    context.summary = summary;
 
-    if (pSuite->pfnSetUp != NULL) {
-        status = pSuite->pfnSetUp(&context.pFixture);
+    if (testSuite->setUp != NULL) {
+        status = testSuite->setUp(&context.fixture);
         if (status != RX_SUCCESS) {
-            RXP_LOG_ERROR(
-                "failed to set-up the fixture (suite: \"%s\", case: \"%s\")\n",
-                pSuite->pName,
-                pCase->pName);
+            RXP_LOG_ERROR("failed to set-up the fixture "
+                          "(suite: \"%s\", case: \"%s\")\n",
+                          testSuite->name,
+                          testCase->name);
             return status;
         }
     } else {
-        context.pFixture = NULL;
+        context.fixture = NULL;
     }
 
     if (rxpGetRealTime(&timeStart) != RX_SUCCESS) {
@@ -2126,102 +2128,32 @@ rxRunTestCase(struct RxTestCaseReport *pReport,
     }
 
     if (setjmp(context.env) == 0) {
-        pCase->pfnRun(&context);
+        testCase->run(&context);
     }
 
     if (timeStart == (uint64_t)-1 || rxpGetRealTime(&timeEnd) != RX_SUCCESS) {
-        RXP_LOG_WARNING("failed to measure the time elapsed (suite: \"%s\", "
-                        "case: \"%s\")\n",
-                        pSuite->pName,
-                        pCase->pName);
-        pReport->elapsed = 0;
+        RXP_LOG_WARNING("failed to measure the time elapsed "
+                        "(suite: \"%s\", case: \"%s\")\n",
+                        testSuite->name,
+                        testCase->name);
+        summary->elapsed = 0;
     } else {
         RX_ASSERT(timeEnd >= timeStart);
-        pReport->elapsed = timeEnd - timeStart;
+        summary->elapsed = timeEnd - timeStart;
     }
 
-    if (pSuite->pfnTearDown != NULL) {
-        pSuite->pfnTearDown(context.pFixture);
+    if (testSuite->tearDown != NULL) {
+        testSuite->tearDown(context.fixture);
     }
 
     return RX_SUCCESS;
 }
 
-RXP_MAYBE_UNUSED RXP_SCOPE void
-rxPrintTestCaseRunSummary(const struct RxTestCaseReport *pReport)
-{
-    size_t i;
-    int valid;
-    int passed;
-    const char *pResultStyleStart;
-    const char *pStyleEnd;
-
-    if (pReport == NULL) {
-        RXP_LOG_WARNING("invalid argument ‘pReport’ (NULL)\n");
-        return;
-    }
-
-    rxpValidateTestCaseReport(&valid, pReport);
-    if (!valid) {
-        RXP_LOG_WARNING("invalid argument ‘pReport’\n");
-        return;
-    }
-
-    passed = pReport->failureCount == 0;
-
-#if RXP_LOG_STYLING
-    if (isatty(fileno(stderr))) {
-        rxpGetStyleAnsiCode(
-            &pResultStyleStart,
-            passed ? RXP_STYLE_BRIGHT_GREEN : RXP_STYLE_BRIGHT_RED);
-        rxpGetStyleAnsiCode(&pStyleEnd, RXP_STYLE_RESET);
-    } else {
-        pResultStyleStart = pStyleEnd = "";
-    }
-#else
-    pResultStyleStart = pStyleEnd = "";
-#endif /* RXP_LOG_STYLING */
-
-    fprintf(stderr,
-            "[%s%s%s] \"%s\" / \"%s\" (%f ms)\n",
-            pResultStyleStart,
-            passed ? "PASSED" : "FAILED",
-            pStyleEnd,
-            pReport->pSuite->pName,
-            pReport->pCase->pName,
-            (double)pReport->elapsed * (1000.0 / RXP_TICKS_PER_SECOND));
-
-    for (i = 0; i < pReport->failureCount; ++i) {
-        const struct RxTestFailure *pFailure;
-        const char *pFailureMessage;
-
-        pFailure = &pReport->pFailures[i];
-        pFailureMessage = pFailure->pMessage == NULL ? "" : pFailure->pMessage;
-
-        if (pFailure->pDiagnosticMessage != NULL) {
-            fprintf(stderr,
-                    "%s:%d: %s test failure: %s\n%s\n",
-                    pFailure->pFile,
-                    pFailure->line,
-                    pFailure->severity == RX_FATAL ? "fatal" : "nonfatal",
-                    pFailureMessage,
-                    pFailure->pDiagnosticMessage);
-        } else {
-            fprintf(stderr,
-                    "%s:%d: %s test failure: %s\n",
-                    pFailure->pFile,
-                    pFailure->line,
-                    pFailure->severity == RX_FATAL ? "fatal" : "nonfatal",
-                    pFailureMessage);
-        }
-    }
-}
-
 RXP_MAYBE_UNUSED RXP_SCOPE enum RxStatus
 rxRun(size_t suiteCount,
-      const struct RxTestSuite *pSuites,
+      const struct RxTestSuite *testSuites,
       int argc,
-      const char **ppArgv)
+      const char **argv)
 {
     size_t i;
     size_t j;
@@ -2229,9 +2161,9 @@ rxRun(size_t suiteCount,
     int valid;
 
     RXP_UNUSED(argc);
-    RXP_UNUSED(ppArgv);
+    RXP_UNUSED(argv);
 
-    RX_ASSERT(pSuites != NULL);
+    RX_ASSERT(testSuites != NULL);
 
     status = RX_SUCCESS;
 
@@ -2241,40 +2173,40 @@ rxRun(size_t suiteCount,
     }
 
     for (i = 0; i < suiteCount; ++i) {
-        const struct RxTestSuite *pSuite;
+        const struct RxTestSuite *testSuite;
 
-        pSuite = &pSuites[i];
-        rxpValidateTestSuite(&valid, pSuite);
+        testSuite = &testSuites[i];
+        rxpTestSuiteValidate(&valid, &testSuites[i]);
         RX_ASSERT(valid);
 
-        for (j = 0; j < pSuite->caseCount; ++j) {
-            const struct RxTestCase *pCase;
-            struct RxTestCaseReport caseReport;
+        for (j = 0; j < testSuite->testCaseCount; ++j) {
+            const struct RxTestCase *testCase;
+            struct RxSummary summary;
 
-            pCase = &pSuite->pCases[j];
-            rxpValidateTestCase(&valid, pCase);
+            testCase = &testSuite->testCases[j];
+            rxpTestCaseValidate(&valid, &testSuites[i].testCases[j]);
             RX_ASSERT(valid);
 
-            status = rxInitializeTestCaseReport(&caseReport, pSuite, pCase);
+            status = rxSummaryInitialize(&summary, testSuite, testCase);
             if (status != RX_SUCCESS) {
-                RXP_LOG_ERROR("failed to initialize the test case report "
+                RXP_LOG_ERROR("failed to initialize the summary "
                               "(suite: \"%s\", case: \"%s\")\n",
-                              pSuite->pName,
-                              pCase->pName);
+                              testSuite->name,
+                              testCase->name);
                 goto exit;
             }
 
-            status = rxRunTestCase(&caseReport, pSuite, pCase);
+            status = rxTestCaseRun(&summary, testCase, testSuite);
             if (status != RX_SUCCESS) {
-                RXP_LOG_ERROR(
-                    "failed to run a test case (suite: \"%s\", case: \"%s\")\n",
-                    pSuite->pName,
-                    pCase->pName);
+                RXP_LOG_ERROR("failed to run a test case "
+                              "(suite: \"%s\", case: \"%s\")\n",
+                              testSuite->name,
+                              testCase->name);
                 goto exit;
             }
 
-            rxPrintTestCaseRunSummary(&caseReport);
-            rxTerminateTestCaseReport(&caseReport);
+            rxSummaryPrint(&summary);
+            rxSummaryTerminate(&summary);
         }
     }
 
