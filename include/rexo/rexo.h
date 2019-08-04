@@ -299,14 +299,6 @@ struct RxContext;
     RXP_DEFINE_STR_TEST(                                                       \
         s1, s2, RXP_STR_CASE_IGNORE, RXP_OP_NOT_EQUAL, RX_NONFATAL)
 
-enum RxLogLevel {
-    RX_LOG_LEVEL_ERROR = 0,
-    RX_LOG_LEVEL_WARNING = 1,
-    RX_LOG_LEVEL_INFO = 2,
-    RX_LOG_LEVEL_TRACE = 3,
-    RX_LOG_LEVEL_DEBUG = 4
-};
-
 enum RxStatus {
     RX_SUCCESS = 0,
     RX_ERROR = -1,
@@ -455,21 +447,21 @@ rxRun(size_t suiteCount,
 #endif
 
 #if defined(RX_SET_LOGGING_LEVEL_DEBUG)
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_DEBUG
 #elif defined(RX_SET_LOGGING_LEVEL_TRACE)
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_TRACE
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_TRACE
 #elif defined(RX_SET_LOGGING_LEVEL_INFO)
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_INFO
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_INFO
 #elif defined(RX_SET_LOGGING_LEVEL_WARNING)
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_WARNING
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_WARNING
 #elif defined(RX_SET_LOGGING_LEVEL_ERROR)
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_ERROR
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_ERROR
 #elif defined(RX_ENABLE_DEBUGGING)                                             \
     || (!defined(RX_DISABLE_DEBUGGING)                                         \
         && (defined(DEBUG) || !defined(NDEBUG)))
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_DEBUG
 #else
-#define RXP_LOGGING_LEVEL RX_LOG_LEVEL_WARNING
+#define RXP_LOGGING_LEVEL RXP_LOG_LEVEL_WARNING
 #endif
 
 #ifdef RX_DISABLE_LOGGING
@@ -487,15 +479,23 @@ rxRun(size_t suiteCount,
     } while (0)
 #endif /* RX_LOG */
 
-#define RXP_LOG_DEBUG(...) RX_LOG(RX_LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define RXP_LOG_DEBUG(...) RX_LOG(RXP_LOG_LEVEL_DEBUG, __VA_ARGS__)
 
-#define RXP_LOG_TRACE(...) RX_LOG(RX_LOG_LEVEL_TRACE, __VA_ARGS__)
+#define RXP_LOG_TRACE(...) RX_LOG(RXP_LOG_LEVEL_TRACE, __VA_ARGS__)
 
-#define RXP_LOG_INFO(...) RX_LOG(RX_LOG_LEVEL_INFO, __VA_ARGS__)
+#define RXP_LOG_INFO(...) RX_LOG(RXP_LOG_LEVEL_INFO, __VA_ARGS__)
 
-#define RXP_LOG_WARNING(...) RX_LOG(RX_LOG_LEVEL_WARNING, __VA_ARGS__)
+#define RXP_LOG_WARNING(...) RX_LOG(RXP_LOG_LEVEL_WARNING, __VA_ARGS__)
 
-#define RXP_LOG_ERROR(...) RX_LOG(RX_LOG_LEVEL_ERROR, __VA_ARGS__)
+#define RXP_LOG_ERROR(...) RX_LOG(RXP_LOG_LEVEL_ERROR, __VA_ARGS__)
+
+enum RxpLogLevel {
+    RXP_LOG_LEVEL_ERROR = 0,
+    RXP_LOG_LEVEL_WARNING = 1,
+    RXP_LOG_LEVEL_INFO = 2,
+    RXP_LOG_LEVEL_TRACE = 3,
+    RXP_LOG_LEVEL_DEBUG = 4
+};
 
 #if RXP_LOG_STYLING
 enum RxpLogStyle {
@@ -518,24 +518,24 @@ enum RxpLogStyle {
 #endif /* RXP_LOG_STYLING */
 
 static void
-rxpLogLevelGetName(const char **name, enum RxLogLevel level)
+rxpLogLevelGetName(const char **name, enum RxpLogLevel level)
 {
     RX_ASSERT(name != NULL);
 
     switch (level) {
-        case RX_LOG_LEVEL_ERROR:
+        case RXP_LOG_LEVEL_ERROR:
             *name = "error";
             return;
-        case RX_LOG_LEVEL_WARNING:
+        case RXP_LOG_LEVEL_WARNING:
             *name = "warning";
             return;
-        case RX_LOG_LEVEL_INFO:
+        case RXP_LOG_LEVEL_INFO:
             *name = "info";
             return;
-        case RX_LOG_LEVEL_TRACE:
+        case RXP_LOG_LEVEL_TRACE:
             *name = "trace";
             return;
-        case RX_LOG_LEVEL_DEBUG:
+        case RXP_LOG_LEVEL_DEBUG:
             *name = "debug";
             return;
         default:
@@ -545,24 +545,24 @@ rxpLogLevelGetName(const char **name, enum RxLogLevel level)
 
 #if RXP_LOG_STYLING
 static void
-rxpLogLevelGetStyle(enum RxpLogStyle *style, enum RxLogLevel level)
+rxpLogLevelGetStyle(enum RxpLogStyle *style, enum RxpLogLevel level)
 {
     RX_ASSERT(style != NULL);
 
     switch (level) {
-        case RX_LOG_LEVEL_ERROR:
+        case RXP_LOG_LEVEL_ERROR:
             *style = RXP_LOG_STYLE_BRIGHT_RED;
             return;
-        case RX_LOG_LEVEL_WARNING:
+        case RXP_LOG_LEVEL_WARNING:
             *style = RXP_LOG_STYLE_BRIGHT_YELLOW;
             return;
-        case RX_LOG_LEVEL_INFO:
+        case RXP_LOG_LEVEL_INFO:
             *style = RXP_LOG_STYLE_BRIGHT_GREEN;
             return;
-        case RX_LOG_LEVEL_TRACE:
+        case RXP_LOG_LEVEL_TRACE:
             *style = RXP_LOG_STYLE_BRIGHT_CYAN;
             return;
-        case RX_LOG_LEVEL_DEBUG:
+        case RXP_LOG_LEVEL_DEBUG:
             *style = RXP_LOG_STYLE_BRIGHT_MAGENTA;
             return;
         default:
@@ -628,7 +628,7 @@ rxpLogStyleGetAnsiCode(const char **code, enum RxpLogStyle style)
 #endif /* RXP_LOG_STYLING */
 
 static void
-rxpLog(enum RxLogLevel level, const char *file, int line, const char *fmt, ...)
+rxpLog(enum RxpLogLevel level, const char *file, int line, const char *fmt, ...)
 {
     const char *levelName;
     const char *levelStyleStart;
