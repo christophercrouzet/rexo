@@ -1057,23 +1057,19 @@ rxpStrCreate(char **s, const char *fmt, ...)
     RX_ASSERT(s != NULL);
     RX_ASSERT(fmt != NULL);
 
-    status = RX_SUCCESS;
-
     va_start(args, fmt);
     size = vsnprintf(NULL, 0, fmt, args);
     va_end(args);
     if (size < 0) {
         RXP_LOG_TRACE("invalid string formatting\n");
-        status = RX_ERROR;
-        goto exit;
+        return RX_ERROR;
     }
 
     *s = (char *)RX_MALLOC(sizeof **s * ((size_t)size + 1));
     if (*s == NULL) {
         RXP_LOG_TRACE("failed to allocate the string (%zu bytes)\n",
                       sizeof **s * ((size_t)size + 1));
-        status = RX_ERROR_ALLOCATION;
-        goto exit;
+        return RX_ERROR_ALLOCATION;
     }
 
     va_start(args, fmt);
@@ -1085,13 +1081,12 @@ rxpStrCreate(char **s, const char *fmt, ...)
         goto undo;
     }
 
-    RX_ASSERT(status == RX_SUCCESS);
-    goto exit;
+    return RX_SUCCESS;
 
 undo:
-    RX_FREE(*s);
+    RX_ASSERT(status != RX_SUCCESS);
 
-exit:
+    RX_FREE(*s);
     return status;
 }
 
@@ -1898,9 +1893,7 @@ rxSummaryInitialize(struct RxSummary *summary,
 
     rxpTestFailureArrayGetSize(&summary->failureCount, summary->failures);
     RX_ASSERT(summary->failureCount == 0);
-
-    RX_ASSERT(status == RX_SUCCESS);
-    return status;
+    return RX_SUCCESS;
 }
 
 RXP_MAYBE_UNUSED RXP_SCOPE void
