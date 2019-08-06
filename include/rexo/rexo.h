@@ -1741,6 +1741,8 @@ rxpAssessStrComparisonTest(struct RxContext *context,
 static void
 rxpTestSuiteAssert(const struct RxTestSuite *testSuite)
 {
+    RXP_UNUSED(testSuite);
+
     RX_ASSERT(testSuite != NULL);
     RX_ASSERT(testSuite->name != NULL);
     RX_ASSERT(testSuite->testCaseCount == 0 || testSuite->testCases != NULL);
@@ -1749,6 +1751,8 @@ rxpTestSuiteAssert(const struct RxTestSuite *testSuite)
 static void
 rxpTestCaseAssert(const struct RxTestCase *testCase)
 {
+    RXP_UNUSED(testCase);
+
     RX_ASSERT(testCase != NULL);
     RX_ASSERT(testCase->name != NULL);
     RX_ASSERT(testCase->run != NULL);
