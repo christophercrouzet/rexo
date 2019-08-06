@@ -1991,7 +1991,6 @@ rxTestCaseRun(struct RxSummary *summary,
               const struct RxTestCase *testCase,
               const struct RxTestSuite *testSuite)
 {
-    enum RxStatus status;
     struct RxContext context;
     uint64_t timeStart;
     uint64_t timeEnd;
@@ -2007,6 +2006,8 @@ rxTestCaseRun(struct RxSummary *summary,
     context.summary = summary;
 
     if (testSuite->setUp != NULL) {
+        enum RxStatus status;
+
         status = testSuite->setUp(&context.fixture);
         if (status != RX_SUCCESS) {
             RXP_LOG_ERROR("failed to set-up the fixture "
@@ -2052,8 +2053,6 @@ rxRun(size_t suiteCount,
       const char **argv)
 {
     size_t i;
-    size_t j;
-    enum RxStatus status;
 
     RXP_UNUSED(argc);
     RXP_UNUSED(argv);
@@ -2066,12 +2065,14 @@ rxRun(size_t suiteCount,
     }
 
     for (i = 0; i < suiteCount; ++i) {
+        size_t j;
         const struct RxTestSuite *testSuite;
 
         testSuite = &testSuites[i];
         rxpTestSuiteAssert(testSuite);
 
         for (j = 0; j < testSuite->testCaseCount; ++j) {
+            enum RxStatus status;
             const struct RxTestCase *testCase;
             struct RxSummary summary;
 
