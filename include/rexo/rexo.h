@@ -1751,68 +1751,31 @@ rxpAssessStrComparisonTest(struct RxContext *context,
 }
 
 static void
-rxpTestSuiteValidate(int *valid, const struct RxTestSuite *testSuite)
+rxpTestSuiteAssert(const struct RxTestSuite *testSuite)
 {
     RX_ASSERT(testSuite != NULL);
-
-    *valid = RXP_FALSE;
-
-    if (testSuite->name == NULL) {
-        RXP_LOG_TRACE("the member ‘name’ is NULL\n");
-        return;
-    }
-
-    if (testSuite->testCaseCount > 0 && testSuite->testCases == NULL) {
-        RXP_LOG_TRACE("the member ‘testCases’ is NULL when ‘testCaseCount’ is "
-                      "not zero\n");
-        return;
-    }
-
-    *valid = RXP_TRUE;
+    RX_ASSERT(testSuite->name != NULL);
+    RX_ASSERT(testSuite->testCaseCount == 0 || testSuite->testCases != NULL);
 }
 
 static void
-rxpTestCaseValidate(int *valid, const struct RxTestCase *testCase)
+rxpTestCaseAssert(const struct RxTestCase *testCase)
 {
     RX_ASSERT(testCase != NULL);
-
-    *valid = RXP_FALSE;
-
-    if (testCase->name == NULL) {
-        RXP_LOG_TRACE("the member ‘name’ is NULL\n");
-        return;
-    }
-
-    if (testCase->run == NULL) {
-        RXP_LOG_TRACE("the member ‘pfn’ is NULL\n");
-        return;
-    }
-
-    *valid = RXP_TRUE;
+    RX_ASSERT(testCase->name != NULL);
+    RX_ASSERT(testCase->run != NULL);
 }
 
 static void
-rxpSummaryValidate(int *valid, const struct RxSummary *summary)
+rxpSummaryAssert(const struct RxSummary *summary)
 {
     size_t failureCount;
 
     RX_ASSERT(summary != NULL);
-
-    *valid = RXP_FALSE;
-
-    if (summary->failures == NULL) {
-        RXP_LOG_TRACE("the member ‘failures’ is NULL\n");
-        return;
-    }
+    RX_ASSERT(summary->failures != NULL);
 
     rxpTestFailureArrayGetSize(&failureCount, summary->failures);
-    if (summary->failureCount != failureCount) {
-        RXP_LOG_TRACE("the member ‘failureCount’ is different from the size of "
-                      "the array ‘failures’\n");
-        return;
-    }
-
-    *valid = RXP_TRUE;
+    RX_ASSERT(summary->failureCount == failureCount);
 }
 
 /* Public API Implementation                                       O-(''Q)
@@ -1834,15 +1797,13 @@ rxHandleTestResult(struct RxContext *context,
                    const char *diagnosticMsg)
 {
     enum RxStatus status;
-    int valid;
     struct RxSummary *summary;
     struct RxFailure *failure;
 
     RX_ASSERT(context != NULL);
     RX_ASSERT(file != NULL);
 
-    rxpSummaryValidate(&valid, context->summary);
-    RX_ASSERT(valid);
+    rxpSummaryAssert(context->summary);
 
     summary = context->summary;
 
@@ -1953,18 +1914,10 @@ RXP_MAYBE_UNUSED RXP_SCOPE void
 rxSummaryTerminate(struct RxSummary *summary)
 {
     size_t i;
-    int valid;
 
-    if (summary == NULL) {
-        RXP_LOG_WARNING("invalid argument ‘summary’ (NULL)\n");
-        return;
-    }
+    RX_ASSERT(summary != NULL);
 
-    rxpSummaryValidate(&valid, summary);
-    if (!valid) {
-        RXP_LOG_WARNING("invalid argument ‘summary’\n");
-        return;
-    }
+    rxpSummaryAssert(summary);
 
     for (i = 0; i < summary->failureCount; ++i) {
         const struct RxFailure *failure;
@@ -1989,21 +1942,13 @@ RXP_MAYBE_UNUSED RXP_SCOPE void
 rxSummaryPrint(const struct RxSummary *summary)
 {
     size_t i;
-    int valid;
     int passed;
     const char *styleStart;
     const char *styleEnd;
 
-    if (summary == NULL) {
-        RXP_LOG_WARNING("invalid argument ‘summary’ (NULL)\n");
-        return;
-    }
+    RX_ASSERT(summary != NULL);
 
-    rxpSummaryValidate(&valid, summary);
-    if (!valid) {
-        RXP_LOG_WARNING("invalid argument ‘summary’\n");
-        return;
-    }
+    rxpSummaryAssert(summary);
 
     passed = summary->failureCount == 0;
 
@@ -2061,7 +2006,6 @@ rxTestCaseRun(struct RxSummary *summary,
               const struct RxTestSuite *testSuite)
 {
     enum RxStatus status;
-    int valid;
     struct RxContext context;
     uint64_t timeStart;
     uint64_t timeEnd;
@@ -2070,14 +2014,9 @@ rxTestCaseRun(struct RxSummary *summary,
     RX_ASSERT(testCase != NULL);
     RX_ASSERT(testSuite != NULL);
 
-    rxpSummaryValidate(&valid, summary);
-    RX_ASSERT(valid);
-
-    rxpTestCaseValidate(&valid, testCase);
-    RX_ASSERT(valid);
-
-    rxpTestSuiteValidate(&valid, testSuite);
-    RX_ASSERT(valid);
+    rxpSummaryAssert(summary);
+    rxpTestCaseAssert(testCase);
+    rxpTestSuiteAssert(testSuite);
 
     context.summary = summary;
 
@@ -2129,7 +2068,6 @@ rxRun(size_t suiteCount,
     size_t i;
     size_t j;
     enum RxStatus status;
-    int valid;
 
     RXP_UNUSED(argc);
     RXP_UNUSED(argv);
@@ -2145,16 +2083,14 @@ rxRun(size_t suiteCount,
         const struct RxTestSuite *testSuite;
 
         testSuite = &testSuites[i];
-        rxpTestSuiteValidate(&valid, &testSuites[i]);
-        RX_ASSERT(valid);
+        rxpTestSuiteAssert(testSuite);
 
         for (j = 0; j < testSuite->testCaseCount; ++j) {
             const struct RxTestCase *testCase;
             struct RxSummary summary;
 
             testCase = &testSuite->testCases[j];
-            rxpTestCaseValidate(&valid, &testSuites[i].testCases[j]);
-            RX_ASSERT(valid);
+            rxpTestCaseAssert(testCase);
 
             status = rxSummaryInitialize(&summary, testSuite, testCase);
             if (status != RX_SUCCESS) {
