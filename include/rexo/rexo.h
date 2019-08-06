@@ -1171,7 +1171,6 @@ rxpAssessTest(struct RxContext *context,
     int result;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(failureMsg != NULL);
     RX_ASSERT(file != NULL);
 
@@ -1205,7 +1204,6 @@ rxpAssessBoolTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(expr != NULL);
     RX_ASSERT(file != NULL);
 
@@ -1275,7 +1273,6 @@ rxpAssessIntComparisonTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(expr1 != NULL);
     RX_ASSERT(expr2 != NULL);
     RX_ASSERT(file != NULL);
@@ -1375,7 +1372,6 @@ rxpAssessUIntComparisonTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(expr1 != NULL);
     RX_ASSERT(expr2 != NULL);
     RX_ASSERT(file != NULL);
@@ -1475,7 +1471,6 @@ rxpAssessRealComparisonTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(expr1 != NULL);
     RX_ASSERT(expr2 != NULL);
     RX_ASSERT(file != NULL);
@@ -1576,7 +1571,6 @@ rxpAssessRealFuzzyComparisonTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(expr1 != NULL);
     RX_ASSERT(expr2 != NULL);
     RX_ASSERT(file != NULL);
@@ -1668,7 +1662,6 @@ rxpAssessStrComparisonTest(struct RxContext *context,
     char *diagnosticMsg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(context->summary != NULL);
     RX_ASSERT(s1 != NULL);
     RX_ASSERT(s2 != NULL);
     RX_ASSERT(expr1 != NULL);
