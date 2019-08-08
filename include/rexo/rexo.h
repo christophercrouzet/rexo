@@ -957,6 +957,23 @@ rxpTestFailureArrayExtendBack(struct RxFailure **slice,
 /* Internals                                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
+#if defined(__GNUC__)
+#define RXP_REAL_OP_EQUAL(a, b)                                                \
+    _Pragma("GCC diagnostic push")                                             \
+    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                        \
+    (a) == (b)                                                                 \
+    _Pragma("GCC diagnostic pop")
+
+#define RXP_REAL_OP_NOT_EQUAL(a, b)                                            \
+    _Pragma("GCC diagnostic push")                                             \
+    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                        \
+    (a) != (b)                                                                 \
+    _Pragma("GCC diagnostic pop")
+#else
+#define RXP_REAL_OP_EQUAL(a, b) (a) == (b)
+#define RXP_REAL_OP_NOT_EQUAL(a, b) (a) != (b)
+#endif
+
 enum RxpOp {
     RXP_OP_EQUAL = 0,
     RXP_OP_NOT_EQUAL = 1,
@@ -1472,10 +1489,10 @@ rxpAssessRealComparisonTest(struct RxContext *context,
 
     switch (op) {
         case RXP_OP_EQUAL:
-            result = x1 == x2;
+            result = RXP_REAL_OP_EQUAL(x1, x2);
             break;
         case RXP_OP_NOT_EQUAL:
-            result = x1 != x2;
+            result = RXP_REAL_OP_NOT_EQUAL(x1, x2);
             break;
         case RXP_OP_GREATER:
             result = x1 > x2;
