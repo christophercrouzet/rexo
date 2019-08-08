@@ -877,7 +877,7 @@ rxpTestFailureArrayCreate(struct RxFailure **array, size_t size)
                                                 rxpTestFailureArrayMaxCapacity,
                                                 sizeof(struct RxFailure));
     if (status != RX_SUCCESS) {
-        RXP_LOG_ERROR("failed to reserve a large enough capacity for the "
+        RXP_LOG_TRACE("failed to reserve a large enough capacity for the "
                       "test failure array (requested capacity: %zu)\n",
                       (size_t)size);
         return status;
@@ -930,7 +930,7 @@ rxpTestFailureArrayExtendBack(struct RxFailure **slice,
         rxpTestFailureArrayMaxCapacity,
         sizeof(struct RxFailure));
     if (status != RX_SUCCESS) {
-        RXP_LOG_ERROR("failed to reserve a large enough capacity for the "
+        RXP_LOG_TRACE("failed to reserve a large enough capacity for the "
                       "test failure array (requested capacity: %zu)\n",
                       RXP_DYNARRAY_GET_HEADER(block)->size + (size_t)size);
         return status;
@@ -1824,10 +1824,10 @@ rxHandleTestResult(struct RxContext *context,
 
     status = rxpTestFailureArrayExtendBack(&failure, &summary->failures, 1);
     if (status != RX_SUCCESS) {
-        RXP_LOG_WARNING("failed to extend the test failure array for the test "
-                        "located at %s:%d\n",
-                        file,
-                        line);
+        RXP_LOG_ERROR("failed to extend the test failure array for the test "
+                      "located at %s:%d\n",
+                      file,
+                      line);
         return status;
     }
 
@@ -1838,10 +1838,10 @@ rxHandleTestResult(struct RxContext *context,
 
         status = rxpStrCopy(&buffer, file);
         if (status != RX_SUCCESS) {
-            RXP_LOG_ERROR("failed to allocate the file name for the "
-                          "test located at %s:%d\n",
-                          file,
-                          line);
+            RXP_LOG_WARNING("failed to allocate the file name for the "
+                            "test located at %s:%d\n",
+                            file,
+                            line);
         }
 
         failure->file = buffer;
@@ -1905,7 +1905,7 @@ rxSummaryInitialize(struct RxSummary *summary,
 
     status = rxpTestFailureArrayCreate(&summary->failures, 0);
     if (status != RX_SUCCESS) {
-        RXP_LOG_TRACE("failed to create the test failure array "
+        RXP_LOG_ERROR("failed to create the test failure array "
                       "(suite: \"%s\", case: \"%s\")\n",
                       testSuite->name,
                       testCase->name);
