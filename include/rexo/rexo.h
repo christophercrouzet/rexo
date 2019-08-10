@@ -42,7 +42,7 @@
 #define RXP_SCOPE static
 #else
 #define RXP_SCOPE extern
-#endif /* RX_STATIC */
+#endif
 
 #ifdef __GNUC__
 #define RXP_MAYBE_UNUSED __attribute__((unused))
@@ -416,22 +416,22 @@ rxRun(size_t suiteCount,
 #ifndef RX_ASSERT
 #include <assert.h>
 #define RX_ASSERT assert
-#endif /* RX_ASSERT */
+#endif
 
 #ifndef RX_MALLOC
 #include <stdlib.h>
 #define RX_MALLOC malloc
-#endif /* RX_MALLOC */
+#endif
 
 #ifndef RX_REALLOC
 #include <stdlib.h>
 #define RX_REALLOC realloc
-#endif /* RX_REALLOC */
+#endif
 
 #ifndef RX_FREE
 #include <stdlib.h>
 #define RX_FREE free
-#endif /* RX_FREE */
+#endif
 
 #define RXP_UNUSED(x) (void)(x)
 
@@ -468,7 +468,7 @@ rxRun(size_t suiteCount,
 #define RXP_LOGGING 0
 #else
 #define RXP_LOGGING 1
-#endif /* RX_DISABLE_LOGGING */
+#endif
 
 #ifndef RX_LOG
 #define RX_LOG(level, ...)                                                     \
@@ -477,7 +477,7 @@ rxRun(size_t suiteCount,
             rxpLog(level, __FILE__, __LINE__, __VA_ARGS__);                    \
         }                                                                      \
     } while (0)
-#endif /* RX_LOG */
+#endif
 
 #define RXP_LOG_DEBUG(...) RX_LOG(RXP_LOG_LEVEL_DEBUG, __VA_ARGS__)
 
@@ -515,7 +515,7 @@ enum RxpLogStyle {
     RXP_LOG_STYLE_BRIGHT_MAGENTA = 13,
     RXP_LOG_STYLE_BRIGHT_CYAN = 14
 };
-#endif /* RXP_LOG_STYLING */
+#endif
 
 static void
 rxpLogLevelGetName(const char **name, enum RxpLogLevel level)
@@ -652,7 +652,7 @@ rxpLog(enum RxpLogLevel level, const char *file, int line, const char *fmt, ...)
     }
 #else
     levelStyleStart = levelStyleEnd = "";
-#endif /* RXP_LOG_STYLING */
+#endif
 
     va_start(args, fmt);
     fprintf(stderr,
