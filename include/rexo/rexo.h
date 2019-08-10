@@ -310,8 +310,8 @@ enum RxStatus {
 enum RxSeverity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
 typedef void (*RxTestCaseRunFn)(RXP_TEST_CASE_PARAMS);
-typedef enum RxStatus (*RxTestSuiteSetUpFn)(void **fixture);
-typedef void (*RxTestSuiteTearDownFn)(void *fixture);
+typedef enum RxStatus (*RxSetUpFn)(void **fixture);
+typedef void (*RxTearDownFn)(void *fixture);
 
 struct RxTestCase {
     const char *name;
@@ -322,8 +322,8 @@ struct RxTestSuite {
     const char *name;
     size_t testCaseCount;
     const struct RxTestCase *testCases;
-    RxTestSuiteSetUpFn setUp;
-    RxTestSuiteTearDownFn tearDown;
+    RxSetUpFn setUp;
+    RxTearDownFn tearDown;
 };
 
 struct RxFailure {
