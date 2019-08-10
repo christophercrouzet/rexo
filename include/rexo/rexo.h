@@ -55,9 +55,9 @@ struct RxContext;
 #define RXP_FALSE ((int)0)
 #define RXP_TRUE ((int)1)
 
-#define RXP_TEST_CASE_PARAMETERS struct RxContext *context RXP_MAYBE_UNUSED
+#define RXP_TEST_CASE_PARAMS struct RxContext *context RXP_MAYBE_UNUSED
 
-#define RX_TEST_CASE(name) static void name(RXP_TEST_CASE_PARAMETERS)
+#define RX_TEST_CASE(name) static void name(RXP_TEST_CASE_PARAMS)
 
 #define RX_FIXTURE context->fixture
 
@@ -309,7 +309,7 @@ enum RxStatus {
 
 enum RxSeverity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
-typedef void (*RxTestCaseRunFn)(RXP_TEST_CASE_PARAMETERS);
+typedef void (*RxTestCaseRunFn)(RXP_TEST_CASE_PARAMS);
 typedef enum RxStatus (*RxTestSuiteSetUpFn)(void **fixture);
 typedef void (*RxTestSuiteTearDownFn)(void *fixture);
 
