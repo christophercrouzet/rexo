@@ -382,7 +382,7 @@ rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_suite *test_suite);
 
 RX__SCOPE enum rx_status
-rx_run(size_t suite_count,
+rx_run(size_t test_suite_count,
        const struct rx_test_suite *test_suites,
        int argc,
        const char **argv);
@@ -2079,7 +2079,7 @@ rx_test_case_run(struct rx_summary *summary,
 }
 
 RX__MAYBE_UNUSED RX__SCOPE enum rx_status
-rx_run(size_t suite_count,
+rx_run(size_t test_suite_count,
        const struct rx_test_suite *test_suites,
        int argc,
        const char **argv)
@@ -2091,12 +2091,12 @@ rx_run(size_t suite_count,
 
     RX_ASSERT(test_suites != NULL);
 
-    if (suite_count == 0) {
+    if (test_suite_count == 0) {
         RX__LOG_INFO("nothing to run\n");
         return RX_SUCCESS;
     }
 
-    for (i = 0; i < suite_count; ++i) {
+    for (i = 0; i < test_suite_count; ++i) {
         size_t j;
         const struct rx_test_suite *test_suite;
 
