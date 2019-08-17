@@ -635,7 +635,7 @@ rx__log(enum rx__log_level level,
         ...)
 {
     const char *level_name;
-    const char *level_style_start;
+    const char *level_style_begin;
     const char *level_style_end;
     va_list args;
 
@@ -649,13 +649,13 @@ rx__log(enum rx__log_level level,
         enum rx__log_style level_style;
 
         rx__log_level_get_style(&level_style, level);
-        rx__log_style_get_ansi_code(&level_style_start, level_style);
+        rx__log_style_get_ansi_code(&level_style_begin, level_style);
         rx__log_style_get_ansi_code(&level_style_end, RX__LOG_STYLE_RESET);
     } else {
-        level_style_start = level_style_end = "";
+        level_style_begin = level_style_end = "";
     }
 #else
-    level_style_start = level_style_end = "";
+    level_style_begin = level_style_end = "";
 #endif
 
     va_start(args, fmt);
@@ -663,7 +663,7 @@ rx__log(enum rx__log_level level,
             "%s:%d: %s%s%s: ",
             file,
             line,
-            level_style_start,
+            level_style_begin,
             level_name,
             level_style_end);
     vfprintf(stderr, fmt, args);
@@ -1960,7 +1960,7 @@ rx_summary_print(const struct rx_summary *summary)
 {
     size_t i;
     int passed;
-    const char *style_start;
+    const char *style_begin;
     const char *style_end;
 
     RX_ASSERT(summary != NULL);
@@ -1972,19 +1972,19 @@ rx_summary_print(const struct rx_summary *summary)
 #if RX__LOG_STYLING
     if (isatty(fileno(stderr))) {
         rx__log_style_get_ansi_code(
-            &style_start,
+            &style_begin,
             passed ? RX__LOG_STYLE_BRIGHT_GREEN : RX__LOG_STYLE_BRIGHT_RED);
         rx__log_style_get_ansi_code(&style_end, RX__LOG_STYLE_RESET);
     } else {
-        style_start = style_end = "";
+        style_begin = style_end = "";
     }
 #else
-    style_start = style_end = "";
+    style_begin = style_end = "";
 #endif /* RX__LOG_STYLING */
 
     fprintf(stderr,
             "[%s%s%s] \"%s\" / \"%s\" (%f ms)\n",
-            style_start,
+            style_begin,
             passed ? "PASSED" : "FAILED",
             style_end,
             summary->test_suite->name,
@@ -2023,7 +2023,7 @@ rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_suite *test_suite)
 {
     struct rx_context context;
-    uint64_t time_start;
+    uint64_t time_begin;
     uint64_t time_end;
 
     RX_ASSERT(summary != NULL);
@@ -2051,15 +2051,15 @@ rx_test_case_run(struct rx_summary *summary,
         context.fixture = NULL;
     }
 
-    if (rx__get_real_time(&time_start) != RX_SUCCESS) {
-        time_start = (uint64_t)-1;
+    if (rx__get_real_time(&time_begin) != RX_SUCCESS) {
+        time_begin = (uint64_t)-1;
     }
 
     if (setjmp(context.env) == 0) {
         test_case->run(&context);
     }
 
-    if (time_start == (uint64_t)-1
+    if (time_begin == (uint64_t)-1
         || rx__get_real_time(&time_end) != RX_SUCCESS) {
         RX__LOG_WARNING("failed to measure the time elapsed "
                         "(suite: \"%s\", case: \"%s\")\n",
@@ -2067,8 +2067,8 @@ rx_test_case_run(struct rx_summary *summary,
                         test_case->name);
         summary->elapsed = 0;
     } else {
-        RX_ASSERT(time_end >= time_start);
-        summary->elapsed = time_end - time_start;
+        RX_ASSERT(time_end >= time_begin);
+        summary->elapsed = time_end - time_begin;
     }
 
     if (test_suite->tear_down != NULL) {
