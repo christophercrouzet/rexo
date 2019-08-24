@@ -788,14 +788,14 @@ rx__get_real_time(uint64_t *time)
 /* Dynamic Array                                                   O-(''Q)
    -------------------------------------------------------------------------- */
 
-#define RX__DYN_ARRAY_GET_BLOCK(buffer)                                        \
-    ((void *)&((struct rx__dyn_array_header *)(buffer))[-1])
+#define RX__DYN_ARRAY_GET_BLOCK(buf)                                           \
+    ((void *)&((struct rx__dyn_array_header *)(buf))[-1])
 #define RX__DYN_ARRAY_GET_HEADER(block)                                        \
     ((struct rx__dyn_array_header *)(block))
 #define RX__DYN_ARRAY_GET_BUFFER(block)                                        \
     ((void *)&((struct rx__dyn_array_header *)(block))[1])
-#define RX__DYN_ARRAY_GET_CONST_BLOCK(buffer)                                  \
-    ((const void *)&((const struct rx__dyn_array_header *)(buffer))[-1])
+#define RX__DYN_ARRAY_GET_CONST_BLOCK(buf)                                     \
+    ((const void *)&((const struct rx__dyn_array_header *)(buf))[-1])
 #define RX__DYN_ARRAY_GET_CONST_HEADER(block)                                  \
     ((const struct rx__dyn_array_header *)(block))
 
@@ -832,7 +832,7 @@ rx__dyn_array_ensure_has_enough_capacity(void **block,
                                          size_t max_capacity,
                                          size_t element_size)
 {
-    void *buffer;
+    void *buf;
     size_t new_capacity;
 
     RX_ASSERT(block != NULL);
@@ -852,16 +852,16 @@ rx__dyn_array_ensure_has_enough_capacity(void **block,
     RX_ASSERT(new_capacity >= requested_capacity);
     RX_ASSERT(new_capacity <= max_capacity);
 
-    buffer = RX_REALLOC(
+    buf = RX_REALLOC(
         *block,
         sizeof(struct rx__dyn_array_header) + element_size * new_capacity);
-    if (buffer == NULL) {
+    if (buf == NULL) {
         RX__LOG_TRACE("failed to reallocate the block\n");
         return RX_ERROR_ALLOCATION;
     }
 
-    RX__DYN_ARRAY_GET_HEADER(buffer)->capacity = new_capacity;
-    *block = buffer;
+    RX__DYN_ARRAY_GET_HEADER(buf)->capacity = new_capacity;
+    *block = buf;
     return RX_SUCCESS;
 }
 
@@ -1843,9 +1843,9 @@ rx_handle_test_result(struct rx_context *context,
     rx__test_failure_array_get_size(&summary->failure_count, summary->failures);
 
     {
-        char *buffer;
+        char *buf;
 
-        status = rx__str_copy(&buffer, file);
+        status = rx__str_copy(&buf, file);
         if (status != RX_SUCCESS) {
             RX__LOG_WARNING("failed to allocate the file name for the "
                             "test located at %s:%d\n",
@@ -1853,7 +1853,7 @@ rx_handle_test_result(struct rx_context *context,
                             line);
         }
 
-        failure->file = buffer;
+        failure->file = buf;
     }
 
     failure->line = line;
@@ -1862,9 +1862,9 @@ rx_handle_test_result(struct rx_context *context,
     if (failure_msg == NULL) {
         failure->msg = NULL;
     } else {
-        char *buffer;
+        char *buf;
 
-        status = rx__str_copy(&buffer, failure_msg);
+        status = rx__str_copy(&buf, failure_msg);
         if (status != RX_SUCCESS) {
             RX__LOG_WARNING("failed to allocate the failure message for the "
                             "test located at %s:%d\n",
@@ -1872,16 +1872,16 @@ rx_handle_test_result(struct rx_context *context,
                             line);
             failure->msg = NULL;
         } else {
-            failure->msg = buffer;
+            failure->msg = buf;
         }
     }
 
     if (diagnostic_msg == NULL) {
         failure->diagnostic_msg = NULL;
     } else {
-        char *buffer;
+        char *buf;
 
-        status = rx__str_copy(&buffer, diagnostic_msg);
+        status = rx__str_copy(&buf, diagnostic_msg);
         if (status != RX_SUCCESS) {
             RX__LOG_WARNING("failed to allocate the diagnostic message for the "
                             "test located at %s:%d\n",
@@ -1889,7 +1889,7 @@ rx_handle_test_result(struct rx_context *context,
                             line);
             failure->diagnostic_msg = NULL;
         } else {
-            failure->diagnostic_msg = buffer;
+            failure->diagnostic_msg = buf;
         }
     }
 
