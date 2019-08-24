@@ -302,9 +302,8 @@ struct rx_context;
 enum rx_status {
     RX_SUCCESS = 0,
     RX_ERROR = -1,
-    RX_ERROR_INVALID_VALUE = -2,
-    RX_ERROR_ALLOCATION = -3,
-    RX_ERROR_MAX_SIZE_EXCEEDED = -4
+    RX_ERROR_ALLOCATION = -2,
+    RX_ERROR_MAX_SIZE_EXCEEDED = -3
 };
 
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
