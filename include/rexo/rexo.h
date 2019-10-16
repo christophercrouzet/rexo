@@ -52,17 +52,20 @@
 
 struct rx_context;
 
+#define RX__PARAM_CONTEXT rx__context
+
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
 
-#define RX__TEST_CASE_PARAMS struct rx_context *context RX__MAYBE_UNUSED
+#define RX__TEST_CASE_PARAMS                                                   \
+    struct rx_context *RX__PARAM_CONTEXT RX__MAYBE_UNUSED
 
 #define RX_TEST_CASE(name) static void name(RX__TEST_CASE_PARAMS)
 
-#define RX_FIXTURE context->fixture
+#define RX_FIXTURE RX__PARAM_CONTEXT->fixture
 
 #define RX__DEFINE_TEST(condition, expected, msg, severity)                    \
-    rx__assess_test(context,                                                   \
+    rx__assess_test(RX__PARAM_CONTEXT,                                         \
                     !!(condition),                                             \
                     expected,                                                  \
                     msg,                                                       \
@@ -71,7 +74,7 @@ struct rx_context;
                     severity)
 
 #define RX__DEFINE_BOOL_TEST(condition, expected, severity)                    \
-    rx__assess_bool_test(context,                                              \
+    rx__assess_bool_test(RX__PARAM_CONTEXT,                                    \
                          !!(condition),                                        \
                          expected,                                             \
                          #condition,                                           \
@@ -80,7 +83,7 @@ struct rx_context;
                          severity)
 
 #define RX__DEFINE_INT_TEST(x1, x2, op, severity)                              \
-    rx__assess_int_comparison_test(context,                                    \
+    rx__assess_int_comparison_test(RX__PARAM_CONTEXT,                          \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -91,7 +94,7 @@ struct rx_context;
                                    severity)
 
 #define RX__DEFINE_UINT_TEST(x1, x2, op, severity)                             \
-    rx__assess_uint_comparison_test(context,                                   \
+    rx__assess_uint_comparison_test(RX__PARAM_CONTEXT,                         \
                                     (x1),                                      \
                                     (x2),                                      \
                                     op,                                        \
@@ -102,7 +105,7 @@ struct rx_context;
                                     severity)
 
 #define RX__DEFINE_REAL_TEST(x1, x2, op, severity)                             \
-    rx__assess_real_comparison_test(context,                                      \
+    rx__assess_real_comparison_test(RX__PARAM_CONTEXT,                         \
                                     (x1),                                      \
                                     (x2),                                      \
                                     op,                                        \
@@ -113,7 +116,7 @@ struct rx_context;
                                     severity)
 
 #define RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, op, severity)                  \
-    rx__assess_real_fuzzy_comparison_test(context,                             \
+    rx__assess_real_fuzzy_comparison_test(RX__PARAM_CONTEXT,                   \
                                           (x1),                                \
                                           (x2),                                \
                                           (tol),                               \
@@ -124,7 +127,7 @@ struct rx_context;
                                           __LINE__,                            \
                                           severity)
 #define RX__DEFINE_STR_TEST(s1, s2, str_case, op, severity)                    \
-    rx__assess_str_comparison_test(context,                                    \
+    rx__assess_str_comparison_test(RX__PARAM_CONTEXT,                          \
                                    (s1),                                       \
                                    (s2),                                       \
                                    str_case,                                   \
