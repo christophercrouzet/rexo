@@ -317,15 +317,10 @@ typedef void (*rx_tear_down_fn)(void *fixture);
 
 struct rx_test_case {
     const char *name;
-    rx_test_case_run_fn run;
-};
-
-struct rx_test_suite {
-    const char *name;
-    size_t test_case_count;
-    const struct rx_test_case *test_cases;
+    const char *suite_name;
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
+    rx_test_case_run_fn run;
 };
 
 struct rx_failure {
@@ -337,7 +332,6 @@ struct rx_failure {
 };
 
 struct rx_summary {
-    const struct rx_test_suite *test_suite;
     const struct rx_test_case *test_case;
     size_t test_count;
     size_t failure_count;
@@ -369,7 +363,6 @@ rx_handle_test_result(struct rx_context *context,
 
 RX__SCOPE enum rx_status
 rx_summary_initialize(struct rx_summary *summary,
-                      const struct rx_test_suite *test_suite,
                       const struct rx_test_case *test_case);
 
 RX__SCOPE void
@@ -380,12 +373,11 @@ rx_summary_print(const struct rx_summary *summary);
 
 RX__SCOPE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
-                 const struct rx_test_case *test_case,
-                 const struct rx_test_suite *test_suite);
+                 const struct rx_test_case *test_case);
 
 RX__SCOPE enum rx_status
-rx_run(size_t test_suite_count,
-       const struct rx_test_suite *test_suites,
+rx_run(size_t test_case_count,
+       const struct rx_test_case *test_cases,
        int argc,
        const char **argv);
 
@@ -1766,23 +1758,13 @@ rx__assess_str_comparison_test(struct rx_context *context,
 }
 
 static void
-rx__test_suite_assert(const struct rx_test_suite *test_suite)
-{
-    RX__UNUSED(test_suite);
-
-    RX_ASSERT(test_suite != NULL);
-    RX_ASSERT(test_suite->name != NULL);
-    RX_ASSERT(test_suite->test_case_count == 0
-              || test_suite->test_cases != NULL);
-}
-
-static void
 rx__test_case_assert(const struct rx_test_case *test_case)
 {
     RX__UNUSED(test_case);
 
     RX_ASSERT(test_case != NULL);
     RX_ASSERT(test_case->name != NULL);
+    RX_ASSERT(test_case->suite_name != NULL);
     RX_ASSERT(test_case->run != NULL);
 }
 
@@ -1901,16 +1883,13 @@ rx_handle_test_result(struct rx_context *context,
 
 RX__MAYBE_UNUSED RX__SCOPE enum rx_status
 rx_summary_initialize(struct rx_summary *summary,
-                      const struct rx_test_suite *test_suite,
                       const struct rx_test_case *test_case)
 {
     enum rx_status status;
 
     RX_ASSERT(summary != NULL);
-    RX_ASSERT(test_suite != NULL);
     RX_ASSERT(test_case != NULL);
 
-    summary->test_suite = test_suite;
     summary->test_case = test_case;
     summary->test_count = 0;
     summary->elapsed = 0;
@@ -1919,7 +1898,7 @@ rx_summary_initialize(struct rx_summary *summary,
     if (status != RX_SUCCESS) {
         RX__LOG_ERROR("failed to create the test failure array "
                       "(suite: \"%s\", case: \"%s\")\n",
-                      test_suite->name,
+                      test_case->suite_name,
                       test_case->name);
         return status;
     }
@@ -1989,7 +1968,7 @@ rx_summary_print(const struct rx_summary *summary)
             style_begin,
             passed ? "PASSED" : "FAILED",
             style_end,
-            summary->test_suite->name,
+            summary->test_case->suite_name,
             summary->test_case->name,
             (double)summary->elapsed * (1000.0 / RX__TICKS_PER_SECOND));
 
@@ -2021,8 +2000,7 @@ rx_summary_print(const struct rx_summary *summary)
 
 RX__MAYBE_UNUSED RX__SCOPE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
-                 const struct rx_test_case *test_case,
-                 const struct rx_test_suite *test_suite)
+                 const struct rx_test_case *test_case)
 {
     struct rx_context context;
     uint64_t time_begin;
@@ -2030,22 +2008,20 @@ rx_test_case_run(struct rx_summary *summary,
 
     RX_ASSERT(summary != NULL);
     RX_ASSERT(test_case != NULL);
-    RX_ASSERT(test_suite != NULL);
 
     rx__summary_assert(summary);
     rx__test_case_assert(test_case);
-    rx__test_suite_assert(test_suite);
 
     context.summary = summary;
 
-    if (test_suite->set_up != NULL) {
+    if (test_case->set_up != NULL) {
         enum rx_status status;
 
-        status = test_suite->set_up(&context.fixture);
+        status = test_case->set_up(&context.fixture);
         if (status != RX_SUCCESS) {
             RX__LOG_ERROR("failed to set-up the fixture "
                           "(suite: \"%s\", case: \"%s\")\n",
-                          test_suite->name,
+                          test_case->suite_name,
                           test_case->name);
             return status;
         }
@@ -2065,7 +2041,7 @@ rx_test_case_run(struct rx_summary *summary,
         || rx__get_real_time(&time_end) != RX_SUCCESS) {
         RX__LOG_WARNING("failed to measure the time elapsed "
                         "(suite: \"%s\", case: \"%s\")\n",
-                        test_suite->name,
+                        test_case->suite_name,
                         test_case->name);
         summary->elapsed = 0;
     } else {
@@ -2073,16 +2049,16 @@ rx_test_case_run(struct rx_summary *summary,
         summary->elapsed = time_end - time_begin;
     }
 
-    if (test_suite->tear_down != NULL) {
-        test_suite->tear_down(context.fixture);
+    if (test_case->tear_down != NULL) {
+        test_case->tear_down(context.fixture);
     }
 
     return RX_SUCCESS;
 }
 
 RX__MAYBE_UNUSED RX__SCOPE enum rx_status
-rx_run(size_t test_suite_count,
-       const struct rx_test_suite *test_suites,
+rx_run(size_t test_case_count,
+       const struct rx_test_case *test_cases,
        int argc,
        const char **argv)
 {
@@ -2091,49 +2067,41 @@ rx_run(size_t test_suite_count,
     RX__UNUSED(argc);
     RX__UNUSED(argv);
 
-    RX_ASSERT(test_suites != NULL);
-
-    if (test_suite_count == 0) {
+    if (test_case_count == 0) {
         RX__LOG_INFO("nothing to run\n");
         return RX_SUCCESS;
     }
 
-    for (i = 0; i < test_suite_count; ++i) {
-        size_t j;
-        const struct rx_test_suite *test_suite;
+    RX_ASSERT(test_cases != NULL);
 
-        test_suite = &test_suites[i];
-        rx__test_suite_assert(test_suite);
+    for (i = 0; i < test_case_count; ++i) {
+        enum rx_status status;
+        const struct rx_test_case *test_case;
+        struct rx_summary summary;
 
-        for (j = 0; j < test_suite->test_case_count; ++j) {
-            enum rx_status status;
-            const struct rx_test_case *test_case;
-            struct rx_summary summary;
+        test_case = &test_cases[i];
+        rx__test_case_assert(test_case);
 
-            test_case = &test_suite->test_cases[j];
-            rx__test_case_assert(test_case);
-
-            status = rx_summary_initialize(&summary, test_suite, test_case);
-            if (status != RX_SUCCESS) {
-                RX__LOG_ERROR("failed to initialize the summary "
-                              "(suite: \"%s\", case: \"%s\")\n",
-                              test_suite->name,
-                              test_case->name);
-                return status;
-            }
-
-            status = rx_test_case_run(&summary, test_case, test_suite);
-            if (status != RX_SUCCESS) {
-                RX__LOG_ERROR("failed to run a test case "
-                              "(suite: \"%s\", case: \"%s\")\n",
-                              test_suite->name,
-                              test_case->name);
-                return status;
-            }
-
-            rx_summary_print(&summary);
-            rx_summary_terminate(&summary);
+        status = rx_summary_initialize(&summary, test_case);
+        if (status != RX_SUCCESS) {
+            RX__LOG_ERROR("failed to initialize the summary "
+                          "(suite: \"%s\", case: \"%s\")\n",
+                          test_case->suite_name,
+                          test_case->name);
+            return status;
         }
+
+        status = rx_test_case_run(&summary, test_case);
+        if (status != RX_SUCCESS) {
+            RX__LOG_ERROR("failed to run a test case "
+                          "(suite: \"%s\", case: \"%s\")\n",
+                          test_case->suite_name,
+                          test_case->name);
+            return status;
+        }
+
+        rx_summary_print(&summary);
+        rx_summary_terminate(&summary);
     }
 
     return RX_SUCCESS;
