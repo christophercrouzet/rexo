@@ -1757,29 +1757,6 @@ rx__assess_str_comparison_test(struct rx_context *context,
     }
 }
 
-static void
-rx__test_case_assert(const struct rx_test_case *test_case)
-{
-    RX__UNUSED(test_case);
-
-    RX_ASSERT(test_case != NULL);
-    RX_ASSERT(test_case->name != NULL);
-    RX_ASSERT(test_case->suite_name != NULL);
-    RX_ASSERT(test_case->run != NULL);
-}
-
-static void
-rx__summary_assert(const struct rx_summary *summary)
-{
-    size_t failure_count;
-
-    RX_ASSERT(summary != NULL);
-    RX_ASSERT(summary->failures != NULL);
-
-    rx__test_failure_array_get_size(&failure_count, summary->failures);
-    RX_ASSERT(summary->failure_count == failure_count);
-}
-
 /* Public API Implementation                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -1803,9 +1780,9 @@ rx_handle_test_result(struct rx_context *context,
     struct rx_failure *failure;
 
     RX_ASSERT(context != NULL);
+    RX_ASSERT(context->summary != NULL);
+    RX_ASSERT(context->summary->failures != NULL);
     RX_ASSERT(file != NULL);
-
-    rx__summary_assert(context->summary);
 
     summary = context->summary;
 
@@ -1914,8 +1891,7 @@ rx_summary_terminate(struct rx_summary *summary)
     size_t i;
 
     RX_ASSERT(summary != NULL);
-
-    rx__summary_assert(summary);
+    RX_ASSERT(summary->failures != NULL);
 
     for (i = 0; i < summary->failure_count; ++i) {
         const struct rx_failure *failure;
@@ -1945,8 +1921,10 @@ rx_summary_print(const struct rx_summary *summary)
     const char *style_end;
 
     RX_ASSERT(summary != NULL);
-
-    rx__summary_assert(summary);
+    RX_ASSERT(summary->test_case != NULL);
+    RX_ASSERT(summary->test_case->name != NULL);
+    RX_ASSERT(summary->test_case->suite_name != NULL);
+    RX_ASSERT(summary->failures != NULL);
 
     passed = summary->failure_count == 0;
 
@@ -2008,9 +1986,9 @@ rx_test_case_run(struct rx_summary *summary,
 
     RX_ASSERT(summary != NULL);
     RX_ASSERT(test_case != NULL);
-
-    rx__summary_assert(summary);
-    rx__test_case_assert(test_case);
+    RX_ASSERT(test_case->name != NULL);
+    RX_ASSERT(test_case->suite_name != NULL);
+    RX_ASSERT(test_case->run != NULL);
 
     context.summary = summary;
 
@@ -2080,7 +2058,9 @@ rx_run(size_t test_case_count,
         struct rx_summary summary;
 
         test_case = &test_cases[i];
-        rx__test_case_assert(test_case);
+
+        RX_ASSERT(test_case->name != NULL);
+        RX_ASSERT(test_case->suite_name != NULL);
 
         status = rx_summary_initialize(&summary, test_case);
         if (status != RX_SUCCESS) {
