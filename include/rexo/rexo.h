@@ -53,16 +53,70 @@
 struct rx_context;
 
 #define RX__PARAM_CONTEXT rx__context
+#define RX__PARAM_DATA rx__data
+
+#define RX_DATA RX__PARAM_DATA
+
+#define RX__DEFINE_PARAMS(type)                                                \
+    struct rx_context *RX__PARAM_CONTEXT RX__MAYBE_UNUSED,                     \
+    type *RX__PARAM_DATA RX__MAYBE_UNUSED
+
+#define RX_SET_UP(id, type)                                                    \
+    static enum rx_status RX__SET_UP_GET_WRAPPER_ID(id)(                       \
+        RX__DEFINE_PARAMS(type));                                              \
+    static enum rx_status                                                      \
+    id(RX__DEFINE_PARAMS(void))                                                \
+    {                                                                          \
+        return RX__SET_UP_GET_WRAPPER_ID(id)(                                  \
+            RX__PARAM_CONTEXT, (type *)RX__PARAM_DATA);                        \
+    }                                                                          \
+    static enum rx_status RX__SET_UP_GET_WRAPPER_ID(id)(                       \
+        RX__DEFINE_PARAMS(type))
+
+#define RX_TEAR_DOWN(id, type)                                                 \
+    static void RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                              \
+        RX__DEFINE_PARAMS(type));                                              \
+    static void                                                                \
+    id(RX__DEFINE_PARAMS(void))                                                \
+    {                                                                          \
+        RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                                      \
+            RX__PARAM_CONTEXT, (type *)RX__PARAM_DATA);                        \
+    }                                                                          \
+    static void RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                              \
+        RX__DEFINE_PARAMS(type))
+
+#define RX_FIXTURE(...)                                                        \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__FIXTURE_,                                                      \
+            RX__FIXTURE_HAS_VARIADIC_ARGS(__VA_ARGS__)                         \
+        )(__VA_ARGS__))                                                        \
+    RX__REQUIRE_SEMICOLON
+
+#define RX_TEST_SUITE(...)                                                     \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__TEST_SUITE_,                                                   \
+            RX__TEST_SUITE_HAS_VARIADIC_ARGS(__VA_ARGS__)                      \
+        )(__VA_ARGS__))                                                        \
+    RX__REQUIRE_SEMICOLON
+
+#define RX_TEST_CASE(...)                                                      \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__TEST_CASE_,                                                    \
+            RX__TEST_CASE_HAS_VARIADIC_ARGS(__VA_ARGS__)                       \
+        )(__VA_ARGS__))                                                        \
+
+#define RX_TEST_CASE_FIXTURE(...)                                              \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__TEST_CASE_FIXTURE_,                                            \
+            RX__TEST_CASE_FIXTURE_HAS_VARIADIC_ARGS(__VA_ARGS__)               \
+        )(__VA_ARGS__))
 
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
-
-#define RX__TEST_CASE_PARAMS                                                   \
-    struct rx_context *RX__PARAM_CONTEXT RX__MAYBE_UNUSED
-
-#define RX_TEST_CASE(name) static void name(RX__TEST_CASE_PARAMS)
-
-#define RX_FIXTURE RX__PARAM_CONTEXT->fixture
 
 #define RX__DEFINE_TEST(condition, expected, msg, severity)                    \
     rx__assess_test(RX__PARAM_CONTEXT,                                         \
@@ -311,13 +365,14 @@ enum rx_status {
 
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
-typedef void (*rx_test_case_run_fn)(RX__TEST_CASE_PARAMS);
-typedef enum rx_status (*rx_set_up_fn)(void **fixture);
-typedef void (*rx_tear_down_fn)(void *fixture);
+typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
+typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
+typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 
 struct rx_test_case {
     const char *name;
     const char *suite_name;
+    void *data;
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
     rx_test_case_run_fn run;
@@ -342,7 +397,6 @@ struct rx_summary {
 struct rx_context {
     jmp_buf env;
     struct rx_summary *summary;
-    void *fixture;
 };
 
 #ifdef __cplusplus
@@ -375,11 +429,12 @@ RX__SCOPE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_case *test_case);
 
+RX__SCOPE void
+rx_test_cases_enumerate(size_t *test_case_count,
+                        struct rx_test_case *test_cases);
+
 RX__SCOPE enum rx_status
-rx_run(size_t test_case_count,
-       const struct rx_test_case *test_cases,
-       int argc,
-       const char **argv);
+rx_run(int argc, const char **argv);
 
 #ifdef __cplusplus
 }
@@ -428,6 +483,105 @@ rx_run(size_t test_case_count,
 #endif
 
 #define RX__UNUSED(x) (void)(x)
+
+#define RX__REQUIRE_SEMICOLON void rx__dummy(void)
+
+#define RX__STRINGIFY(x) #x
+
+#define RX__EXPAND(x) x
+
+#define RX__CONCAT_(a, b) a##b
+#define RX__CONCAT(a, b) RX__CONCAT_(a, b)
+
+#define RX__ARG(                                                               \
+     _0,  _1,  _2,  _3,  _4,  _5,  _6,  _7,                                    \
+     _8,  _9, _10, _11, _12, _13, _14, _15,                                    \
+    _16, ...) _16
+
+#define RX__COUNT_ARGS(...)                                                    \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        16, 15, 14, 13, 12, 11, 10,  9,                                        \
+         8,  7,  6,  5,  4,  3,  2,  1,                                        \
+         0,))
+
+#define RX__APPLY_1(x, first) x(first)
+#define RX__APPLY_2(x, first, ...) x(first) RX__APPLY_1(x, __VA_ARGS__)
+#define RX__APPLY_3(x, first, ...) x(first) RX__APPLY_2(x, __VA_ARGS__)
+#define RX__APPLY_4(x, first, ...) x(first) RX__APPLY_3(x, __VA_ARGS__)
+#define RX__APPLY_5(x, first, ...) x(first) RX__APPLY_4(x, __VA_ARGS__)
+#define RX__APPLY_6(x, first, ...) x(first) RX__APPLY_5(x, __VA_ARGS__)
+#define RX__APPLY_7(x, first, ...) x(first) RX__APPLY_6(x, __VA_ARGS__)
+#define RX__APPLY_8(x, first, ...) x(first) RX__APPLY_7(x, __VA_ARGS__)
+#define RX__APPLY_9(x, first, ...) x(first) RX__APPLY_8(x, __VA_ARGS__)
+#define RX__APPLY_10(x, first, ...) x(first) RX__APPLY_9(x, __VA_ARGS__)
+#define RX__APPLY_11(x, first, ...) x(first) RX__APPLY_10(x, __VA_ARGS__)
+#define RX__APPLY_12(x, first, ...) x(first) RX__APPLY_11(x, __VA_ARGS__)
+#define RX__APPLY_13(x, first, ...) x(first) RX__APPLY_12(x, __VA_ARGS__)
+#define RX__APPLY_14(x, first, ...) x(first) RX__APPLY_13(x, __VA_ARGS__)
+#define RX__APPLY_15(x, first, ...) x(first) RX__APPLY_14(x, __VA_ARGS__)
+#define RX__APPLY_16(x, first, ...) x(first) RX__APPLY_15(x, __VA_ARGS__)
+
+#define RX__APPLY(x, ...)                                                      \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(RX__APPLY_, RX__COUNT_ARGS(__VA_ARGS__))(x, __VA_ARGS__))
+
+#define RX__STRUCT_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)                    \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 0, 0, 0,))
+
+#define RX__STRUCT_INITIALIZE_STATIC_0(id, type, assigner)                     \
+    static const type id = {0}
+
+#ifdef __cplusplus
+    #define RX__STRUCT_DEFAULT_MEMBER_ASSIGN(x) out x;
+    #define RX__STRUCT_INITIALIZE_STATIC_1(id, type, assigner, ...)            \
+        static const type id##_initialize()                                    \
+        {                                                                      \
+            type out = {0};                                                    \
+            RX__APPLY(assigner, __VA_ARGS__);                                  \
+            return out;                                                        \
+        }                                                                      \
+        static const type id = id##_initialize()
+#else
+    #define RX__STRUCT_DEFAULT_MEMBER_ASSIGN(x) x,
+    #define RX__STRUCT_INITIALIZE_STATIC_1(id, type, assigner, ...)            \
+        static const type id = { RX__APPLY(assigner, __VA_ARGS__) }
+#endif
+
+#define RX__STRUCT_INITIALIZE_STATIC(...)                                      \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__STRUCT_INITIALIZE_STATIC_,                                     \
+            RX__STRUCT_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)        \
+        )(__VA_ARGS__))
+
+#define RX__SET_UP_GET_WRAPPER_ID(id)                                          \
+    rx__set_up_wrapper_##id
+#define RX__TEAR_DOWN_GET_WRAPPER_ID(id)                                       \
+    rx__tear_down_wrapper_##id
+#define RX__FIXTURE_GET_DATA_TYPE(id)                                          \
+    rx__fixture_data_type_##id
+#define RX__FIXTURE_DESC_GET_ID(id)                                            \
+    rx__fixture_desc_##id
+#define RX__TEST_SUITE_DESC_GET_ID(id)                                         \
+    rx__test_suite_desc_##id
+#define RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                \
+    rx__test_case_desc_##suite_id##_##id
+#define RX__TEST_SUITE_DESC_PTR_GET_ID(id)                                     \
+    rx__test_suite_desc_ptr_##id
+#define RX__TEST_CASE_DESC_PTR_GET_ID(suite_id, id)                            \
+    rx__test_case_desc_ptr_##suite_id##_##id
+#define RX__TEST_SUITE_CONFIG_GET_ID(id)                                       \
+    rx__test_suite_config_##id
+#define RX__TEST_CASE_CONFIG_GET_ID(suite_id, id)                              \
+    rx__test_case_config_##suite_id##_##id
+#define RX__TEST_CASE_DATA_GET_ID(suite_id, id)                                \
+    rx__test_case_data_##suite_id##_##id
+#define RX__TEST_CASE_GET_ID(suite_id, id)                                     \
+    suite_id##_##id
 
 typedef intmax_t rx__int;
 typedef uintmax_t rx__uint;
@@ -959,6 +1113,284 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     return RX_SUCCESS;
 }
 
+/* Test Discovery                                                  O-(''Q)
+   -------------------------------------------------------------------------- */
+
+/* Compiler-specific code that allows grouping test suite and test case
+  descriptions into specific data sections, thus enabling automatic discovery
+  by iterating over any data registered in these sections. */
+
+#if defined(__GNUC__)
+    #define RX__TEST_SUITE_SECTION_BEGIN __start_rxsuite
+    #define RX__TEST_SUITE_SECTION_END __stop_rxsuite
+    #define RX__TEST_CASE_SECTION_BEGIN __start_rxcase
+    #define RX__TEST_CASE_SECTION_END __stop_rxcase
+
+    extern const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_BEGIN;
+    extern const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_END;
+    extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_BEGIN;
+    extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_END;
+
+    /* Dummy descriptions are needed to avoid the compiler optimizing away
+       empty sections in release mode and thus breaking the discovery function
+       when the user does not define any suite and/or case. */
+    __attribute__((used, section("rxsuite")))
+    const struct rx__test_suite_desc *rx__dummy_suite = NULL;
+
+    __attribute__((used, section("rxcase")))
+    const struct rx__test_case_desc *rx__dummy_case = NULL;
+
+    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
+        __attribute__((used, section("rxsuite")))                              \
+        const struct rx__test_suite_desc                                       \
+        *RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                  \
+            = &RX__TEST_SUITE_DESC_GET_ID(name)
+
+    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
+        __attribute__((used, section("rxcase")))                               \
+        const struct rx__test_case_desc                                        \
+        *RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                       \
+            = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
+#elif defined(_MSC_VER)
+    #define RX__TEST_SUITE_SECTION_BEGIN rx__test_suite_section_begin
+    #define RX__TEST_SUITE_SECTION_END rx__test_suite_section_end
+    #define RX__TEST_CASE_SECTION_BEGIN rx__test_case_section_begin
+    #define RX__TEST_CASE_SECTION_END rx__test_case_section_end
+
+    #if defined(_WIN64)
+        #define RX__MSVC_FORCE_LINKING(id)                                     \
+            __pragma(comment(linker, "/include:" RX__STRINGIFY(id)))
+    #else
+        #define RX__MSVC_FORCE_LINKING(id)                                     \
+            __pragma(comment(linker, "/include:_" RX__STRINGIFY(id)))
+    #endif
+
+    __pragma(section("rxsuite$a", read))
+    __pragma(section("rxsuite$s", read))
+    __pragma(section("rxsuite$z", read))
+    __pragma(section("rxcase$a", read))
+    __pragma(section("rxcase$s", read))
+    __pragma(section("rxcase$z", read))
+
+    RX__MSVC_FORCE_LINKING(RX__TEST_SUITE_SECTION_BEGIN)                       \
+    __declspec(allocate("rxsuite$a"))                                          \
+    const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_BEGIN;
+
+    RX__MSVC_FORCE_LINKING(RX__TEST_SUITE_SECTION_END)                         \
+    __declspec(allocate("rxsuite$z"))                                          \
+    const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_END;
+
+    RX__MSVC_FORCE_LINKING(RX__TEST_CASE_SECTION_BEGIN)                        \
+    __declspec(allocate("rxcase$a"))                                           \
+    const struct rx__test_case_desc *RX__TEST_CASE_SECTION_BEGIN;
+
+    RX__MSVC_FORCE_LINKING(RX__TEST_CASE_SECTION_END)                          \
+    __declspec(allocate("rxcase$z"))                                           \
+    const struct rx__test_case_desc *RX__TEST_CASE_SECTION_END;
+
+    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
+        RX__MSVC_FORCE_LINKING(RX__TEST_SUITE_DESC_PTR_GET_ID(name))           \
+        __declspec(allocate("rxsuite$s"))                                      \
+        const struct rx__test_suite_desc                                       \
+        *RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                  \
+            = &RX__TEST_SUITE_DESC_GET_ID(name)
+
+    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
+        RX__MSVC_FORCE_LINKING(RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name))\
+        __declspec(allocate("rxcase$s"))                                       \
+        const struct rx__test_case_desc                                        \
+        *RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                       \
+            = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
+#endif
+
+/* Test Configuration                                              O-(''Q)
+   -------------------------------------------------------------------------- */
+
+#define RX__CONFIG_MEMBERS                                                     \
+    RX__CONFIG_MEMBER(rx_set_up_fn, set_up)                                    \
+    RX__CONFIG_MEMBER(rx_tear_down_fn, tear_down)
+
+#ifdef __cplusplus
+    struct rx__config {
+        struct {
+    #define RX__CONFIG_MEMBER(type, name) type name;
+            RX__CONFIG_MEMBERS
+    #undef RX__CONFIG_MEMBER
+        } value;
+        struct {
+    #define RX__CONFIG_MEMBER(type, name) int name;
+            RX__CONFIG_MEMBERS
+    #undef RX__CONFIG_MEMBER
+        } defined;
+    };
+
+    #define RX__CONFIG_MEMBER_IS_DEFINED(data, name) data->defined . name
+    #define RX__CONFIG_MEMBER_ACCESS_VALUE(data, name) data->value . name
+    #define RX__CONFIG_MEMBER_ASSIGN(x) out.value x; out.defined x ? 1 : 1;
+#else
+    struct rx__config {
+    #define RX__CONFIG_MEMBER(type, name) type name; int name##_defined;
+        RX__CONFIG_MEMBERS
+    #undef RX__CONFIG_MEMBER
+    };
+
+    #define RX__CONFIG_MEMBER_IS_DEFINED(data, name) data->name##_defined
+    #define RX__CONFIG_MEMBER_ACCESS_VALUE(data, name) data->name
+    #define RX__CONFIG_MEMBER_ASSIGN(x) x, 1,
+#endif
+
+#define RX__CONFIG_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)                    \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 1, 0,))
+
+#define RX__CONFIG_INITIALIZE_STATIC_0(id)                                     \
+    RX__STRUCT_INITIALIZE_STATIC_0(                                            \
+        id, struct rx__config, RX__CONFIG_MEMBER_ASSIGN)
+
+#define RX__CONFIG_INITIALIZE_STATIC_1(id, ...)                                \
+    RX__STRUCT_INITIALIZE_STATIC_1(                                            \
+        id, struct rx__config, RX__CONFIG_MEMBER_ASSIGN, __VA_ARGS__)
+
+#define RX__CONFIG_INITIALIZE_STATIC(...)                                      \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__CONFIG_INITIALIZE_STATIC_,                                     \
+            RX__CONFIG_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)        \
+        )(__VA_ARGS__))
+
+/* Fixture Macros                                                  O-(''Q)
+   -------------------------------------------------------------------------- */
+
+struct rx__fixture_desc {
+    rx_set_up_fn set_up;
+    rx_tear_down_fn tear_down;
+};
+
+#define RX__FIXTURE_HAS_VARIADIC_ARGS(...)                                     \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 0, 0,))
+
+#define RX__FIXTURE_(id, type)                                                 \
+    typedef type RX__FIXTURE_GET_DATA_TYPE(id);
+
+#define RX__FIXTURE_0(id, type)                                                \
+    RX__STRUCT_INITIALIZE_STATIC(RX__FIXTURE_DESC_GET_ID(id),                  \
+                                 struct rx__fixture_desc,                      \
+                                 RX__STRUCT_DEFAULT_MEMBER_ASSIGN);            \
+    RX__FIXTURE_(id, type)
+
+#define RX__FIXTURE_1(id, type, ...)                                           \
+    RX__STRUCT_INITIALIZE_STATIC(RX__FIXTURE_DESC_GET_ID(id),                  \
+                                 struct rx__fixture_desc,                      \
+                                 RX__STRUCT_DEFAULT_MEMBER_ASSIGN,             \
+                                 __VA_ARGS__);                                 \
+    RX__FIXTURE_(id, type)
+
+/* Test Suite Macros                                               O-(''Q)
+   -------------------------------------------------------------------------- */
+
+struct rx__test_suite_desc {
+    const char *name;
+    const struct rx__config *config;
+};
+
+#define RX__TEST_SUITE_HAS_VARIADIC_ARGS(...)                                  \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 0, 0,))
+
+#define RX__TEST_SUITE_(id)                                                    \
+    static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id)     \
+        = {#id, &RX__TEST_SUITE_CONFIG_GET_ID(id)};                            \
+    RX__TEST_SUITE_DESC_DEFINE_PTR(id)
+
+#define RX__TEST_SUITE_0(id)                                                   \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_SUITE_CONFIG_GET_ID(id));                                     \
+    RX_TEST_SUITE_(id);
+
+#define RX__TEST_SUITE_1(id, ...)                                              \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_SUITE_CONFIG_GET_ID(id), __VA_ARGS__);                        \
+    RX_TEST_SUITE_(id);
+
+/* Test Case Macros                                                O-(''Q)
+   -------------------------------------------------------------------------- */
+
+struct rx__test_case_desc {
+    const char *name;
+    const char *suite_name;
+    void *data;
+    const struct rx__fixture_desc *fixture;
+    const struct rx__config *config;
+    const rx_test_case_run_fn run;
+};
+
+#define RX__TEST_CASE_HAS_VARIADIC_ARGS(...)                                   \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 0, 0,))
+
+#define RX__TEST_CASE_(suite_id, id, type, data, fixture)                      \
+    static void RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));   \
+    static const struct rx__test_case_desc                                     \
+    RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                    \
+        = {#id,                                                                \
+           #suite_id,                                                          \
+           data,                                                               \
+           fixture,                                                            \
+           &RX__TEST_CASE_CONFIG_GET_ID(suite_id, id),                         \
+           (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};           \
+    RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                               \
+    static void RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type))
+
+#define RX__TEST_CASE_0(suite_id, id)                                          \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
+
+#define RX__TEST_CASE_1(suite_id, id, ...)                                     \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id), __VA_ARGS__);               \
+    RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
+
+#define RX__TEST_CASE_FIXTURE_HAS_VARIADIC_ARGS(...)                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 0, 0, 0,))
+
+#define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
+    static RX__FIXTURE_GET_DATA_TYPE(fixture)                                  \
+    RX__TEST_CASE_DATA_GET_ID(suite_id, id);                                   \
+
+#define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                         \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
+                   &RX__FIXTURE_DESC_GET_ID(fixture))
+
+#define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                    \
+    RX__CONFIG_INITIALIZE_STATIC(                                              \
+        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
+                   &RX__FIXTURE_DESC_GET_ID(fixture),                          \
+                   __VA_ARGS__)
+
 /* Operators                                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -1131,6 +1563,29 @@ rx__str_copy(char **s, const char *original)
 
 /* Helpers                                                         O-(''Q)
    -------------------------------------------------------------------------- */
+
+static int
+rx__compare_test_cases(const void *a, const void *b)
+{
+    int out;
+    const struct rx_test_case *aa;
+    const struct rx_test_case *bb;
+
+    aa = (const struct rx_test_case *)a;
+    bb = (const struct rx_test_case *)b;
+
+    out = strcmp(aa->suite_name, bb->suite_name);
+    if (out != 0) {
+        return out;
+    }
+
+    out = strcmp(aa->name, bb->name);
+    if (out != 0) {
+        return out;
+    }
+
+    return out;
+}
 
 static void
 rx__real_are_almost_equal(int *result, rx__real a, rx__real b, rx__real tol)
@@ -2004,7 +2459,7 @@ rx_test_case_run(struct rx_summary *summary,
     if (test_case->set_up != NULL) {
         enum rx_status status;
 
-        status = test_case->set_up(&context.fixture);
+        status = test_case->set_up(&context, test_case->data);
         if (status != RX_SUCCESS) {
             RX__LOG_ERROR("failed to set-up the fixture "
                           "(suite: \"%s\", case: \"%s\")\n",
@@ -2012,8 +2467,6 @@ rx_test_case_run(struct rx_summary *summary,
                           test_case->name);
             return status;
         }
-    } else {
-        context.fixture = NULL;
     }
 
     if (rx__get_real_time(&time_begin) != RX_SUCCESS) {
@@ -2021,7 +2474,7 @@ rx_test_case_run(struct rx_summary *summary,
     }
 
     if (setjmp(context.env) == 0) {
-        test_case->run(&context);
+        test_case->run(&context, test_case->data);
     }
 
     if (time_begin == (uint64_t)-1
@@ -2037,32 +2490,130 @@ rx_test_case_run(struct rx_summary *summary,
     }
 
     if (test_case->tear_down != NULL) {
-        test_case->tear_down(context.fixture);
+        test_case->tear_down(&context, test_case->data);
     }
 
     return RX_SUCCESS;
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
-rx_run(size_t test_case_count,
-       const struct rx_test_case *test_cases,
-       int argc,
-       const char **argv)
+RX__MAYBE_UNUSED RX__SCOPE void
+rx_test_cases_enumerate(size_t *test_case_count,
+                        struct rx_test_case *test_cases)
 {
+    size_t count;
+    const struct rx__test_case_desc **c_it;
+
+    if (test_cases == NULL) {
+        RX_ASSERT(test_case_count != NULL);
+
+        *test_case_count = 0;
+        for (c_it = &RX__TEST_CASE_SECTION_BEGIN;
+             c_it != &RX__TEST_CASE_SECTION_END;
+             ++c_it) {
+            if (*c_it != NULL) {
+                ++(*test_case_count);
+            }
+        }
+
+        return;
+    }
+
+    count = 0;
+    for (c_it = &RX__TEST_CASE_SECTION_BEGIN;
+         c_it != &RX__TEST_CASE_SECTION_END;
+         ++c_it) {
+        const struct rx__test_suite_desc **s_it;
+        struct rx_test_case *test_case;
+
+        if (*c_it == NULL) {
+            continue;
+        }
+
+        for (s_it = &RX__TEST_SUITE_SECTION_BEGIN;
+             s_it != &RX__TEST_SUITE_SECTION_END;
+             ++s_it) {
+            if (*s_it == NULL) {
+                continue;
+            }
+
+            if (strcmp((*s_it)->name, (*c_it)->suite_name) == 0) {
+                break;
+            }
+        }
+
+        test_case = &test_cases[count];
+
+        test_case->name = (*c_it)->name;
+        test_case->suite_name = (*c_it)->suite_name;
+        test_case->data = (*c_it)->data;
+        test_case->run = (*c_it)->run;
+
+        if ((*c_it)->fixture == NULL) {
+            test_case->set_up = NULL;
+            test_case->tear_down = NULL;
+        } else {
+            test_case->set_up = (*c_it)->fixture->set_up;
+            test_case->tear_down = (*c_it)->fixture->tear_down;
+        }
+
+        if (s_it != &RX__TEST_SUITE_SECTION_END) {
+#define RX__CONFIG_MEMBER(type, name)                                          \
+    if (RX__CONFIG_MEMBER_IS_DEFINED((*s_it)->config, name)) {                 \
+        test_case->name                                                        \
+            = RX__CONFIG_MEMBER_ACCESS_VALUE((*s_it)->config, name);           \
+    }
+            RX__CONFIG_MEMBERS
+#undef RX__CONFIG_MEMBER
+        }
+
+#define RX__CONFIG_MEMBER(type, name)                                          \
+    if (RX__CONFIG_MEMBER_IS_DEFINED((*c_it)->config, name)) {                 \
+        test_case->name                                                        \
+            = RX__CONFIG_MEMBER_ACCESS_VALUE((*c_it)->config, name);           \
+    }
+        RX__CONFIG_MEMBERS
+#undef RX__CONFIG_MEMBER
+
+        ++count;
+    }
+
+    /* Objects that are defined in a custom memory section can only be retrieved
+       in an undefined order, so these need to be manually sorted afterwards
+       in a sensible way.
+    */
+    qsort(test_cases, count, sizeof *test_cases, rx__compare_test_cases);
+}
+
+RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+rx_run(int argc, const char **argv)
+{
+    enum rx_status out;
     size_t i;
+    size_t test_case_count;
+    struct rx_test_case *test_cases;
 
     RX__UNUSED(argc);
     RX__UNUSED(argv);
 
+    out = RX_SUCCESS;
+
+    rx_test_cases_enumerate(&test_case_count, NULL);
+
     if (test_case_count == 0) {
         RX__LOG_INFO("nothing to run\n");
-        return RX_SUCCESS;
+        goto exit;
     }
 
-    RX_ASSERT(test_cases != NULL);
+    test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
+                                                  * test_case_count);
+    if (test_cases == NULL) {
+        RX__LOG_TRACE("failed to allocate the test cases\n");
+        out = RX_ERROR_ALLOCATION;
+        goto exit;
+    }
 
+    rx_test_cases_enumerate(NULL, test_cases);
     for (i = 0; i < test_case_count; ++i) {
-        enum rx_status status;
         const struct rx_test_case *test_case;
         struct rx_summary summary;
 
@@ -2071,29 +2622,33 @@ rx_run(size_t test_case_count,
         RX_ASSERT(test_case->name != NULL);
         RX_ASSERT(test_case->suite_name != NULL);
 
-        status = rx_summary_initialize(&summary, test_case);
-        if (status != RX_SUCCESS) {
+        out = rx_summary_initialize(&summary, test_case);
+        if (out != RX_SUCCESS) {
             RX__LOG_ERROR("failed to initialize the summary "
                           "(suite: \"%s\", case: \"%s\")\n",
                           test_case->suite_name,
                           test_case->name);
-            return status;
+            goto cleanup;
         }
 
-        status = rx_test_case_run(&summary, test_case);
-        if (status != RX_SUCCESS) {
+        out = rx_test_case_run(&summary, test_case);
+        if (out != RX_SUCCESS) {
             RX__LOG_ERROR("failed to run a test case "
                           "(suite: \"%s\", case: \"%s\")\n",
                           test_case->suite_name,
                           test_case->name);
-            return status;
+            goto cleanup;
         }
 
         rx_summary_print(&summary);
         rx_summary_terminate(&summary);
     }
 
-    return RX_SUCCESS;
+cleanup:
+    RX_FREE(test_cases);
+
+exit:
+    return out;
 }
 
 #endif /* REXO_REXO_H */
