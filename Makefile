@@ -63,8 +63,8 @@ $(foreach _config,$(CONFIG),$(eval $(call \
 
 # ------------------------------------------------------------------------------
 
-FORMAT_FILES += $(wildcard include/$(PROJECT)/*.h)
-TIDY_FILES += $(wildcard include/$(PROJECT)/*.h)
+FORMAT_FILES += $(wildcard include/*.h)
+TIDY_FILES += $(wildcard include/*.h)
 
 # ------------------------------------------------------------------------------
 

@@ -112,7 +112,7 @@ add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
 # ------------------------------------------------------------------------------
 
 install(
-    DIRECTORY include/zero
+    DIRECTORY include
     DESTINATION ${CMAKE_INSTALL_INCLUDEDIR})
 
 # ------------------------------------------------------------------------------
