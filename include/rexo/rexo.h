@@ -720,7 +720,7 @@ rx__get_real_time(uint64_t *time)
             return RX_ERROR;
         }
 
-        *time = counter.QuadPart * time_to_nano;
+        *time = (uint64_t)(counter.QuadPart * time_to_nano);
         return RX_SUCCESS;
     }
 #elif defined(RX__PLATFORM_DARWIN)
