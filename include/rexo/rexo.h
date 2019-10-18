@@ -385,7 +385,7 @@ rx_run(size_t test_case_count,
 }
 #endif
 
-/* Internal Implementation                                         O-(''Q)
+/* Implementation                                                  O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if defined(RX_ENABLE_DEBUGGING)                                               \
@@ -428,6 +428,10 @@ rx_run(size_t test_case_count,
 #endif
 
 #define RX__UNUSED(x) (void)(x)
+
+typedef intmax_t rx__int;
+typedef uintmax_t rx__uint;
+typedef long double rx__real;
 
 /* Logger                                                          O-(''Q)
    -------------------------------------------------------------------------- */
@@ -780,7 +784,7 @@ rx__get_real_time(uint64_t *time)
     return RX_ERROR;
 }
 
-/* Dynamic Array                                                   O-(''Q)
+/* Test Failure Array                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
 #define RX__DYN_ARRAY_GET_BLOCK(buf)                                           \
@@ -955,7 +959,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     return RX_SUCCESS;
 }
 
-/* Internals                                                       O-(''Q)
+/* Operators                                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if defined(__GNUC__)
@@ -983,12 +987,6 @@ enum rx__op {
     RX__OP_GREATER_OR_EQUAL = 4,
     RX__OP_LESSER_OR_EQUAL = 5
 };
-
-enum rx__str_case { RX__STR_CASE_OBEY = 0, RX__STR_CASE_IGNORE = 1 };
-
-typedef intmax_t rx__int;
-typedef uintmax_t rx__uint;
-typedef long double rx__real;
 
 static void
 rx__op_get_symbol(const char **symbol, enum rx__op op)
@@ -1047,6 +1045,11 @@ rx__op_get_name(const char **name, enum rx__op op)
             RX_ASSERT(0);
     }
 }
+
+/* Strings                                                         O-(''Q)
+   -------------------------------------------------------------------------- */
+
+enum rx__str_case { RX__STR_CASE_OBEY = 0, RX__STR_CASE_IGNORE = 1 };
 
 static void
 rx__str_case_get_type(const char **type, enum rx__str_case str_case)
@@ -1126,6 +1129,23 @@ rx__str_copy(char **s, const char *original)
     return RX_SUCCESS;
 }
 
+/* Helpers                                                         O-(''Q)
+   -------------------------------------------------------------------------- */
+
+static void
+rx__real_are_almost_equal(int *result, rx__real a, rx__real b, rx__real tol)
+{
+    rx__real diff;
+
+    diff = fabsl(a - b);
+    if (diff <= tol) {
+        *result = 1;
+        return;
+    }
+
+    *result = diff <= fmaxl(fabsl(a), fabsl(b)) * tol;
+}
+
 static void
 rx__str_are_equal(int *result, const char *a, const char *b)
 {
@@ -1158,19 +1178,8 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
     *result = tolower(*a) == tolower(*b);
 }
 
-static void
-rx__real_are_almost_equal(int *result, rx__real a, rx__real b, rx__real tol)
-{
-    rx__real diff;
-
-    diff = fabsl(a - b);
-    if (diff <= tol) {
-        *result = 1;
-        return;
-    }
-
-    *result = diff <= fmaxl(fabsl(a), fabsl(b)) * tol;
-}
+/* Test assessments                                                O-(''Q)
+   -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED static void
 rx__assess_test(struct rx_context *context,
@@ -1757,7 +1766,7 @@ rx__assess_str_comparison_test(struct rx_context *context,
     }
 }
 
-/* Public API Implementation                                       O-(''Q)
+/* Public API                                                      O-(''Q)
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED RX__SCOPE void
