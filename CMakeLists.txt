@@ -42,6 +42,9 @@ install(
     EXPORT ${PROJECT_NAME}Targets)
 add_library(${PROJECT_NAME}::rexo ALIAS rexo)
 
+if(UNIX)
+    target_link_libraries(rexo INTERFACE m)
+endif()
 
 # ------------------------------------------------------------------------------
 
