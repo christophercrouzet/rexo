@@ -75,9 +75,36 @@ macro(rx_add_test)
     list(APPEND RX_TEST_TARGETS test-${RX_ADD_TEST_NAME})
 endmacro()
 
+enable_testing()
+
 rx_add_test(
-    NAME conformance
-    FILES tests/conformance.c
+    NAME fixture-data-only
+    FILES tests/fixture-data-only.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME fixture-void
+    FILES tests/fixture-void.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME run-empty
+    FILES tests/run-empty.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME run-explicit
+    FILES tests/run-explicit.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME run-fixture
+    FILES tests/run-fixture.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME run-minimal
+    FILES tests/run-minimal.c
     DEPENDS rexo)
 
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
