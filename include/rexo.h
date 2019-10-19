@@ -365,9 +365,9 @@ enum rx_status {
 
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
-typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
+typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
 struct rx_test_case {
     const char *name;
