@@ -95,6 +95,14 @@ struct rx_context;
         )(__VA_ARGS__))                                                        \
     RX__REQUIRE_SEMICOLON
 
+#define RX_FIXTURE_VOID(...)                                                   \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__FIXTURE_VOID_,                                                 \
+            RX__FIXTURE_VOID_HAS_VARIADIC_ARGS(__VA_ARGS__)                    \
+        )(__VA_ARGS__))                                                        \
+    RX__REQUIRE_SEMICOLON
+
 #define RX_TEST_SUITE(...)                                                     \
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
@@ -1294,6 +1302,18 @@ struct rx__fixture_desc {
                                  RX__STRUCT_DEFAULT_MEMBER_ASSIGN,             \
                                  __VA_ARGS__);                                 \
     RX__FIXTURE_(id, type)
+
+#define RX__FIXTURE_VOID_HAS_VARIADIC_ARGS(...)                                \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 1, 0,))
+
+#define RX__FIXTURE_VOID_0(id)                                                 \
+    RX__FIXTURE_0(id, void *)
+
+#define RX__FIXTURE_VOID_1(id, ...)                                            \
+    RX__FIXTURE_1(id, void *, __VA_ARGS__)
 
 /* Test Suite Macros                                               O-(''Q)
    -------------------------------------------------------------------------- */

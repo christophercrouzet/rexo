@@ -15,7 +15,7 @@ RX_TEAR_DOWN(my_tear_down, void *)
     assert(step++ == 3);
 }
 
-RX_FIXTURE(my_fixture, void *, .set_up = my_set_up, .tear_down = my_tear_down);
+RX_FIXTURE_VOID(my_fixture, .set_up = my_set_up, .tear_down = my_tear_down);
 
 RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
 {
