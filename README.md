@@ -1,39 +1,65 @@
 Rexo
 ====
 
-Rexo is a simple unit testing framework for C/C++.
+Rexo is a neat unit testing framework for C and C++.
 
-It is written in C89 at the exception of a couple of features borrowed from C99.
+It offers the same xUnit-like structure than most other unit testing frameworks
+but aims at providing a _truly_ polished API.
 
 
 ## Features
 
-* mostly C89-compliant
-* diagonal and orthogonal APIs
-* fixtures
-* simple
+* fits into a single header file.
+* automatic registration of tests.
+* dead simple implementation (KISS all the things!).
+* no specific test runner or DWARF debug information required.
+* brings a designated initializer-like syntax to all C++ versions.
+* test cases can override config attributes from their respective test suite.
+* diagonal (high level) API for ease of use.
+* orthogonal (low level) API for granular customization.
+* test fixtures with set up/tear down callbacks.
+* compatible with C99 and C++.
 
 
-## Minimal Example
+## Requirements
 
-```C
-#include <rexo/rexo.h>
+The automatic registration of tests relies on a compiler-specific feature to
+place data in a specific memory section. The compilers currently supported are
+the GNU compilers (clang, gcc, icc) and MSVC.
 
-RX_TEST_CASE(testBasics)
+Extending the automatic registration feature to other compilers should be
+possible.
+
+
+## Roadmap
+
+* implement a command-line option parser.
+* run each test in isolated environment (subprocess).
+* add an option to set up the output format of the summary (e.g.: jUnit XML).
+* more visual failure messages (e.g.: an arrow pointing where a string differs).
+* support for more assertion macros (e.g.: array comparison, signal handling).
+
+
+## Usage
+
+```c
+#include <rexo.h>
+
+RX_TEST_CASE(my_test_suite, my_test_case)
 {
-    RX_CHECK_INT_EQUAL(1, 1);
+    RX_REQUIRE_STR_EQUAL("Hello", "world!");
 }
-
-static const struct RxTestCase cases[]
-    = {{"basics", testBasics}};
-
-static const struct RxTestSuite suites[]
-    = {{"example", sizeof cases / sizeof cases[0], cases, NULL, NULL}};
 
 int
-main(int argc, const char **ppArgv)
+main(int argc, const char **argv)
 {
-    rxRun(sizeof suites / sizeof suites[0], suites, argc, ppArgv);
-    return 0;
+    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
 }
 ```
+
+![usage](img/usage.png)
+
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit)
