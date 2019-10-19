@@ -37,6 +37,8 @@
 #define RX_MAJOR_VERSION 0
 #define RX_MINOR_VERSION 1
 #define RX_PATCH_VERSION 0
+#define RX_VERSION                                                             \
+    (RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION)
 
 #ifdef RX_STATIC
 #define RX__SCOPE static
