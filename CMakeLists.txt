@@ -18,15 +18,16 @@ set(CMAKE_CXX_STANDARD 98)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-if ("${CMAKE_C_COMPILER_ID}" STREQUAL "GNU"
-    OR "${CMAKE_C_COMPILER_ID}" STREQUAL "CLANG")
+if(MSVC)
+    add_compile_options(/W4)
+else()
     add_compile_options(
         -Wpedantic -Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual
         -Wconversion -Wfloat-equal -Wpointer-arith -Wshadow -Wstrict-overflow=5
         -Wswitch -Wswitch-default -Wundef -Wunreachable-code -Wwrite-strings)
 endif()
 
-if (UNIX)
+if(UNIX)
     add_definitions(-D_POSIX_C_SOURCE=199309L)
 endif()
 
@@ -64,7 +65,7 @@ macro(rx_add_test)
     add_executable(test-${RX_ADD_TEST_NAME} ${RX_ADD_TEST_FILES})
     set_target_properties(test-${RX_ADD_TEST_NAME}
         PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY bin/tests
+            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/tests
             OUTPUT_NAME ${RX_ADD_TEST_NAME})
     target_link_libraries(test-${RX_ADD_TEST_NAME}
         PRIVATE ${RX_ADD_TEST_DEPENDS})
