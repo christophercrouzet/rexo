@@ -9,7 +9,7 @@ OUT_DIR := $(outdir)
 endif
 
 ifndef config
-CONFIG := release
+CONFIG := debug
 else ifneq "$(filter-out debug release all,$(config))" ""
 $(error the 'config' option is not valid)
 else ifneq "$(filter all,$(config))" ""
