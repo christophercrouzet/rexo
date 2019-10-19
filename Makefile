@@ -86,6 +86,11 @@ tests: $(MAKE_FILES)
 FORMAT_FILES += $(wildcard tests/*.[ch])
 TIDY_FILES += $(wildcard tests/*.[ch])
 
+run-tests: tests
+	@ $(call rx_forward_rule,test)
+
+.PHONY: tests
+
 # ------------------------------------------------------------------------------
 
 CLANG_VERSION := $(shell \
