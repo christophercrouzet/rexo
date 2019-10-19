@@ -434,7 +434,10 @@ rx_test_cases_enumerate(size_t *test_case_count,
                         struct rx_test_case *test_cases);
 
 RX__SCOPE enum rx_status
-rx_run(int argc, const char **argv);
+rx_run(int argc,
+       const char **argv,
+       size_t test_case_count,
+       struct rx_test_case *test_cases);
 
 #ifdef __cplusplus
 }
@@ -1633,6 +1636,53 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
     *result = tolower(*a) == tolower(*b);
 }
 
+RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
+{
+    size_t i;
+
+    if (test_case_count == 0) {
+        RX__LOG_INFO("nothing to run\n");
+        return RX_SUCCESS;
+    }
+
+    RX_ASSERT(test_cases != NULL);
+
+    for (i = 0; i < test_case_count; ++i) {
+        enum rx_status status;
+        const struct rx_test_case *test_case;
+        struct rx_summary summary;
+
+        test_case = &test_cases[i];
+
+        RX_ASSERT(test_case->name != NULL);
+        RX_ASSERT(test_case->suite_name != NULL);
+
+        status = rx_summary_initialize(&summary, test_case);
+        if (status != RX_SUCCESS) {
+            RX__LOG_ERROR("failed to initialize the summary "
+                          "(suite: \"%s\", case: \"%s\")\n",
+                          test_case->suite_name,
+                          test_case->name);
+            return status;
+        }
+
+        status = rx_test_case_run(&summary, test_case);
+        if (status != RX_SUCCESS) {
+            RX__LOG_ERROR("failed to run a test case "
+                          "(suite: \"%s\", case: \"%s\")\n",
+                          test_case->suite_name,
+                          test_case->name);
+            return status;
+        }
+
+        rx_summary_print(&summary);
+        rx_summary_terminate(&summary);
+    }
+
+    return RX_SUCCESS;
+}
+
 /* Test assessments                                                O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -2585,69 +2635,35 @@ rx_test_cases_enumerate(size_t *test_case_count,
 }
 
 RX__MAYBE_UNUSED RX__SCOPE enum rx_status
-rx_run(int argc, const char **argv)
+rx_run(int argc,
+       const char **argv,
+       size_t test_case_count,
+       struct rx_test_case *test_cases)
 {
     enum rx_status out;
-    size_t i;
-    size_t test_case_count;
-    struct rx_test_case *test_cases;
 
     RX__UNUSED(argc);
     RX__UNUSED(argv);
 
-    out = RX_SUCCESS;
+    if (test_cases != NULL) {
+        return rx__test_cases_run(test_case_count, test_cases);
+    }
 
     rx_test_cases_enumerate(&test_case_count, NULL);
-
     if (test_case_count == 0) {
-        RX__LOG_INFO("nothing to run\n");
-        goto exit;
+        return rx__test_cases_run(0, NULL);
     }
 
     test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
                                                   * test_case_count);
     if (test_cases == NULL) {
         RX__LOG_TRACE("failed to allocate the test cases\n");
-        out = RX_ERROR_ALLOCATION;
-        goto exit;
+        return RX_ERROR_ALLOCATION;
     }
 
-    rx_test_cases_enumerate(NULL, test_cases);
-    for (i = 0; i < test_case_count; ++i) {
-        const struct rx_test_case *test_case;
-        struct rx_summary summary;
-
-        test_case = &test_cases[i];
-
-        RX_ASSERT(test_case->name != NULL);
-        RX_ASSERT(test_case->suite_name != NULL);
-
-        out = rx_summary_initialize(&summary, test_case);
-        if (out != RX_SUCCESS) {
-            RX__LOG_ERROR("failed to initialize the summary "
-                          "(suite: \"%s\", case: \"%s\")\n",
-                          test_case->suite_name,
-                          test_case->name);
-            goto cleanup;
-        }
-
-        out = rx_test_case_run(&summary, test_case);
-        if (out != RX_SUCCESS) {
-            RX__LOG_ERROR("failed to run a test case "
-                          "(suite: \"%s\", case: \"%s\")\n",
-                          test_case->suite_name,
-                          test_case->name);
-            goto cleanup;
-        }
-
-        rx_summary_print(&summary);
-        rx_summary_terminate(&summary);
-    }
-
-cleanup:
+    rx_test_cases_enumerate(&test_case_count, test_cases);
+    out = rx__test_cases_run(test_case_count, test_cases);
     RX_FREE(test_cases);
-
-exit:
     return out;
 }
 
