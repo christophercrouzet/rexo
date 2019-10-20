@@ -41,15 +41,15 @@
     (RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION)
 
 #ifdef RX_STATIC
-#define RX__SCOPE static
+    #define RX__SCOPE static
 #else
-#define RX__SCOPE extern
+    #define RX__SCOPE extern
 #endif
 
 #ifdef __GNUC__
-#define RX__MAYBE_UNUSED __attribute__((unused))
+    #define RX__MAYBE_UNUSED __attribute__((unused))
 #else
-#define RX__MAYBE_UNUSED
+    #define RX__MAYBE_UNUSED
 #endif
 
 struct rx_context;
@@ -456,43 +456,42 @@ rx_run(int argc,
 /* Implementation                                                  O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if defined(RX_ENABLE_DEBUGGING)                                               \
-    || (!defined(RX_DISABLE_DEBUGGING)                                         \
-        && (defined(DEBUG) || !defined(NDEBUG)))
-#define RX__DEBUGGING 1
+#if defined(RX_ENABLE_DEBUGGING) || (!defined(RX_DISABLE_DEBUGGING)            \
+                                     && (defined(DEBUG) || !defined(NDEBUG)))
+    #define RX__DEBUGGING 1
 #else
-#define RX__DEBUGGING 0
+    #define RX__DEBUGGING 0
 #endif
 
 #if defined(_WIN32)
-#define RX__PLATFORM_WINDOWS
+    #define RX__PLATFORM_WINDOWS
 #elif defined(__unix__) || defined(__APPLE__)
-#define RX__PLATFORM_UNIX
-#if defined(__APPLE__)
-#define RX__PLATFORM_DARWIN
-#elif defined(__linux__)
-#define RX__PLATFORM_LINUX
-#endif
+    #define RX__PLATFORM_UNIX
+    #if defined(__APPLE__)
+        #define RX__PLATFORM_DARWIN
+    #elif defined(__linux__)
+        #define RX__PLATFORM_LINUX
+    #endif
 #endif
 
 #ifndef RX_ASSERT
-#include <assert.h>
-#define RX_ASSERT assert
+    #include <assert.h>
+    #define RX_ASSERT assert
 #endif
 
 #ifndef RX_MALLOC
-#include <stdlib.h>
-#define RX_MALLOC malloc
+    #include <stdlib.h>
+    #define RX_MALLOC malloc
 #endif
 
 #ifndef RX_REALLOC
-#include <stdlib.h>
-#define RX_REALLOC realloc
+    #include <stdlib.h>
+    #define RX_REALLOC realloc
 #endif
 
 #ifndef RX_FREE
-#include <stdlib.h>
-#define RX_FREE free
+    #include <stdlib.h>
+    #define RX_FREE free
 #endif
 
 #define RX__UNUSED(x) (void)(x)
@@ -612,36 +611,36 @@ typedef long double rx__real;
 #endif
 
 #if defined(RX_SET_LOGGING_LEVEL_DEBUG)
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
 #elif defined(RX_SET_LOGGING_LEVEL_TRACE)
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_TRACE
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_TRACE
 #elif defined(RX_SET_LOGGING_LEVEL_INFO)
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_INFO
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_INFO
 #elif defined(RX_SET_LOGGING_LEVEL_WARNING)
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
 #elif defined(RX_SET_LOGGING_LEVEL_ERROR)
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_ERROR
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_ERROR
 #elif defined(RX_ENABLE_DEBUGGING)                                             \
     || (!defined(RX_DISABLE_DEBUGGING)                                         \
         && (defined(DEBUG) || !defined(NDEBUG)))
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
 #else
-#define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
+    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
 #endif
 
 #ifdef RX_DISABLE_LOGGING
-#define RX__LOGGING 0
+    #define RX__LOGGING 0
 #else
-#define RX__LOGGING 1
+    #define RX__LOGGING 1
 #endif
 
 #ifndef RX_LOG
-#define RX_LOG(level, ...)                                                     \
-    do {                                                                       \
-        if (RX__LOGGING && level <= RX__LOGGING_LEVEL) {                       \
-            rx__log(level, __FILE__, __LINE__, __VA_ARGS__);                   \
-        }                                                                      \
-    } while (0)
+    #define RX_LOG(level, ...)                                                 \
+        do {                                                                   \
+            if (RX__LOGGING && level <= RX__LOGGING_LEVEL) {                   \
+                rx__log(level, __FILE__, __LINE__, __VA_ARGS__);               \
+            }                                                                  \
+        } while (0)
 #endif
 
 #define RX__LOG_DEBUG(...) RX_LOG(RX__LOG_LEVEL_DEBUG, __VA_ARGS__)
@@ -841,28 +840,28 @@ rx__log(enum rx__log_level level,
 #define RX__TICKS_PER_SECOND 1000000000ull
 
 #if defined(RX__PLATFORM_WINDOWS)
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
+    #define WIN32_LEAN_AND_MEAN
+    #include <windows.h>
 #elif defined(RX__PLATFORM_DARWIN)
-#include <mach/mach_time.h>
-#include <sys/resource.h>
+    #include <mach/mach_time.h>
+    #include <sys/resource.h>
 #elif defined(RX__PLATFORM_UNIX)
-#include <sys/resource.h>
-#if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 199309L
-#include <time.h>
-#define RX__USE_CLOCK_GETTIME
-#if defined(CLOCK_MONOTONIC_RAW)
-#define RX__CLOCK_ID CLOCK_MONOTONIC_RAW
-#elif defined(CLOCK_MONOTONIC)
-#define RX__CLOCK_ID CLOCK_MONOTONIC
+    #include <sys/resource.h>
+    #if defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 199309L
+        #include <time.h>
+        #define RX__USE_CLOCK_GETTIME
+        #if defined(CLOCK_MONOTONIC_RAW)
+            #define RX__CLOCK_ID CLOCK_MONOTONIC_RAW
+        #elif defined(CLOCK_MONOTONIC)
+            #define RX__CLOCK_ID CLOCK_MONOTONIC
+        #else
+            #define RX__CLOCK_ID CLOCK_REALTIME
+        #endif
+    #else
+        #include <sys/time.h>
+    #endif
 #else
-#define RX__CLOCK_ID CLOCK_REALTIME
-#endif
-#else
-#include <sys/time.h>
-#endif
-#else
-typedef char rx__unsupported_platform[-1];
+    typedef char rx__unsupported_platform[-1];
 #endif
 
 static enum rx_status
@@ -919,7 +918,7 @@ rx__get_real_time(uint64_t *time)
         return RX_SUCCESS;
     }
 #elif defined(RX__PLATFORM_UNIX)
-#if defined(RX__USE_CLOCK_GETTIME)
+    #if defined(RX__USE_CLOCK_GETTIME)
     {
         struct timespec t;
 
@@ -931,7 +930,7 @@ rx__get_real_time(uint64_t *time)
         *time = (uint64_t)t.tv_sec * 1000000000ull + (uint64_t)t.tv_nsec;
         return RX_SUCCESS;
     }
-#else
+    #else
     {
         struct timeval t;
 
@@ -944,7 +943,7 @@ rx__get_real_time(uint64_t *time)
                 + (uint64_t)t.tv_usec * 1000ull;
         return RX_SUCCESS;
     }
-#endif
+    #endif
 #endif
 
     RX__LOG_ERROR("platform not supported\n");
@@ -1420,20 +1419,20 @@ struct rx__test_case_desc {
    -------------------------------------------------------------------------- */
 
 #if defined(__GNUC__)
-#define RX__REAL_OP_EQUAL(out, a, b)                                           \
-    _Pragma("GCC diagnostic push")                                             \
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                        \
-    out = (a) == (b);                                                          \
-    _Pragma("GCC diagnostic pop")
+    #define RX__REAL_OP_EQUAL(out, a, b)                                       \
+        _Pragma("GCC diagnostic push")                                         \
+        _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
+        out = (a) == (b);                                                      \
+        _Pragma("GCC diagnostic pop")
 
-#define RX__REAL_OP_NOT_EQUAL(out, a, b)                                       \
-    _Pragma("GCC diagnostic push")                                             \
-    _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                        \
-    out = (a) != (b);                                                          \
-    _Pragma("GCC diagnostic pop")
+    #define RX__REAL_OP_NOT_EQUAL(out, a, b)                                   \
+        _Pragma("GCC diagnostic push")                                         \
+        _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
+        out = (a) != (b);                                                      \
+        _Pragma("GCC diagnostic pop")
 #else
-#define RX__REAL_OP_EQUAL(out, a, b) out = (a) == (b);
-#define RX__REAL_OP_NOT_EQUAL(out, a, b) out = (a) != (b);
+    #define RX__REAL_OP_EQUAL(out, a, b) out = (a) == (b);
+    #define RX__REAL_OP_NOT_EQUAL(out, a, b) out = (a) != (b);
 #endif
 
 enum rx__op {
@@ -2475,7 +2474,7 @@ rx_summary_print(const struct rx_summary *summary)
     }
 #else
     style_begin = style_end = "";
-#endif /* RX__LOG_STYLING */
+#endif
 
     fprintf(stderr,
             "[%s%s%s] \"%s\" / \"%s\" (%f ms)\n",
