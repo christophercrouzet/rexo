@@ -38,7 +38,7 @@
 #define RX_MINOR_VERSION 1
 #define RX_PATCH_VERSION 0
 #define RX_VERSION                                                             \
-    (RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION)
+    ((RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION))
 
 #ifdef RX_STATIC
     #define RX__SCOPE static
@@ -1420,17 +1420,17 @@ struct rx__test_case_desc {
     #define RX__REAL_OP_EQUAL(out, a, b)                                       \
         _Pragma("GCC diagnostic push")                                         \
         _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
-        out = (a) == (b);                                                      \
+        (out) = (a) == (b);                                                    \
         _Pragma("GCC diagnostic pop")
 
     #define RX__REAL_OP_NOT_EQUAL(out, a, b)                                   \
         _Pragma("GCC diagnostic push")                                         \
         _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
-        out = (a) != (b);                                                      \
+        (out) = (a) != (b);                                                    \
         _Pragma("GCC diagnostic pop")
 #else
-    #define RX__REAL_OP_EQUAL(out, a, b) out = (a) == (b);
-    #define RX__REAL_OP_NOT_EQUAL(out, a, b) out = (a) != (b);
+    #define RX__REAL_OP_EQUAL(out, a, b) (out) = (a) == (b);
+    #define RX__REAL_OP_NOT_EQUAL(out, a, b) (out) = (a) != (b);
 #endif
 
 enum rx__op {
