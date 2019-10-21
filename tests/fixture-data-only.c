@@ -12,15 +12,22 @@ RX_FIXTURE(my_fixture, struct my_data);
 
 RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
 {
-    assert(step++ == 1);
+    ++step;
+    assert(step == 2);
+
     RX_DATA->value = 123;
 }
 
 int
 main(int argc, const char **argv)
 {
-    assert(step++ == 0);
+    ++step;
+    assert(step == 1);
+
     assert(rx_run(argc, argv, 0, NULL) == RX_SUCCESS);
-    assert(step++ == 2);
+
+    ++step;
+    assert(step == 3);
+
     return 0;
 }

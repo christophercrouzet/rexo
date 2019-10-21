@@ -13,7 +13,9 @@ my_set_up(struct rx_context *context, struct my_data *data)
 {
     (void)context;
 
-    assert(step++ == 1);
+    ++step;
+    assert(step == 2);
+
     data->value = 123;
     return RX_SUCCESS;
 }
@@ -23,7 +25,9 @@ my_tear_down(struct rx_context *context, struct my_data *data)
 {
     (void)context;
 
-    assert(step++ == 3);
+    ++step;
+    assert(step == 4);
+
     assert(data->value == 123);
 }
 
@@ -32,7 +36,9 @@ my_test_suite_my_test_case(struct rx_context *context, struct my_data *data)
 {
     (void)context;
 
-    assert(step++ == 2);
+    ++step;
+    assert(step == 3);
+
     assert(data->value == 123);
 }
 
@@ -52,8 +58,13 @@ static struct rx_test_case my_test_case = {
 int
 main(int argc, const char **argv)
 {
-    assert(step++ == 0);
+    ++step;
+    assert(step == 1);
+
     assert(rx_run(argc, argv, 1, &my_test_case) == RX_SUCCESS);
-    assert(step++ == 4);
+
+    ++step;
+    assert(step == 5);
+
     return 0;
 }

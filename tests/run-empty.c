@@ -7,8 +7,13 @@ static int step = 0;
 int
 main(int argc, const char **argv)
 {
-    assert(step++ == 0);
+    ++step;
+    assert(step == 1);
+
     assert(rx_run(argc, argv, 0, NULL) == RX_SUCCESS);
-    assert(step++ == 1);
+
+    ++step;
+    assert(step == 2);
+
     return 0;
 }
