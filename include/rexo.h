@@ -1043,20 +1043,19 @@ rx__test_failure_array_create(struct rx_failure **array, size_t size)
     status = rx__dyn_array_ensure_has_enough_capacity(
         &block,
         0,
-        (size_t)size,
+        size,
         rx__test_failure_array_max_capacity,
         sizeof(struct rx_failure));
     if (status != RX_SUCCESS) {
         RX__LOG_TRACE("failed to reserve a large enough capacity for the "
-                      "test failure array (requested capacity: %zu)\n",
-                      (size_t)size);
+                      "test failure array (requested capacity: %zu)\n", size);
         return status;
     }
 
     RX_ASSERT(block != NULL);
 
-    RX__DYN_ARRAY_GET_HEADER(block)->size = (size_t)size;
-    RX__DYN_ARRAY_GET_HEADER(block)->capacity = (size_t)size;
+    RX__DYN_ARRAY_GET_HEADER(block)->size = size;
+    RX__DYN_ARRAY_GET_HEADER(block)->capacity = size;
     *array = (struct rx_failure *)RX__DYN_ARRAY_GET_BUFFER(block);
     return RX_SUCCESS;
 }
@@ -1076,8 +1075,7 @@ rx__test_failure_array_get_size(size_t *size, const struct rx_failure *array)
 {
     RX_ASSERT(array != NULL);
 
-    *size = (size_t)RX__DYN_ARRAY_GET_CONST_HEADER(
-        RX__DYN_ARRAY_GET_CONST_BLOCK(array))
+    *size = RX__DYN_ARRAY_GET_CONST_HEADER(RX__DYN_ARRAY_GET_CONST_BLOCK(array))
         ->size;
 }
 
@@ -1097,13 +1095,13 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     status = rx__dyn_array_ensure_has_enough_capacity(
         &block,
         RX__DYN_ARRAY_GET_HEADER(block)->capacity,
-        RX__DYN_ARRAY_GET_HEADER(block)->size + (size_t)size,
+        RX__DYN_ARRAY_GET_HEADER(block)->size + size,
         rx__test_failure_array_max_capacity,
         sizeof(struct rx_failure));
     if (status != RX_SUCCESS) {
         RX__LOG_TRACE("failed to reserve a large enough capacity for the "
                       "test failure array (requested capacity: %zu)\n",
-                      RX__DYN_ARRAY_GET_HEADER(block)->size + (size_t)size);
+                      RX__DYN_ARRAY_GET_HEADER(block)->size + size);
         return status;
     }
 
@@ -1111,17 +1109,17 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     *array = (struct rx_failure *)RX__DYN_ARRAY_GET_BUFFER(block);
 
-    pos = (size_t)RX__DYN_ARRAY_GET_HEADER(block)->size;
-    memmove(&(*array)[(size_t)pos + (size_t)size],
-            &(*array)[(size_t)pos],
+    pos = RX__DYN_ARRAY_GET_HEADER(block)->size;
+    memmove(&(*array)[pos + size],
+            &(*array)[pos],
             sizeof(struct rx_failure)
-                * (RX__DYN_ARRAY_GET_HEADER(block)->size - (size_t)pos));
+                * (RX__DYN_ARRAY_GET_HEADER(block)->size - pos));
 
     if (slice != NULL) {
         *slice = &(*array)[pos];
     }
 
-    RX__DYN_ARRAY_GET_HEADER(block)->size += (size_t)size;
+    RX__DYN_ARRAY_GET_HEADER(block)->size += size;
     return RX_SUCCESS;
 }
 
