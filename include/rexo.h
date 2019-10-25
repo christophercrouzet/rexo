@@ -1657,18 +1657,19 @@ RX__MAYBE_UNUSED RX__SCOPE enum rx_status
 rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
 {
     size_t i;
+    enum rx_status status;
+    struct rx_summary summary;
 
     if (test_case_count == 0) {
         RX__LOG_INFO("nothing to run\n");
-        return RX_SUCCESS;
+        status = RX_SUCCESS;
+        goto exit;
     }
 
     RX_ASSERT(test_cases != NULL);
 
     for (i = 0; i < test_case_count; ++i) {
-        enum rx_status status;
         const struct rx_test_case *test_case;
-        struct rx_summary summary;
 
         test_case = &test_cases[i];
 
@@ -1681,7 +1682,7 @@ rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
                           "(suite: \"%s\", case: \"%s\")\n",
                           test_case->suite_name,
                           test_case->name);
-            return status;
+            goto exit;
         }
 
         status = rx_test_case_run(&summary, test_case);
@@ -1690,14 +1691,20 @@ rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
                           "(suite: \"%s\", case: \"%s\")\n",
                           test_case->suite_name,
                           test_case->name);
-            return status;
+            goto summary_undo;
         }
 
         rx_summary_print(&summary);
         rx_summary_terminate(&summary);
     }
 
-    return RX_SUCCESS;
+    goto exit;
+
+summary_undo:
+    rx_summary_terminate(&summary);
+
+exit:
+    return status;
 }
 
 /* Test assessments                                                O-(''Q)
