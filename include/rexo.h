@@ -1033,29 +1033,27 @@ rx__dyn_array_ensure_has_enough_capacity(void **block,
 static enum rx_status
 rx__test_failure_array_create(struct rx_failure **array, size_t size)
 {
-    enum rx_status status;
     void *block;
+    size_t capacity;
 
     RX_ASSERT(array != NULL);
 
-    block = NULL;
+    rx__dyn_array_get_new_capacity(
+        &capacity, 0, size, rx__test_failure_array_max_capacity);
+    RX_ASSERT(capacity >= size);
+    RX_ASSERT(capacity <= rx__test_failure_array_max_capacity);
 
-    status = rx__dyn_array_ensure_has_enough_capacity(
-        &block,
-        0,
-        size,
-        rx__test_failure_array_max_capacity,
-        sizeof(struct rx_failure));
-    if (status != RX_SUCCESS) {
+    block = RX_MALLOC(sizeof(struct rx__dyn_array_header)
+                      + sizeof(struct rx_failure) * capacity);
+    if (block == NULL) {
         RX__LOG_TRACE("failed to reserve a large enough capacity for the "
-                      "test failure array (requested capacity: %zu)\n", size);
-        return status;
+                      "test failure array (requested capacity: %zu)\n",
+                      size);
+        return RX_ERROR_ALLOCATION;
     }
 
-    RX_ASSERT(block != NULL);
-
     RX__DYN_ARRAY_GET_HEADER(block)->size = size;
-    RX__DYN_ARRAY_GET_HEADER(block)->capacity = size;
+    RX__DYN_ARRAY_GET_HEADER(block)->capacity = capacity;
     *array = (struct rx_failure *)RX__DYN_ARRAY_GET_BUFFER(block);
     return RX_SUCCESS;
 }
