@@ -544,6 +544,11 @@ rx_run(int argc,
         1, 1, 1, 1, 1, 1, 1, 1,                                                \
         1, 1, 1, 1, 1, 0, 0, 0,))
 
+/* Initializing data at compile-time in C99 can be done conveniently using
+  designated initializers but these are not available in C++ prior to C++20.
+  As a workaround, we use a feature specific to C++ that allows running
+  a function at file scope to initialize the content of our static data. */
+
 #define RX__STRUCT_INITIALIZE_STATIC_0(id, type, assigner)                     \
     static const type id = {0}
 
@@ -953,6 +958,22 @@ rx__get_real_time(uint64_t *time)
 /* Test Failure Array                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
+/* Simple implementation for dynamic arrays that can grow and stretch at
+   runtime. The object returned to the user is a standard pointer to a C array
+   but the implementation also allocates a header to keep track of the size
+   and the capacity.
+
+   The memory layout is better represented by the diagram below.
+
+   block     user pointer
+    /        /
+   +--------+--------+
+   | header | buffer |
+   +--------+--------+
+
+   The block points to the whole memory being allocated while the buffer
+   represents the actual array exposed to the user. */
+
 #define RX__DYN_ARRAY_GET_BLOCK(buf)                                           \
     ((void *)&((struct rx__dyn_array_header *)(buf))[-1])
 #define RX__DYN_ARRAY_GET_HEADER(block)                                        \
@@ -1139,9 +1160,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_BEGIN;
     extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_END;
 
-    /* Dummy descriptions are needed to avoid the compiler optimizing away
-       empty sections in release mode and thus breaking the discovery function
-       when the user does not define any suite and/or case. */
+    /* Dummy pointers are required to avoid the compiler optimizing away
+       empty sections in release mode. */
     __attribute__((used, section("rxsuite")))
     const struct rx__test_suite_desc *rx__dummy_suite = NULL;
 
@@ -1165,6 +1185,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_CASE_SECTION_BEGIN rx__test_case_section_begin
     #define RX__TEST_CASE_SECTION_END rx__test_case_section_end
 
+    /* All the pointers set in the custom memory section need to be tagged
+       to prevent MSVC to optimize them away. */
     #if defined(_WIN64)
         #define RX__MSVC_FORCE_LINKING(id)                                     \
             __pragma(comment(linker, "/include:" RX__STRINGIFY(id)))
@@ -1217,6 +1239,45 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 #define RX__CONFIG_MEMBERS                                                     \
     RX__CONFIG_MEMBER(rx_set_up_fn, set_up)                                    \
     RX__CONFIG_MEMBER(rx_tear_down_fn, tear_down)
+
+/* Providing a designated initializer-like API like `DEFINE_DATA(.foo = 1.23);`,
+   that tracks whether a member is explicitely defined or not, builds upon the
+   `RX__STRUCT_INITIALIZE_STATIC` macro but provides an alternative way of
+   setting members that also sets a ‘defined’ flag alongside each member that
+   is being set through this macro.
+
+   How the members and their respective boolean flags are set depends on
+   the language.
+
+   The designated initializer syntax available in C99 states that implicit
+   initializers initialize struct elements in order of declaration after any
+   previous designator used. So if we define a struct where each member value
+   is followed by a corresponding boolean flag, as in
+
+   struct data {
+       double foo;
+       int foo_defined;
+   };
+
+   then we are able to expand the macro to `.foo = 1.23, 1`, that is being used
+   to fill up the structure as expected.
+
+   C++ requires a different trick where the values and boolean flags are
+   separatated into two named structs, such as
+
+   struct data {
+       struct {
+           double foo;
+       } value;
+       struct {
+           int foo;
+       } defined;
+   };
+
+   In this scenario, the macro prefixes each given assignment to produce
+   an expression like `out.value.foo = 1.23; out.defined.foo = 1.23 ? 1 : 1`
+   that is used to initialize the structure inside the function defined by
+   the C++ version of the macro `RX__STRUCT_INITIALIZE_STATIC`. */
 
 #ifdef __cplusplus
     struct rx__config {
