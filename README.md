@@ -45,9 +45,21 @@ possible.
 ```c
 #include <rexo.h>
 
-RX_TEST_CASE(my_test_suite, my_test_case)
+struct my_data {
+    const char *value;
+};
+
+RX_SET_UP(my_set_up, struct my_data)
 {
-    RX_REQUIRE_STR_EQUAL("Hello", "world!");
+    RX_DATA->value = "world!";
+    return RX_SUCCESS;
+}
+
+RX_FIXTURE(my_fixture, struct my_data, .set_up = my_set_up);
+
+RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
+{
+    RX_REQUIRE_STR_EQUAL("Hello", RX_DATA->value);
 }
 
 int
