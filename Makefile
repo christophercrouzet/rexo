@@ -79,7 +79,7 @@ TIDY_FILES += $(wildcard tests/*.[ch])
 test: tests
 	@ $(call rx_forward_rule,test)
 
-.PHONY: tests
+.PHONY: tests test
 
 # ------------------------------------------------------------------------------
 
