@@ -109,6 +109,14 @@ tidy: $(MAKE_FILES)
 
 # ------------------------------------------------------------------------------
 
+coverity: clean
+	@ cov-build --dir cov-int make tests -j 4
+	@ tar czvf rexo.tgz cov-int
+
+.PHONY: coverity
+
+# ------------------------------------------------------------------------------
+
 install: $(MAKE_FILES)
 	@ $(call rx_forward_rule,install)
 
@@ -117,7 +125,7 @@ install: $(MAKE_FILES)
 # ------------------------------------------------------------------------------
 
 clean:
-	@ rm -rf $(OUT_DIR)
+	@ rm -rf $(OUT_DIR) cov-int rexo.tgz
 
 .PHONY: clean
 
