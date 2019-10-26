@@ -40,10 +40,10 @@
 #define RX_VERSION                                                             \
     ((RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION))
 
-#ifdef RX_STATIC
-    #define RX__SCOPE static
+#ifdef RX_ENABLE_EXTERNAL_LINKING
+    #define RX__STORAGE extern
 #else
-    #define RX__SCOPE extern
+    #define RX__STORAGE static
 #endif
 
 #ifdef __GNUC__
@@ -413,10 +413,10 @@ struct rx_context {
 extern "C" {
 #endif
 
-RX__SCOPE void
+RX__STORAGE void
 rx_abort_test(struct rx_context *context);
 
-RX__SCOPE enum rx_status
+RX__STORAGE enum rx_status
 rx_handle_test_result(struct rx_context *context,
                       int result,
                       const char *file,
@@ -425,25 +425,25 @@ rx_handle_test_result(struct rx_context *context,
                       const char *failure_msg,
                       const char *diagnostic_msg);
 
-RX__SCOPE enum rx_status
+RX__STORAGE enum rx_status
 rx_summary_initialize(struct rx_summary *summary,
                       const struct rx_test_case *test_case);
 
-RX__SCOPE void
+RX__STORAGE void
 rx_summary_terminate(struct rx_summary *summary);
 
-RX__SCOPE void
+RX__STORAGE void
 rx_summary_print(const struct rx_summary *summary);
 
-RX__SCOPE enum rx_status
+RX__STORAGE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_case *test_case);
 
-RX__SCOPE void
+RX__STORAGE void
 rx_test_cases_enumerate(size_t *test_case_count,
                         struct rx_test_case *test_cases);
 
-RX__SCOPE enum rx_status
+RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
        size_t test_case_count,
@@ -1714,7 +1714,7 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
     *result = tolower(*a) == tolower(*b);
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
 {
     size_t i;
@@ -2359,13 +2359,13 @@ rx__assess_str_comparison_test(struct rx_context *context,
 /* Public API                                                      O-(''Q)
    -------------------------------------------------------------------------- */
 
-RX__MAYBE_UNUSED RX__SCOPE void
+RX__MAYBE_UNUSED RX__STORAGE void
 rx_abort_test(struct rx_context *context)
 {
     longjmp(context->env, 1);
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_handle_test_result(struct rx_context *context,
                       int result,
                       const char *file,
@@ -2457,7 +2457,7 @@ rx_handle_test_result(struct rx_context *context,
     return RX_SUCCESS;
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_summary_initialize(struct rx_summary *summary,
                       const struct rx_test_case *test_case)
 {
@@ -2484,7 +2484,7 @@ rx_summary_initialize(struct rx_summary *summary,
     return RX_SUCCESS;
 }
 
-RX__MAYBE_UNUSED RX__SCOPE void
+RX__MAYBE_UNUSED RX__STORAGE void
 rx_summary_terminate(struct rx_summary *summary)
 {
     size_t i;
@@ -2511,7 +2511,7 @@ rx_summary_terminate(struct rx_summary *summary)
     rx__test_failure_array_destroy(summary->failures);
 }
 
-RX__MAYBE_UNUSED RX__SCOPE void
+RX__MAYBE_UNUSED RX__STORAGE void
 rx_summary_print(const struct rx_summary *summary)
 {
     size_t i;
@@ -2575,7 +2575,7 @@ rx_summary_print(const struct rx_summary *summary)
     }
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_case *test_case)
 {
@@ -2631,7 +2631,7 @@ rx_test_case_run(struct rx_summary *summary,
     return RX_SUCCESS;
 }
 
-RX__MAYBE_UNUSED RX__SCOPE void
+RX__MAYBE_UNUSED RX__STORAGE void
 rx_test_cases_enumerate(size_t *test_case_count,
                         struct rx_test_case *test_cases)
 {
@@ -2719,7 +2719,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
     qsort(test_cases, count, sizeof *test_cases, rx__compare_test_cases);
 }
 
-RX__MAYBE_UNUSED RX__SCOPE enum rx_status
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
        size_t test_case_count,
