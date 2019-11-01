@@ -1294,7 +1294,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     };
 
     #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name) data->defined . name
-    #define RX__CONFIG_DESC_MEMBER_ACCESS_VALUE(data, name) data->value . name
+    #define RX__CONFIG_DESC_MEMBER_GET(data, name) data->value . name
     #define RX__CONFIG_DESC_MEMBER_ASSIGN(x) out.value x; out.defined x ? 1 : 1;
 #else
     struct rx__config_desc {
@@ -1304,7 +1304,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     };
 
     #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name) data->name##_defined
-    #define RX__CONFIG_DESC_MEMBER_ACCESS_VALUE(data, name) data->name
+    #define RX__CONFIG_DESC_MEMBER_GET(data, name) data->name
     #define RX__CONFIG_DESC_MEMBER_ASSIGN(x) x, 1,
 #endif
 
@@ -2695,7 +2695,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {            \
         test_case->name                                                        \
-            = RX__CONFIG_DESC_MEMBER_ACCESS_VALUE((*s_it)->config, name);      \
+            = RX__CONFIG_DESC_MEMBER_GET((*s_it)->config, name);               \
     }
             RX__CONFIG_MEMBERS
 #undef RX__CONFIG_MEMBER
@@ -2704,7 +2704,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*c_it)->config, name)) {            \
         test_case->name                                                        \
-            = RX__CONFIG_DESC_MEMBER_ACCESS_VALUE((*c_it)->config, name);      \
+            = RX__CONFIG_DESC_MEMBER_GET((*c_it)->config, name);               \
     }
         RX__CONFIG_MEMBERS
 #undef RX__CONFIG_MEMBER
