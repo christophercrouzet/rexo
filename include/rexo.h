@@ -1238,9 +1238,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    -------------------------------------------------------------------------- */
 
 #define RX__CONFIG_MEMBERS                                                     \
-    RX__CONFIG_MEMBER(int, skip)                                               \
-    RX__CONFIG_MEMBER(rx_set_up_fn, set_up)                                    \
-    RX__CONFIG_MEMBER(rx_tear_down_fn, tear_down)
+    RX__CONFIG_MEMBER(int, skip)
 
 /* Providing a designated initializer-like API like `DEFINE_DATA(.foo = 1.23);`,
    that tracks whether a member is explicitely defined or not, builds upon the
