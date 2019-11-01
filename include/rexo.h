@@ -382,6 +382,7 @@ typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 struct rx_test_case {
     const char *name;
     const char *suite_name;
+    int skip;
     void *data;
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
@@ -1237,6 +1238,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    -------------------------------------------------------------------------- */
 
 #define RX__CONFIG_MEMBERS                                                     \
+    RX__CONFIG_MEMBER(int, skip)                                               \
     RX__CONFIG_MEMBER(rx_set_up_fn, set_up)                                    \
     RX__CONFIG_MEMBER(rx_tear_down_fn, tear_down)
 
@@ -2588,6 +2590,10 @@ rx_test_case_run(struct rx_summary *summary,
     RX_ASSERT(test_case->name != NULL);
     RX_ASSERT(test_case->suite_name != NULL);
     RX_ASSERT(test_case->run != NULL);
+
+    if (test_case->skip) {
+        return RX_SUCCESS;
+    }
 
     context.summary = summary;
 

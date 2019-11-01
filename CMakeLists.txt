@@ -78,6 +78,11 @@ endmacro()
 enable_testing()
 
 rx_add_test(
+    NAME config-skip
+    FILES tests/config-skip.c
+    DEPENDS rexo)
+
+rx_add_test(
     NAME fixture-data-only
     FILES tests/fixture-data-only.c
     DEPENDS rexo)
