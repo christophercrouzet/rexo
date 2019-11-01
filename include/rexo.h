@@ -591,10 +591,10 @@ rx_run(int argc,
     rx__test_suite_desc_ptr_##id
 #define RX__TEST_CASE_DESC_PTR_GET_ID(suite_id, id)                            \
     rx__test_case_desc_ptr_##suite_id##_##id
-#define RX__TEST_SUITE_CONFIG_GET_ID(id)                                       \
-    rx__test_suite_config_##id
-#define RX__TEST_CASE_CONFIG_GET_ID(suite_id, id)                              \
-    rx__test_case_config_##suite_id##_##id
+#define RX__TEST_SUITE_CONFIG_DESC_GET_ID(id)                                  \
+    rx__test_suite_config_desc_##id
+#define RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id)                         \
+    rx__test_case_config_desc_##suite_id##_##id
 #define RX__TEST_CASE_DATA_GET_ID(suite_id, id)                                \
     rx__test_case_data_##suite_id##_##id
 #define RX__TEST_CASE_GET_ID(suite_id, id)                                     \
@@ -1280,7 +1280,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    the C++ version of the macro `RX__STRUCT_INITIALIZE_STATIC`. */
 
 #ifdef __cplusplus
-    struct rx__config {
+    struct rx__config_desc {
         struct {
     #define RX__CONFIG_MEMBER(type, name) type name;
             RX__CONFIG_MEMBERS
@@ -1293,40 +1293,40 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         } defined;
     };
 
-    #define RX__CONFIG_MEMBER_IS_DEFINED(data, name) data->defined . name
-    #define RX__CONFIG_MEMBER_ACCESS_VALUE(data, name) data->value . name
-    #define RX__CONFIG_MEMBER_ASSIGN(x) out.value x; out.defined x ? 1 : 1;
+    #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name) data->defined . name
+    #define RX__CONFIG_DESC_MEMBER_ACCESS_VALUE(data, name) data->value . name
+    #define RX__CONFIG_DESC_MEMBER_ASSIGN(x) out.value x; out.defined x ? 1 : 1;
 #else
-    struct rx__config {
+    struct rx__config_desc {
     #define RX__CONFIG_MEMBER(type, name) type name; int name##_defined;
         RX__CONFIG_MEMBERS
     #undef RX__CONFIG_MEMBER
     };
 
-    #define RX__CONFIG_MEMBER_IS_DEFINED(data, name) data->name##_defined
-    #define RX__CONFIG_MEMBER_ACCESS_VALUE(data, name) data->name
-    #define RX__CONFIG_MEMBER_ASSIGN(x) x, 1,
+    #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name) data->name##_defined
+    #define RX__CONFIG_DESC_MEMBER_ACCESS_VALUE(data, name) data->name
+    #define RX__CONFIG_DESC_MEMBER_ASSIGN(x) x, 1,
 #endif
 
-#define RX__CONFIG_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)                    \
+#define RX__CONFIG_DESC_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)               \
     RX__EXPAND(RX__ARG(                                                        \
         __VA_ARGS__,                                                           \
         1, 1, 1, 1, 1, 1, 1, 1,                                                \
         1, 1, 1, 1, 1, 1, 1, 0,))
 
-#define RX__CONFIG_INITIALIZE_STATIC_0(id)                                     \
+#define RX__CONFIG_DESC_INITIALIZE_STATIC_0(id)                                \
     RX__STRUCT_INITIALIZE_STATIC_0(                                            \
-        id, struct rx__config, RX__CONFIG_MEMBER_ASSIGN)
+        id, struct rx__config_desc, RX__CONFIG_DESC_MEMBER_ASSIGN)
 
-#define RX__CONFIG_INITIALIZE_STATIC_1(id, ...)                                \
+#define RX__CONFIG_DESC_INITIALIZE_STATIC_1(id, ...)                           \
     RX__STRUCT_INITIALIZE_STATIC_1(                                            \
-        id, struct rx__config, RX__CONFIG_MEMBER_ASSIGN, __VA_ARGS__)
+        id, struct rx__config_desc, RX__CONFIG_DESC_MEMBER_ASSIGN, __VA_ARGS__)
 
-#define RX__CONFIG_INITIALIZE_STATIC(...)                                      \
+#define RX__CONFIG_DESC_INITIALIZE_STATIC(...)                                 \
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
-            RX__CONFIG_INITIALIZE_STATIC_,                                     \
-            RX__CONFIG_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)        \
+            RX__CONFIG_DESC_INITIALIZE_STATIC_,                                \
+            RX__CONFIG_DESC_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)   \
         )(__VA_ARGS__))
 
 /* Fixture Macros                                                  O-(''Q)
@@ -1376,7 +1376,7 @@ struct rx__fixture_desc {
 
 struct rx__test_suite_desc {
     const char *name;
-    const struct rx__config *config;
+    const struct rx__config_desc *config;
 };
 
 #define RX__TEST_SUITE_HAS_VARIADIC_ARGS(...)                                  \
@@ -1387,17 +1387,17 @@ struct rx__test_suite_desc {
 
 #define RX__TEST_SUITE_(id)                                                    \
     static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id)     \
-        = {#id, &RX__TEST_SUITE_CONFIG_GET_ID(id)};                            \
+        = {#id, &RX__TEST_SUITE_CONFIG_DESC_GET_ID(id)};                       \
     RX__TEST_SUITE_DESC_DEFINE_PTR(id)
 
 #define RX__TEST_SUITE_0(id)                                                   \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_SUITE_CONFIG_GET_ID(id));                                     \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_SUITE_CONFIG_DESC_GET_ID(id));                                \
     RX_TEST_SUITE_(id);
 
 #define RX__TEST_SUITE_1(id, ...)                                              \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_SUITE_CONFIG_GET_ID(id), __VA_ARGS__);                        \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_SUITE_CONFIG_DESC_GET_ID(id), __VA_ARGS__);                   \
     RX_TEST_SUITE_(id);
 
 /* Test Case Macros                                                O-(''Q)
@@ -1408,7 +1408,7 @@ struct rx__test_case_desc {
     const char *suite_name;
     void *data;
     const struct rx__fixture_desc *fixture;
-    const struct rx__config *config;
+    const struct rx__config_desc *config;
     const rx_test_case_run_fn run;
 };
 
@@ -1426,19 +1426,19 @@ struct rx__test_case_desc {
            #suite_id,                                                          \
            data,                                                               \
            fixture,                                                            \
-           &RX__TEST_CASE_CONFIG_GET_ID(suite_id, id),                         \
+           &RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id),                    \
            (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};           \
     RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                               \
     static void RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type))
 
 #define RX__TEST_CASE_0(suite_id, id)                                          \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                       \
     RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
 
 #define RX__TEST_CASE_1(suite_id, id, ...)                                     \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id), __VA_ARGS__);               \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id), __VA_ARGS__);          \
     RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
 
 #define RX__TEST_CASE_FIXTURE_HAS_VARIADIC_ARGS(...)                           \
@@ -1452,8 +1452,8 @@ struct rx__test_case_desc {
     RX__TEST_CASE_DATA_GET_ID(suite_id, id);                                   \
 
 #define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                         \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                       \
     RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
     RX__TEST_CASE_(suite_id,                                                   \
                    id,                                                         \
@@ -1462,8 +1462,8 @@ struct rx__test_case_desc {
                    &RX__FIXTURE_DESC_GET_ID(fixture))
 
 #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                    \
-    RX__CONFIG_INITIALIZE_STATIC(                                              \
-        RX__TEST_CASE_CONFIG_GET_ID(suite_id, id));                            \
+    RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
+        RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                       \
     RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
     RX__TEST_CASE_(suite_id,                                                   \
                    id,                                                         \
@@ -2693,18 +2693,18 @@ rx_test_cases_enumerate(size_t *test_case_count,
 
         if (s_it != &RX__TEST_SUITE_SECTION_END) {
 #define RX__CONFIG_MEMBER(type, name)                                          \
-    if (RX__CONFIG_MEMBER_IS_DEFINED((*s_it)->config, name)) {                 \
+    if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {            \
         test_case->name                                                        \
-            = RX__CONFIG_MEMBER_ACCESS_VALUE((*s_it)->config, name);           \
+            = RX__CONFIG_DESC_MEMBER_ACCESS_VALUE((*s_it)->config, name);      \
     }
             RX__CONFIG_MEMBERS
 #undef RX__CONFIG_MEMBER
         }
 
 #define RX__CONFIG_MEMBER(type, name)                                          \
-    if (RX__CONFIG_MEMBER_IS_DEFINED((*c_it)->config, name)) {                 \
+    if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*c_it)->config, name)) {            \
         test_case->name                                                        \
-            = RX__CONFIG_MEMBER_ACCESS_VALUE((*c_it)->config, name);           \
+            = RX__CONFIG_DESC_MEMBER_ACCESS_VALUE((*c_it)->config, name);      \
     }
         RX__CONFIG_MEMBERS
 #undef RX__CONFIG_MEMBER
