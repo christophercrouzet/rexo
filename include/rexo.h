@@ -379,10 +379,19 @@ typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
+#define RX__CONFIG_MEMBERS                                                     \
+    RX__CONFIG_MEMBER(int, skip)
+
+struct rx_config {
+#define RX__CONFIG_MEMBER(type, name) type name;
+    RX__CONFIG_MEMBERS
+#undef RX__CONFIG_MEMBER
+};
+
 struct rx_test_case {
     const char *name;
     const char *suite_name;
-    int skip;
+    struct rx_config config;
     void *data;
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
@@ -1236,9 +1245,6 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
 /* Test Configuration                                              O-(''Q)
    -------------------------------------------------------------------------- */
-
-#define RX__CONFIG_MEMBERS                                                     \
-    RX__CONFIG_MEMBER(int, skip)
 
 /* Providing a designated initializer-like API like `DEFINE_DATA(.foo = 1.23);`,
    that tracks whether a member is explicitely defined or not, builds upon the
@@ -2589,7 +2595,7 @@ rx_test_case_run(struct rx_summary *summary,
     RX_ASSERT(test_case->suite_name != NULL);
     RX_ASSERT(test_case->run != NULL);
 
-    if (test_case->skip) {
+    if (test_case->config.skip) {
         return RX_SUCCESS;
     }
 
@@ -2698,7 +2704,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
         if (s_it != &RX__TEST_SUITE_SECTION_END) {
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {            \
-        test_case->name                                                        \
+        test_case->config.name                                                 \
             = RX__CONFIG_DESC_MEMBER_GET((*s_it)->config, name);               \
     }
             RX__CONFIG_MEMBERS
@@ -2707,7 +2713,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*c_it)->config, name)) {            \
-        test_case->name                                                        \
+        test_case->config.name                                                 \
             = RX__CONFIG_DESC_MEMBER_GET((*c_it)->config, name);               \
     }
         RX__CONFIG_MEMBERS
