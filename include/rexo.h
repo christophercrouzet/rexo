@@ -2674,6 +2674,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
             continue;
         }
 
+        /* Find the corresponding test suite description, if any. */
         for (s_it = &RX__TEST_SUITE_SECTION_BEGIN;
              s_it != &RX__TEST_SUITE_SECTION_END;
              ++s_it) {
@@ -2692,6 +2693,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
         test_case->suite_name = (*c_it)->suite_name;
 
         if (s_it != &RX__TEST_SUITE_SECTION_END) {
+            /* Inherit the config from the test suite's description. */
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {            \
         test_case->config.name                                                 \
@@ -2701,6 +2703,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 #undef RX__CONFIG_MEMBER
         }
 
+        /* Inherit the config from the test case's description. */
 #define RX__CONFIG_MEMBER(type, name)                                          \
     if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*c_it)->config, name)) {            \
         test_case->config.name                                                 \
@@ -2725,8 +2728,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 
     /* Objects that are defined in a custom memory section can only be retrieved
        in an undefined order, so these need to be manually sorted afterwards
-       in a sensible way.
-    */
+       in a sensible way. */
     qsort(test_cases, count, sizeof *test_cases, rx__compare_test_cases);
 }
 
@@ -2745,6 +2747,8 @@ rx_run(int argc,
         return rx__test_cases_run(test_case_count, test_cases);
     }
 
+    /* If no test cases are explicitly passed, fallback to discovering the
+       ones defined through the automatic registration framework. */
     rx_test_cases_enumerate(&test_case_count, NULL);
     if (test_case_count == 0) {
         return rx__test_cases_run(0, NULL);
