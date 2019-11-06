@@ -643,9 +643,7 @@ typedef long double rx__real;
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
 #elif defined(RX_SET_LOGGING_LEVEL_ERROR)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_ERROR
-#elif defined(RX_ENABLE_DEBUGGING)                                             \
-    || (!defined(RX_DISABLE_DEBUGGING)                                         \
-        && (defined(DEBUG) || !defined(NDEBUG)))
+#elif RX__DEBUGGING
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #else
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
