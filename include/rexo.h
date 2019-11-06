@@ -375,6 +375,14 @@ enum rx_status {
 
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
+enum rx_log_level {
+    RX_LOG_LEVEL_ERROR = 0,
+    RX_LOG_LEVEL_WARNING = 1,
+    RX_LOG_LEVEL_INFO = 2,
+    RX_LOG_LEVEL_TRACE = 3,
+    RX_LOG_LEVEL_DEBUG = 4
+};
+
 typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
@@ -626,21 +634,21 @@ typedef long double rx__real;
 #endif
 
 #if defined(RX_SET_LOGGING_LEVEL_DEBUG)
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #elif defined(RX_SET_LOGGING_LEVEL_TRACE)
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_TRACE
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_TRACE
 #elif defined(RX_SET_LOGGING_LEVEL_INFO)
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_INFO
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_INFO
 #elif defined(RX_SET_LOGGING_LEVEL_WARNING)
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
 #elif defined(RX_SET_LOGGING_LEVEL_ERROR)
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_ERROR
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_ERROR
 #elif defined(RX_ENABLE_DEBUGGING)                                             \
     || (!defined(RX_DISABLE_DEBUGGING)                                         \
         && (defined(DEBUG) || !defined(NDEBUG)))
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_DEBUG
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #else
-    #define RX__LOGGING_LEVEL RX__LOG_LEVEL_WARNING
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
 #endif
 
 #ifdef RX_DISABLE_LOGGING
@@ -658,23 +666,15 @@ typedef long double rx__real;
         } while (0)
 #endif
 
-#define RX__LOG_DEBUG(...) RX_LOG(RX__LOG_LEVEL_DEBUG, __VA_ARGS__)
+#define RX__LOG_DEBUG(...) RX_LOG(RX_LOG_LEVEL_DEBUG, __VA_ARGS__)
 
-#define RX__LOG_TRACE(...) RX_LOG(RX__LOG_LEVEL_TRACE, __VA_ARGS__)
+#define RX__LOG_TRACE(...) RX_LOG(RX_LOG_LEVEL_TRACE, __VA_ARGS__)
 
-#define RX__LOG_INFO(...) RX_LOG(RX__LOG_LEVEL_INFO, __VA_ARGS__)
+#define RX__LOG_INFO(...) RX_LOG(RX_LOG_LEVEL_INFO, __VA_ARGS__)
 
-#define RX__LOG_WARNING(...) RX_LOG(RX__LOG_LEVEL_WARNING, __VA_ARGS__)
+#define RX__LOG_WARNING(...) RX_LOG(RX_LOG_LEVEL_WARNING, __VA_ARGS__)
 
-#define RX__LOG_ERROR(...) RX_LOG(RX__LOG_LEVEL_ERROR, __VA_ARGS__)
-
-enum rx__log_level {
-    RX__LOG_LEVEL_ERROR = 0,
-    RX__LOG_LEVEL_WARNING = 1,
-    RX__LOG_LEVEL_INFO = 2,
-    RX__LOG_LEVEL_TRACE = 3,
-    RX__LOG_LEVEL_DEBUG = 4
-};
+#define RX__LOG_ERROR(...) RX_LOG(RX_LOG_LEVEL_ERROR, __VA_ARGS__)
 
 #if RX__LOG_STYLING
 enum rx__log_style {
@@ -697,24 +697,24 @@ enum rx__log_style {
 #endif
 
 static void
-rx__log_level_get_name(const char **name, enum rx__log_level level)
+rx__log_level_get_name(const char **name, enum rx_log_level level)
 {
     RX_ASSERT(name != NULL);
 
     switch (level) {
-        case RX__LOG_LEVEL_ERROR:
+        case RX_LOG_LEVEL_ERROR:
             *name = "error";
             return;
-        case RX__LOG_LEVEL_WARNING:
+        case RX_LOG_LEVEL_WARNING:
             *name = "warning";
             return;
-        case RX__LOG_LEVEL_INFO:
+        case RX_LOG_LEVEL_INFO:
             *name = "info";
             return;
-        case RX__LOG_LEVEL_TRACE:
+        case RX_LOG_LEVEL_TRACE:
             *name = "trace";
             return;
-        case RX__LOG_LEVEL_DEBUG:
+        case RX_LOG_LEVEL_DEBUG:
             *name = "debug";
             return;
         default:
@@ -724,24 +724,24 @@ rx__log_level_get_name(const char **name, enum rx__log_level level)
 
 #if RX__LOG_STYLING
 static void
-rx__log_level_get_style(enum rx__log_style *style, enum rx__log_level level)
+rx__log_level_get_style(enum rx__log_style *style, enum rx_log_level level)
 {
     RX_ASSERT(style != NULL);
 
     switch (level) {
-        case RX__LOG_LEVEL_ERROR:
+        case RX_LOG_LEVEL_ERROR:
             *style = RX__LOG_STYLE_BRIGHT_RED;
             return;
-        case RX__LOG_LEVEL_WARNING:
+        case RX_LOG_LEVEL_WARNING:
             *style = RX__LOG_STYLE_BRIGHT_YELLOW;
             return;
-        case RX__LOG_LEVEL_INFO:
+        case RX_LOG_LEVEL_INFO:
             *style = RX__LOG_STYLE_BRIGHT_GREEN;
             return;
-        case RX__LOG_LEVEL_TRACE:
+        case RX_LOG_LEVEL_TRACE:
             *style = RX__LOG_STYLE_BRIGHT_CYAN;
             return;
-        case RX__LOG_LEVEL_DEBUG:
+        case RX_LOG_LEVEL_DEBUG:
             *style = RX__LOG_STYLE_BRIGHT_MAGENTA;
             return;
         default:
@@ -807,7 +807,7 @@ rx__log_style_get_ansi_code(const char **code, enum rx__log_style style)
 #endif /* RX__LOG_STYLING */
 
 static void
-rx__log(enum rx__log_level level,
+rx__log(enum rx_log_level level,
         const char *file,
         int line,
         const char *fmt,
