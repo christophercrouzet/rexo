@@ -128,8 +128,8 @@ struct rx_context;
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
 
-#define RX__DEFINE_TEST(condition, expected, msg, severity)                    \
-    rx__assess_test(RX__PARAM_CONTEXT,                                         \
+#define RX__TEST_DEFINE(condition, expected, msg, severity)                    \
+    rx__test_assess(RX__PARAM_CONTEXT,                                         \
                     !!(condition),                                             \
                     expected,                                                  \
                     msg,                                                       \
@@ -137,8 +137,8 @@ struct rx_context;
                     __LINE__,                                                  \
                     severity)
 
-#define RX__DEFINE_BOOL_TEST(condition, expected, severity)                    \
-    rx__assess_bool_test(RX__PARAM_CONTEXT,                                    \
+#define RX__BOOL_TEST_DEFINE(condition, expected, severity)                    \
+    rx__bool_test_assess(RX__PARAM_CONTEXT,                                    \
                          !!(condition),                                        \
                          expected,                                             \
                          #condition,                                           \
@@ -146,8 +146,8 @@ struct rx_context;
                          __LINE__,                                             \
                          severity)
 
-#define RX__DEFINE_INT_TEST(x1, x2, op, severity)                              \
-    rx__assess_int_comparison_test(RX__PARAM_CONTEXT,                          \
+#define RX__INT_TEST_DEFINE(x1, x2, op, severity)                              \
+    rx__int_test_assess_comparison(RX__PARAM_CONTEXT,                          \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -157,8 +157,8 @@ struct rx_context;
                                    __LINE__,                                   \
                                    severity)
 
-#define RX__DEFINE_UINT_TEST(x1, x2, op, severity)                             \
-    rx__assess_uint_comparison_test(RX__PARAM_CONTEXT,                         \
+#define RX__UINT_TEST_DEFINE(x1, x2, op, severity)                             \
+    rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                         \
                                     (x1),                                      \
                                     (x2),                                      \
                                     op,                                        \
@@ -168,8 +168,8 @@ struct rx_context;
                                     __LINE__,                                  \
                                     severity)
 
-#define RX__DEFINE_REAL_TEST(x1, x2, op, severity)                             \
-    rx__assess_real_comparison_test(RX__PARAM_CONTEXT,                         \
+#define RX__REAL_TEST_DEFINE(x1, x2, op, severity)                             \
+    rx__real_test_assess_comparison(RX__PARAM_CONTEXT,                         \
                                     (x1),                                      \
                                     (x2),                                      \
                                     op,                                        \
@@ -179,8 +179,8 @@ struct rx_context;
                                     __LINE__,                                  \
                                     severity)
 
-#define RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, op, severity)                  \
-    rx__assess_real_fuzzy_comparison_test(RX__PARAM_CONTEXT,                   \
+#define RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, op, severity)                  \
+    rx__real_test_assess_comparison_fuzzy(RX__PARAM_CONTEXT,                   \
                                           (x1),                                \
                                           (x2),                                \
                                           (tol),                               \
@@ -190,8 +190,8 @@ struct rx_context;
                                           __FILE__,                            \
                                           __LINE__,                            \
                                           severity)
-#define RX__DEFINE_STR_TEST(s1, s2, str_case, op, severity)                    \
-    rx__assess_str_comparison_test(RX__PARAM_CONTEXT,                          \
+#define RX__STR_TEST_DEFINE(s1, s2, str_case, op, severity)                    \
+    rx__str_test_assess_comparison(RX__PARAM_CONTEXT,                          \
                                    (s1),                                       \
                                    (s2),                                       \
                                    str_case,                                   \
@@ -203,167 +203,167 @@ struct rx_context;
                                    severity)
 
 #define RX_REQUIRE(condition, msg)                                             \
-    RX__DEFINE_TEST(condition, RX__TRUE, msg, RX_FATAL)
+    RX__TEST_DEFINE(condition, RX__TRUE, msg, RX_FATAL)
 
-#define RX_REQUIRE_TRUE(condition)                                             \
-    RX__DEFINE_BOOL_TEST(condition, RX__TRUE, RX_FATAL)
+#define RX_BOOL_REQUIRE_TRUE(condition)                                        \
+    RX__BOOL_TEST_DEFINE(condition, RX__TRUE, RX_FATAL)
 
-#define RX_REQUIRE_FALSE(condition)                                            \
-    RX__DEFINE_BOOL_TEST(condition, RX__FALSE, RX_FATAL)
+#define RX_BOOL_REQUIRE_FALSE(condition)                                       \
+    RX__BOOL_TEST_DEFINE(condition, RX__FALSE, RX_FATAL)
 
-#define RX_REQUIRE_INT_EQUAL(x1, x2)                                           \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_EQUAL(x1, x2)                                           \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_NOT_EQUAL(x1, x2)                                       \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                       \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_GREATER(x1, x2)                                         \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_INT_REQUIRE_GREATER(x1, x2)                                         \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_INT_LESSER(x1, x2)                                          \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_INT_REQUIRE_LESSER(x1, x2)                                          \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_INT_GREATER_OR_EQUAL(x1, x2)                                \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                                \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_INT_LESSER_OR_EQUAL(x1, x2)                                 \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                 \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_EQUAL(x1, x2)                                          \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_EQUAL(x1, x2)                                          \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_NOT_EQUAL(x1, x2)                                      \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                      \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_GREATER(x1, x2)                                        \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_UINT_REQUIRE_GREATER(x1, x2)                                        \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_UINT_LESSER(x1, x2)                                         \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_UINT_REQUIRE_LESSER(x1, x2)                                         \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_UINT_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_UINT_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_EQUAL(x1, x2)                                          \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_EQUAL(x1, x2)                                          \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_NOT_EQUAL(x1, x2)                                      \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                      \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_GREATER(x1, x2)                                        \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_REAL_REQUIRE_GREATER(x1, x2)                                        \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
 
-#define RX_REQUIRE_REAL_LESSER(x1, x2)                                         \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_REAL_REQUIRE_LESSER(x1, x2)                                         \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
 
-#define RX_REQUIRE_REAL_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_ALMOST_EQUAL(x1, x2, tol)                              \
-    RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RX__OP_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_EQUAL_FUZZY(x1, x2, tol)                               \
+    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_REAL_NOT_ALMOST_EQUAL(x1, x2, tol)                          \
-    RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                           \
+    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_EQUAL(s1, s2)                                           \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_FATAL)
+#define RX_STR_REQUIRE_EQUAL(s1, s2)                                           \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_NOT_EQUAL(s1, s2)                                       \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_OBEY, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)                                       \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_NOT_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_EQUAL_NO_CASE(s1, s2)                                   \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_FATAL)
+#define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)                                   \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_FATAL)
 
-#define RX_REQUIRE_STR_NOT_EQUAL_NO_CASE(s1, s2)                               \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_IGNORE, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)                               \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_NOT_EQUAL, RX_FATAL)
 
 #define RX_CHECK(condition, msg)                                               \
-    RX__DEFINE_TEST(condition, RX__TRUE, msg, RX_NONFATAL)
+    RX__TEST_DEFINE(condition, RX__TRUE, msg, RX_NONFATAL)
 
-#define RX_CHECK_TRUE(condition)                                               \
-    RX__DEFINE_BOOL_TEST(condition, RX__TRUE, RX_NONFATAL)
+#define RX_BOOL_CHECK_TRUE(condition)                                          \
+    RX__BOOL_TEST_DEFINE(condition, RX__TRUE, RX_NONFATAL)
 
-#define RX_CHECK_FALSE(condition)                                              \
-    RX__DEFINE_BOOL_TEST(condition, RX__FALSE, RX_NONFATAL)
+#define RX_BOOL_CHECK_FALSE(condition)                                         \
+    RX__BOOL_TEST_DEFINE(condition, RX__FALSE, RX_NONFATAL)
 
-#define RX_CHECK_INT_EQUAL(x1, x2)                                             \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_INT_CHECK_EQUAL(x1, x2)                                             \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_NOT_EQUAL(x1, x2)                                         \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                         \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_GREATER(x1, x2)                                           \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_GREATER, RX_NONFATAL)
+#define RX_INT_CHECK_GREATER(x1, x2)                                           \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_INT_LESSER(x1, x2)                                            \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_LESSER, RX_NONFATAL)
+#define RX_INT_CHECK_LESSER(x1, x2)                                            \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_INT_GREATER_OR_EQUAL(x1, x2)                                  \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                                  \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_INT_LESSER_OR_EQUAL(x1, x2)                                   \
-    RX__DEFINE_INT_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                                   \
+    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_EQUAL(x1, x2)                                            \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_UINT_CHECK_EQUAL(x1, x2)                                            \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_NOT_EQUAL(x1, x2)                                        \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                        \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_GREATER(x1, x2)                                          \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_GREATER, RX_NONFATAL)
+#define RX_UINT_CHECK_GREATER(x1, x2)                                          \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_UINT_LESSER(x1, x2)                                           \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_LESSER, RX_NONFATAL)
+#define RX_UINT_CHECK_LESSER(x1, x2)                                           \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_UINT_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_UINT_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__DEFINE_UINT_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
+    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_EQUAL(x1, x2)                                            \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_EQUAL(x1, x2)                                            \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_NOT_EQUAL(x1, x2)                                        \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                        \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_GREATER(x1, x2)                                          \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_GREATER, RX_NONFATAL)
+#define RX_REAL_CHECK_GREATER(x1, x2)                                          \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
 
-#define RX_CHECK_REAL_LESSER(x1, x2)                                           \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_LESSER, RX_NONFATAL)
+#define RX_REAL_CHECK_LESSER(x1, x2)                                           \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
 
-#define RX_CHECK_REAL_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__DEFINE_REAL_TEST(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
+    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_ALMOST_EQUAL(x1, x2, tol)                                \
-    RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                                 \
+    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_REAL_NOT_ALMOST_EQUAL(x1, x2, tol)                            \
-    RX__DEFINE_REAL_FUZZY_TEST(x1, x2, tol, RX__OP_NOT_EQUAL, RX_NONFATAL)
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                             \
+    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_EQUAL(s1, s2)                                             \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_STR_CHECK_EQUAL(s1, s2)                                             \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_NOT_EQUAL(s1, s2)                                         \
-    RX__DEFINE_STR_TEST(                                                       \
+#define RX_STR_CHECK_NOT_EQUAL(s1, s2)                                         \
+    RX__STR_TEST_DEFINE(                                                       \
         s1, s2, RX__STR_CASE_OBEY, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_EQUAL_NO_CASE(s1, s2)                                     \
-    RX__DEFINE_STR_TEST(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_NONFATAL)
+#define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)                                     \
+    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_NONFATAL)
 
-#define RX_CHECK_STR_NOT_EQUAL_NO_CASE(s1, s2)                                 \
-    RX__DEFINE_STR_TEST(                                                       \
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)                                 \
+    RX__STR_TEST_DEFINE(                                                       \
         s1, s2, RX__STR_CASE_IGNORE, RX__OP_NOT_EQUAL, RX_NONFATAL)
 
 enum rx_status {
@@ -1673,7 +1673,7 @@ rx__compare_test_cases(const void *a, const void *b)
 }
 
 static void
-rx__real_are_almost_equal(int *result, rx__real a, rx__real b, rx__real tol)
+rx__real_are_equal_fuzzy(int *result, rx__real a, rx__real b, rx__real tol)
 {
     rx__real diff;
 
@@ -1802,7 +1802,7 @@ rx__test_cases_run_registered(void)
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED static void
-rx__assess_test(struct rx_context *context,
+rx__test_assess(struct rx_context *context,
                 int value,
                 int expected,
                 const char *failure_msg,
@@ -1833,7 +1833,7 @@ rx__assess_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_bool_test(struct rx_context *context,
+rx__bool_test_assess(struct rx_context *context,
                      int x,
                      int expected,
                      const char *expr,
@@ -1900,7 +1900,7 @@ rx__assess_bool_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_int_comparison_test(struct rx_context *context,
+rx__int_test_assess_comparison(struct rx_context *context,
                                rx__int x1,
                                rx__int x2,
                                enum rx__op op,
@@ -1999,7 +1999,7 @@ rx__assess_int_comparison_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_uint_comparison_test(struct rx_context *context,
+rx__uint_test_assess_comparison(struct rx_context *context,
                                 rx__uint x1,
                                 rx__uint x2,
                                 enum rx__op op,
@@ -2098,7 +2098,7 @@ rx__assess_uint_comparison_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_real_comparison_test(struct rx_context *context,
+rx__real_test_assess_comparison(struct rx_context *context,
                                 rx__real x1,
                                 rx__real x2,
                                 enum rx__op op,
@@ -2197,7 +2197,7 @@ rx__assess_real_comparison_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_real_fuzzy_comparison_test(struct rx_context *context,
+rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
                                       rx__real x1,
                                       rx__real x2,
                                       rx__real tol,
@@ -2219,10 +2219,10 @@ rx__assess_real_fuzzy_comparison_test(struct rx_context *context,
 
     switch (op) {
         case RX__OP_EQUAL:
-            rx__real_are_almost_equal(&result, x1, x2, tol);
+            rx__real_are_equal_fuzzy(&result, x1, x2, tol);
             break;
         case RX__OP_NOT_EQUAL:
-            rx__real_are_almost_equal(&result, x1, x2, tol);
+            rx__real_are_equal_fuzzy(&result, x1, x2, tol);
             result = !result;
             break;
         default:
@@ -2288,7 +2288,7 @@ rx__assess_real_fuzzy_comparison_test(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__assess_str_comparison_test(struct rx_context *context,
+rx__str_test_assess_comparison(struct rx_context *context,
                                const char *s1,
                                const char *s2,
                                enum rx__str_case str_case,
