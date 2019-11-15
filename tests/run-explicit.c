@@ -42,9 +42,7 @@ my_test_suite_my_test_case(struct rx_context *context, struct my_data *data)
     assert(data->value == 123);
 }
 
-static struct my_data my_data = {
-    123,
-};
+static struct my_data my_data;
 
 static struct rx_test_case my_test_case = {
     "my_test_case",
