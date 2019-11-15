@@ -112,6 +112,16 @@ rx_add_test(
     FILES tests/run-minimal.c
     DEPENDS rexo)
 
+rx_add_test(
+    NAME run-semi-explicit-1
+    FILES tests/run-semi-explicit-1.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME run-semi-explicit-2
+    FILES tests/run-semi-explicit-2.c
+    DEPENDS rexo)
+
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
 
 # ------------------------------------------------------------------------------
