@@ -465,7 +465,7 @@ RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
        size_t test_case_count,
-       struct rx_test_case *test_cases);
+       const struct rx_test_case *test_cases);
 
 #ifdef __cplusplus
 }
@@ -1719,7 +1719,8 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
 }
 
 RX__MAYBE_UNUSED static enum rx_status
-rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
+rx__test_cases_run(size_t test_case_count,
+                   const struct rx_test_case *test_cases)
 {
     size_t i;
     enum rx_status status;
@@ -2758,7 +2759,7 @@ RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
        size_t test_case_count,
-       struct rx_test_case *test_cases)
+       const struct rx_test_case *test_cases)
 {
     RX__UNUSED(argc);
     RX__UNUSED(argv);
