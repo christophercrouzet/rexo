@@ -1772,6 +1772,31 @@ exit:
     return status;
 }
 
+RX__MAYBE_UNUSED static enum rx_status
+rx__test_cases_run_registered(void)
+{
+    enum rx_status out;
+    size_t test_case_count;
+    struct rx_test_case *test_cases;
+
+    rx_test_cases_enumerate(&test_case_count, NULL);
+    if (test_case_count == 0) {
+        return rx__test_cases_run(0, NULL);
+    }
+
+    test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
+                                                  * test_case_count);
+    if (test_cases == NULL) {
+        RX__LOG_TRACE("failed to allocate the test cases\n");
+        return RX_ERROR_ALLOCATION;
+    }
+
+    rx_test_cases_enumerate(&test_case_count, test_cases);
+    out = rx__test_cases_run(test_case_count, test_cases);
+    RX_FREE(test_cases);
+    return out;
+}
+
 /* Test assessments                                                O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -2735,8 +2760,6 @@ rx_run(int argc,
        size_t test_case_count,
        struct rx_test_case *test_cases)
 {
-    enum rx_status out;
-
     RX__UNUSED(argc);
     RX__UNUSED(argv);
 
@@ -2746,22 +2769,7 @@ rx_run(int argc,
 
     /* If no test cases are explicitly passed, fallback to discovering the
        ones defined through the automatic registration framework. */
-    rx_test_cases_enumerate(&test_case_count, NULL);
-    if (test_case_count == 0) {
-        return rx__test_cases_run(0, NULL);
-    }
-
-    test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
-                                                  * test_case_count);
-    if (test_cases == NULL) {
-        RX__LOG_TRACE("failed to allocate the test cases\n");
-        return RX_ERROR_ALLOCATION;
-    }
-
-    rx_test_cases_enumerate(&test_case_count, test_cases);
-    out = rx__test_cases_run(test_case_count, test_cases);
-    RX_FREE(test_cases);
-    return out;
+    return rx__test_cases_run_registered();
 }
 
 #endif /* REXO_REXO_H */
