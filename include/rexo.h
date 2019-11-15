@@ -399,11 +399,11 @@ struct rx_config {
 struct rx_test_case {
     const char *name;
     const char *suite_name;
-    struct rx_config config;
+    rx_test_case_run_fn run;
     void *data;
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
-    rx_test_case_run_fn run;
+    struct rx_config config;
 };
 
 struct rx_failure {
@@ -2689,6 +2689,16 @@ rx_test_cases_enumerate(size_t *test_case_count,
 
         test_case->name = (*c_it)->name;
         test_case->suite_name = (*c_it)->suite_name;
+        test_case->run = (*c_it)->run;
+        test_case->data = (*c_it)->data;
+
+        if ((*c_it)->fixture == NULL) {
+            test_case->set_up = NULL;
+            test_case->tear_down = NULL;
+        } else {
+            test_case->set_up = (*c_it)->fixture->set_up;
+            test_case->tear_down = (*c_it)->fixture->tear_down;
+        }
 
         if (s_it != &RX__TEST_SUITE_SECTION_END) {
             /* Inherit the config from the test suite's description. */
@@ -2710,17 +2720,6 @@ rx_test_cases_enumerate(size_t *test_case_count,
         RX__CONFIG_MEMBERS
 #undef RX__CONFIG_MEMBER
 
-        test_case->data = (*c_it)->data;
-
-        if ((*c_it)->fixture == NULL) {
-            test_case->set_up = NULL;
-            test_case->tear_down = NULL;
-        } else {
-            test_case->set_up = (*c_it)->fixture->set_up;
-            test_case->tear_down = (*c_it)->fixture->tear_down;
-        }
-
-        test_case->run = (*c_it)->run;
         ++count;
     }
 

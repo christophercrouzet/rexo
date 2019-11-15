@@ -49,11 +49,11 @@ static struct my_data my_data = {
 static struct rx_test_case my_test_case = {
     "my_test_case",
     "my_test_suite",
-    {0},
+    (rx_test_case_run_fn)my_test_suite_my_test_case,
     &my_data,
     (rx_set_up_fn)my_set_up,
     (rx_tear_down_fn)my_tear_down,
-    (rx_test_case_run_fn)my_test_suite_my_test_case,
+    {0},
 };
 
 int
