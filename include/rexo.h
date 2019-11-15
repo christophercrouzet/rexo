@@ -1718,7 +1718,7 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
     *result = tolower(*a) == tolower(*b);
 }
 
-RX__MAYBE_UNUSED RX__STORAGE enum rx_status
+RX__MAYBE_UNUSED static enum rx_status
 rx__test_cases_run(size_t test_case_count, struct rx_test_case *test_cases)
 {
     size_t i;
