@@ -91,7 +91,7 @@ struct rx_context;
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__FIXTURE_,                                                      \
-            RX__FIXTURE_HAS_VARIADIC_ARGS(__VA_ARGS__)                         \
+            RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))                                                        \
     RX__REQUIRE_SEMICOLON
 
@@ -99,7 +99,7 @@ struct rx_context;
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__FIXTURE_VOID_,                                                 \
-            RX__FIXTURE_VOID_HAS_VARIADIC_ARGS(__VA_ARGS__)                    \
+            RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))                                                        \
     RX__REQUIRE_SEMICOLON
 
@@ -107,7 +107,7 @@ struct rx_context;
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__TEST_SUITE_,                                                   \
-            RX__TEST_SUITE_HAS_VARIADIC_ARGS(__VA_ARGS__)                      \
+            RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))                                                        \
     RX__REQUIRE_SEMICOLON
 
@@ -115,14 +115,14 @@ struct rx_context;
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__TEST_CASE_,                                                    \
-            RX__TEST_CASE_HAS_VARIADIC_ARGS(__VA_ARGS__)                       \
+            RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))                                                        \
 
 #define RX_TEST_CASE_FIXTURE(...)                                              \
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__TEST_CASE_FIXTURE_,                                            \
-            RX__TEST_CASE_FIXTURE_HAS_VARIADIC_ARGS(__VA_ARGS__)               \
+            RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))
 
 #define RX__FALSE ((int)0)
@@ -528,6 +528,24 @@ rx_run(int argc,
      _8,  _9, _10, _11, _12, _13, _14, _15,                                    \
     _16, ...) _16
 
+#define RX__HAS_AT_LEAST_2_ARGS(...)                                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 1, 0,))
+
+#define RX__HAS_AT_LEAST_3_ARGS(...)                                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 1, 0, 0,))
+
+#define RX__HAS_AT_LEAST_4_ARGS(...)                                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 1, 0, 0, 0,))
+
 #define RX__COUNT_ARGS(...)                                                    \
     RX__EXPAND(RX__ARG(                                                        \
         __VA_ARGS__,                                                           \
@@ -555,12 +573,6 @@ rx_run(int argc,
 #define RX__APPLY(x, ...)                                                      \
     RX__EXPAND(                                                                \
         RX__CONCAT(RX__APPLY_, RX__COUNT_ARGS(__VA_ARGS__))(x, __VA_ARGS__))
-
-#define RX__STRUCT_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)                    \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 0, 0, 0,))
 
 /* Initializing data at compile-time in C99 can be done conveniently using
   designated initializers but these are not available in C++ prior to C++20.
@@ -590,7 +602,7 @@ rx_run(int argc,
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__STRUCT_INITIALIZE_STATIC_,                                     \
-            RX__STRUCT_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)        \
+            RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))
 
 #define RX__SET_UP_GET_WRAPPER_ID(id)                                          \
@@ -1312,12 +1324,6 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__CONFIG_DESC_MEMBER_ASSIGN(x) x, 1,
 #endif
 
-#define RX__CONFIG_DESC_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(...)               \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 1, 1, 0,))
-
 #define RX__CONFIG_DESC_INITIALIZE_STATIC_0(id)                                \
     RX__STRUCT_INITIALIZE_STATIC_0(                                            \
         id, struct rx__config_desc, RX__CONFIG_DESC_MEMBER_ASSIGN)
@@ -1330,7 +1336,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     RX__EXPAND(                                                                \
         RX__CONCAT(                                                            \
             RX__CONFIG_DESC_INITIALIZE_STATIC_,                                \
-            RX__CONFIG_DESC_INITIALIZE_STATIC_HAS_VARIADIC_ARGS(__VA_ARGS__)   \
+            RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                               \
         )(__VA_ARGS__))
 
 /* Fixture Macros                                                  O-(''Q)
@@ -1340,12 +1346,6 @@ struct rx__fixture_desc {
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
 };
-
-#define RX__FIXTURE_HAS_VARIADIC_ARGS(...)                                     \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 1, 0, 0,))
 
 #define RX__FIXTURE_(id, type)                                                 \
     typedef type RX__FIXTURE_GET_DATA_TYPE(id);
@@ -1363,12 +1363,6 @@ struct rx__fixture_desc {
                                  __VA_ARGS__);                                 \
     RX__FIXTURE_(id, type)
 
-#define RX__FIXTURE_VOID_HAS_VARIADIC_ARGS(...)                                \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 1, 1, 0,))
-
 #define RX__FIXTURE_VOID_0(id)                                                 \
     RX__FIXTURE_0(id, void *)
 
@@ -1382,12 +1376,6 @@ struct rx__test_suite_desc {
     const char *name;
     const struct rx__config_desc *config;
 };
-
-#define RX__TEST_SUITE_HAS_VARIADIC_ARGS(...)                                  \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 1, 0, 0,))
 
 #define RX__TEST_SUITE_(id)                                                    \
     static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id)     \
@@ -1416,12 +1404,6 @@ struct rx__test_case_desc {
     const rx_test_case_run_fn run;
 };
 
-#define RX__TEST_CASE_HAS_VARIADIC_ARGS(...)                                   \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 1, 0, 0,))
-
 #define RX__TEST_CASE_(suite_id, id, type, data, fixture)                      \
     static void RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));   \
     static const struct rx__test_case_desc                                     \
@@ -1444,12 +1426,6 @@ struct rx__test_case_desc {
     RX__CONFIG_DESC_INITIALIZE_STATIC(                                         \
         RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id), __VA_ARGS__);          \
     RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
-
-#define RX__TEST_CASE_FIXTURE_HAS_VARIADIC_ARGS(...)                           \
-    RX__EXPAND(RX__ARG(                                                        \
-        __VA_ARGS__,                                                           \
-        1, 1, 1, 1, 1, 1, 1, 1,                                                \
-        1, 1, 1, 1, 1, 0, 0, 0,))
 
 #define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
     static RX__FIXTURE_GET_DATA_TYPE(fixture)                                  \
