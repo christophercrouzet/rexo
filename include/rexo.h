@@ -128,25 +128,50 @@ struct rx_context;
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
 
-#define RX__TEST_DEFINE(condition, expected, msg, severity)                    \
+#define RX__TEST_DEFINE_0(severity, expected, condition)                       \
+    RX__TEST_DEFINE_1(severity, expected, condition, NULL)
+
+#define RX__TEST_DEFINE_1(severity, expected, condition, ...)                  \
     rx__test_assess(RX__PARAM_CONTEXT,                                         \
                     !!(condition),                                             \
                     expected,                                                  \
-                    msg,                                                       \
+                    #condition,                                                \
                     __FILE__,                                                  \
                     __LINE__,                                                  \
-                    severity)
+                    severity,                                                  \
+                    __VA_ARGS__)
 
-#define RX__BOOL_TEST_DEFINE(condition, expected, severity)                    \
+#define RX__TEST_DEFINE(...)                                                   \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__TEST_DEFINE_,                                                  \
+            RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__BOOL_TEST_DEFINE_0(severity, expected, condition)                  \
+    RX__BOOL_TEST_DEFINE_1(severity, expected, condition, NULL)
+
+#define RX__BOOL_TEST_DEFINE_1(severity, expected, condition, ...)             \
     rx__bool_test_assess(RX__PARAM_CONTEXT,                                    \
                          !!(condition),                                        \
                          expected,                                             \
                          #condition,                                           \
                          __FILE__,                                             \
                          __LINE__,                                             \
-                         severity)
+                         severity,                                             \
+                         __VA_ARGS__)
 
-#define RX__INT_TEST_DEFINE(x1, x2, op, severity)                              \
+#define RX__BOOL_TEST_DEFINE(...)                                              \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__BOOL_TEST_DEFINE_,                                             \
+            RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__INT_TEST_DEFINE_0(severity, op, x1, x2)                            \
+    RX__INT_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+
+#define RX__INT_TEST_DEFINE_1(severity, op, x1, x2, ...)                       \
     rx__int_test_assess_comparison(RX__PARAM_CONTEXT,                          \
                                    (x1),                                       \
                                    (x2),                                       \
@@ -155,20 +180,42 @@ struct rx_context;
                                    #x2,                                        \
                                    __FILE__,                                   \
                                    __LINE__,                                   \
-                                   severity)
+                                   severity,                                   \
+                                   __VA_ARGS__)
 
-#define RX__UINT_TEST_DEFINE(x1, x2, op, severity)                             \
+#define RX__INT_TEST_DEFINE(...)                                               \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__INT_TEST_DEFINE_,                                              \
+            RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__UINT_TEST_DEFINE_0(severity, op, x1, x2)                           \
+    RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+
+#define RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, ...)                      \
     rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                         \
-                                    (x1),                                      \
-                                    (x2),                                      \
-                                    op,                                        \
-                                    #x1,                                       \
-                                    #x2,                                       \
-                                    __FILE__,                                  \
-                                    __LINE__,                                  \
-                                    severity)
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   __VA_ARGS__)
 
-#define RX__REAL_TEST_DEFINE(x1, x2, op, severity)                             \
+#define RX__UINT_TEST_DEFINE(...)                                              \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__UINT_TEST_DEFINE_,                                             \
+            RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__REAL_TEST_DEFINE_0(severity, op, x1, x2)                           \
+    RX__REAL_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+
+#define RX__REAL_TEST_DEFINE_1(severity, op, x1, x2, ...)                      \
     rx__real_test_assess_comparison(RX__PARAM_CONTEXT,                         \
                                     (x1),                                      \
                                     (x2),                                      \
@@ -177,9 +224,20 @@ struct rx_context;
                                     #x2,                                       \
                                     __FILE__,                                  \
                                     __LINE__,                                  \
-                                    severity)
+                                    severity,                                  \
+                                    __VA_ARGS__)
 
-#define RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, op, severity)                  \
+#define RX__REAL_TEST_DEFINE(...)                                              \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__REAL_TEST_DEFINE_,                                             \
+            RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__REAL_TEST_DEFINE_FUZZY_0(severity, op, x1, x2, tol)                \
+    RX__REAL_TEST_DEFINE_FUZZY_1(severity, op, x1, x2, tol, NULL)
+
+#define RX__REAL_TEST_DEFINE_FUZZY_1(severity, op, x1, x2, tol, ...)           \
     rx__real_test_assess_comparison_fuzzy(RX__PARAM_CONTEXT,                   \
                                           (x1),                                \
                                           (x2),                                \
@@ -189,8 +247,20 @@ struct rx_context;
                                           #x2,                                 \
                                           __FILE__,                            \
                                           __LINE__,                            \
-                                          severity)
-#define RX__STR_TEST_DEFINE(s1, s2, str_case, op, severity)                    \
+                                          severity,                            \
+                                          __VA_ARGS__)
+
+#define RX__REAL_TEST_DEFINE_FUZZY(...)                                        \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__REAL_TEST_DEFINE_FUZZY_,                                       \
+            RX__HAS_AT_LEAST_6_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
+
+#define RX__STR_TEST_DEFINE_0(severity, op, str_case, s1, s2)                  \
+    RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, NULL)
+
+#define RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, ...)             \
     rx__str_test_assess_comparison(RX__PARAM_CONTEXT,                          \
                                    (s1),                                       \
                                    (s2),                                       \
@@ -200,171 +270,185 @@ struct rx_context;
                                    #s2,                                        \
                                    __FILE__,                                   \
                                    __LINE__,                                   \
-                                   severity)
+                                   severity,                                   \
+                                   __VA_ARGS__)
 
-#define RX_REQUIRE(condition, msg)                                             \
-    RX__TEST_DEFINE(condition, RX__TRUE, msg, RX_FATAL)
+#define RX__STR_TEST_DEFINE(...)                                               \
+    RX__EXPAND(                                                                \
+        RX__CONCAT(                                                            \
+            RX__STR_TEST_DEFINE_,                                              \
+            RX__HAS_AT_LEAST_6_ARGS(__VA_ARGS__)                               \
+        )(__VA_ARGS__))
 
-#define RX_BOOL_REQUIRE_TRUE(condition)                                        \
-    RX__BOOL_TEST_DEFINE(condition, RX__TRUE, RX_FATAL)
+#define RX_REQUIRE(...)                                                        \
+    RX__TEST_DEFINE(RX_FATAL, RX__TRUE, __VA_ARGS__)
 
-#define RX_BOOL_REQUIRE_FALSE(condition)                                       \
-    RX__BOOL_TEST_DEFINE(condition, RX__FALSE, RX_FATAL)
+#define RX_BOOL_REQUIRE_TRUE(...)                                              \
+    RX__BOOL_TEST_DEFINE(RX_FATAL, RX__TRUE, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_EQUAL(x1, x2)                                           \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_BOOL_REQUIRE_FALSE(...)                                             \
+    RX__BOOL_TEST_DEFINE(RX_FATAL, RX__FALSE, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                       \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_EQUAL(...)                                              \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_GREATER(x1, x2)                                         \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_INT_REQUIRE_NOT_EQUAL(...)                                          \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_LESSER(x1, x2)                                          \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_INT_REQUIRE_GREATER(...)                                            \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                                \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_LESSER(...)                                             \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
-#define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                 \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL(...)                                   \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_EQUAL(x1, x2)                                          \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL(...)                                    \
+    RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                      \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_EQUAL(...)                                             \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_GREATER(x1, x2)                                        \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_UINT_REQUIRE_NOT_EQUAL(...)                                         \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_LESSER(x1, x2)                                         \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_UINT_REQUIRE_GREATER(...)                                           \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_LESSER(...)                                            \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
-#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(...)                                  \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_EQUAL(x1, x2)                                          \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_FATAL)
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(...)                                   \
+    RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                      \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_EQUAL(...)                                             \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_GREATER(x1, x2)                                        \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_FATAL)
+#define RX_REAL_REQUIRE_NOT_EQUAL(...)                                         \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_LESSER(x1, x2)                                         \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_FATAL)
+#define RX_REAL_REQUIRE_GREATER(...)                                           \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_LESSER(...)                                            \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(...)                                  \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY(x1, x2, tol)                               \
-    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(...)                                   \
+    RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                           \
-    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_NOT_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_EQUAL_FUZZY(...)                                       \
+    RX__REAL_TEST_DEFINE_FUZZY(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
-#define RX_STR_REQUIRE_EQUAL(s1, s2)                                           \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_FATAL)
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(...)                                   \
+    RX__REAL_TEST_DEFINE_FUZZY(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
-#define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)                                       \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_NOT_EQUAL, RX_FATAL)
-
-#define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)                                   \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_FATAL)
-
-#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)                               \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_NOT_EQUAL, RX_FATAL)
-
-#define RX_CHECK(condition, msg)                                               \
-    RX__TEST_DEFINE(condition, RX__TRUE, msg, RX_NONFATAL)
-
-#define RX_BOOL_CHECK_TRUE(condition)                                          \
-    RX__BOOL_TEST_DEFINE(condition, RX__TRUE, RX_NONFATAL)
-
-#define RX_BOOL_CHECK_FALSE(condition)                                         \
-    RX__BOOL_TEST_DEFINE(condition, RX__FALSE, RX_NONFATAL)
-
-#define RX_INT_CHECK_EQUAL(x1, x2)                                             \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                         \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
-
-#define RX_INT_CHECK_GREATER(x1, x2)                                           \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
-
-#define RX_INT_CHECK_LESSER(x1, x2)                                            \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
-
-#define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                                  \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                                   \
-    RX__INT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_UINT_CHECK_EQUAL(x1, x2)                                            \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                        \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
-
-#define RX_UINT_CHECK_GREATER(x1, x2)                                          \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
-
-#define RX_UINT_CHECK_LESSER(x1, x2)                                           \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
-
-#define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__UINT_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_EQUAL(x1, x2)                                            \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                        \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_NOT_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_GREATER(x1, x2)                                          \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER, RX_NONFATAL)
-
-#define RX_REAL_CHECK_LESSER(x1, x2)                                           \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER, RX_NONFATAL)
-
-#define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_GREATER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__REAL_TEST_DEFINE(x1, x2, RX__OP_LESSER_OR_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                                 \
-    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                             \
-    RX__REAL_TEST_DEFINE_FUZZY(x1, x2, tol, RX__OP_NOT_EQUAL, RX_NONFATAL)
-
-#define RX_STR_CHECK_EQUAL(s1, s2)                                             \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_OBEY, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_STR_CHECK_NOT_EQUAL(s1, s2)                                         \
+#define RX_STR_REQUIRE_EQUAL(...)                                              \
     RX__STR_TEST_DEFINE(                                                       \
-        s1, s2, RX__STR_CASE_OBEY, RX__OP_NOT_EQUAL, RX_NONFATAL)
+        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, __VA_ARGS__)
 
-#define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)                                     \
-    RX__STR_TEST_DEFINE(s1, s2, RX__STR_CASE_IGNORE, RX__OP_EQUAL, RX_NONFATAL)
-
-#define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)                                 \
+#define RX_STR_REQUIRE_NOT_EQUAL(...)                                          \
     RX__STR_TEST_DEFINE(                                                       \
-        s1, s2, RX__STR_CASE_IGNORE, RX__OP_NOT_EQUAL, RX_NONFATAL)
+        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, __VA_ARGS__)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE(...)                                      \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, __VA_ARGS__)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(...)                                  \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, __VA_ARGS__)
+
+#define RX_CHECK(...)                                                          \
+    RX__TEST_DEFINE(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
+
+#define RX_BOOL_CHECK_TRUE(...)                                                \
+    RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
+
+#define RX_BOOL_CHECK_FALSE(...)                                               \
+    RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__FALSE, __VA_ARGS__)
+
+#define RX_INT_CHECK_EQUAL(...)                                                \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+
+#define RX_INT_CHECK_NOT_EQUAL(...)                                            \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+
+#define RX_INT_CHECK_GREATER(...)                                              \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+
+#define RX_INT_CHECK_LESSER(...)                                               \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL(...)                                     \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL(...)                                      \
+    RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_UINT_CHECK_EQUAL(...)                                               \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+
+#define RX_UINT_CHECK_NOT_EQUAL(...)                                           \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+
+#define RX_UINT_CHECK_GREATER(...)                                             \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+
+#define RX_UINT_CHECK_LESSER(...)                                              \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL(...)                                    \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL(...)                                     \
+    RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_EQUAL(...)                                               \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_NOT_EQUAL(...)                                           \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_GREATER(...)                                             \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+
+#define RX_REAL_CHECK_LESSER(...)                                              \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL(...)                                    \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL(...)                                     \
+    RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY(...)                                         \
+    RX__REAL_TEST_DEFINE_FUZZY(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(...)                                     \
+    RX__REAL_TEST_DEFINE_FUZZY(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+
+#define RX_STR_CHECK_EQUAL(...)                                                \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, __VA_ARGS__)
+
+#define RX_STR_CHECK_NOT_EQUAL(...)                                            \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, __VA_ARGS__)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE(...)                                        \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, __VA_ARGS__)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE(...)                                    \
+    RX__STR_TEST_DEFINE(                                                       \
+        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, __VA_ARGS__)
 
 enum rx_status {
     RX_SUCCESS = 0,
@@ -545,6 +629,18 @@ rx_run(int argc,
         __VA_ARGS__,                                                           \
         1, 1, 1, 1, 1, 1, 1, 1,                                                \
         1, 1, 1, 1, 1, 0, 0, 0,))
+
+#define RX__HAS_AT_LEAST_5_ARGS(...)                                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 1, 0, 0, 0, 0,))
+
+#define RX__HAS_AT_LEAST_6_ARGS(...)                                           \
+    RX__EXPAND(RX__ARG(                                                        \
+        __VA_ARGS__,                                                           \
+        1, 1, 1, 1, 1, 1, 1, 1,                                                \
+        1, 1, 1, 0, 0, 0, 0, 0,))
 
 #define RX__COUNT_ARGS(...)                                                    \
     RX__EXPAND(RX__ARG(                                                        \
@@ -1542,6 +1638,54 @@ rx__op_get_name(const char **name, enum rx__op op)
 /* Strings                                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
+#define RX__STR_CREATE_VA_LIST(status, s, fmt)                                 \
+    do {                                                                       \
+        va_list args;                                                          \
+        size_t rx__length;                                                     \
+                                                                               \
+        va_start(args, fmt);                                                   \
+        (status) = rx__str_initialize_va_list(&rx__length, NULL, fmt, args);   \
+        va_end(args);                                                          \
+                                                                               \
+        if ((status) == RX_SUCCESS) {                                          \
+            (s) = (char *)RX_MALLOC(sizeof *(s) * rx__length);                 \
+            if ((s) == NULL) {                                                 \
+                RX__LOG_TRACE("failed to allocate the string (%zu bytes)\n",   \
+                              sizeof *(s) * rx__length);                       \
+                (status) = RX_ERROR_ALLOCATION;                                \
+            } else {                                                           \
+                va_start(args, fmt);                                           \
+                (status)                                                       \
+                    = rx__str_initialize_va_list(&rx__length, s, fmt, args);   \
+                va_end(args);                                                  \
+                if ((status) != RX_SUCCESS) {                                  \
+                    RX_FREE(s);                                                \
+                }                                                              \
+            }                                                                  \
+        }                                                                      \
+    } while (0)
+
+#define RX__STR_CREATE(status, s, fmt, ...)                                    \
+    do {                                                                       \
+        size_t rx__length;                                                     \
+                                                                               \
+        (status) = rx__str_initialize(&rx__length, NULL, fmt, __VA_ARGS__);    \
+        if ((status) == RX_SUCCESS) {                                          \
+            (s) = (char *)RX_MALLOC(sizeof *(s) * rx__length);                 \
+            if ((s) == NULL) {                                                 \
+                RX__LOG_TRACE("failed to allocate the string (%zu bytes)\n",   \
+                              sizeof *(s) * rx__length);                       \
+                (status) = RX_ERROR_ALLOCATION;                                \
+            } else {                                                           \
+                (status)                                                       \
+                    = rx__str_initialize(&rx__length, s, fmt, __VA_ARGS__);    \
+                if ((status) != RX_SUCCESS) {                                  \
+                    RX_FREE(s);                                                \
+                }                                                              \
+            }                                                                  \
+        }                                                                      \
+    } while (0)
+
 enum rx__str_case { RX__STR_CASE_OBEY = 0, RX__STR_CASE_IGNORE = 1 };
 
 static void
@@ -1562,46 +1706,49 @@ rx__str_case_get_type(const char **type, enum rx__str_case str_case)
 }
 
 static enum rx_status
-rx__str_create(char **s, const char *fmt, ...)
+rx__str_initialize_va_list(size_t *count,
+                           char *s,
+                           const char *fmt,
+                           va_list args)
 {
-    enum rx_status status;
-    va_list args;
-    int size;
+    int result;
 
-    RX_ASSERT(s != NULL);
-    RX_ASSERT(fmt != NULL);
+    RX_ASSERT(count != NULL);
 
-    va_start(args, fmt);
-    size = vsnprintf(NULL, 0, fmt, args);
-    va_end(args);
-    if (size < 0) {
-        RX__LOG_TRACE("invalid string formatting\n");
+    if (s == NULL) {
+        result = (size_t)vsnprintf(NULL, 0, fmt, args);
+        if (result < 0) {
+            RX__LOG_TRACE("invalid string formatting\n");
+            return RX_ERROR;
+        }
+
+        *count = (size_t)result + 1;
+        return RX_SUCCESS;
+    }
+
+    result = (size_t)vsnprintf(s, *count, fmt, args);
+    if (result < 0) {
+        RX__LOG_TRACE("unexpected string formatting error\n");
         return RX_ERROR;
     }
 
-    *s = (char *)RX_MALLOC(sizeof **s * ((size_t)size + 1));
-    if (*s == NULL) {
-        RX__LOG_TRACE("failed to allocate the string (%zu bytes)\n",
-                      sizeof **s * ((size_t)size + 1));
-        return RX_ERROR_ALLOCATION;
-    }
+    *count = (size_t)result + 1;
+    return RX_SUCCESS;
+}
+
+static enum rx_status
+rx__str_initialize(size_t *count, char *s, const char *fmt, ...)
+{
+    enum rx_status out;
+    va_list args;
+
+    RX_ASSERT(count != NULL);
 
     va_start(args, fmt);
-    size = vsnprintf(*s, (size_t)size + 1, fmt, args);
+    out = rx__str_initialize_va_list(count, s, fmt, args);
     va_end(args);
-    if (size < 0) {
-        RX__LOG_TRACE("unexpected string formatting error\n");
-        status = RX_ERROR;
-        goto undo;
-    }
 
-    return RX_SUCCESS;
-
-undo:
-    RX_ASSERT(status != RX_SUCCESS);
-
-    RX_FREE(*s);
-    return status;
+    return out;
 }
 
 static enum rx_status
@@ -1781,26 +1928,70 @@ RX__MAYBE_UNUSED static void
 rx__test_assess(struct rx_context *context,
                 int value,
                 int expected,
-                const char *failure_msg,
+                const char *expr,
                 const char *file,
                 int line,
-                enum rx_severity severity)
+                enum rx_severity severity,
+                const char *failure_fmt,
+                ...)
 {
     int result;
+    char *failure_msg;
+    char *diagnostic_msg;
 
     RX_ASSERT(context != NULL);
-    RX_ASSERT(failure_msg != NULL);
     RX_ASSERT(file != NULL);
 
     result = ((value && expected) || (!value && !expected));
 
+    if (result) {
+        failure_msg = NULL;
+        diagnostic_msg = NULL;
+    } else {
+        enum rx_status status;
+
+        if (failure_fmt == NULL) {
+            RX__STR_CREATE(status,
+                           failure_msg,
+                           "‘%s’ is expected to evaluate to true",
+                           expr);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
+            RX__LOG_TRACE("failed to create the failure message for the "
+                          "test located at %s:%d\n",
+                          file,
+                          line);
+            failure_msg = NULL;
+        }
+
+        RX__STR_CREATE(status, diagnostic_msg, "%d", value);
+        if (status != RX_SUCCESS) {
+            RX__LOG_TRACE("failed to create the diagnostic message for the "
+                          "test located at %s:%d\n",
+                          file,
+                          line);
+            diagnostic_msg = NULL;
+        }
+    }
+
     if (rx_handle_test_result(
-            context, result, file, line, severity, failure_msg, NULL)
+            context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
         RX__LOG_TRACE("failed to handle the test result for the test "
                       "located at %s:%d\n",
                       file,
                       line);
+    }
+
+    if (failure_msg != NULL) {
+        RX_FREE(failure_msg);
+    }
+
+    if (diagnostic_msg != NULL) {
+        RX_FREE(diagnostic_msg);
     }
 
     if (!result && severity == RX_FATAL) {
@@ -1815,7 +2006,9 @@ rx__bool_test_assess(struct rx_context *context,
                      const char *expr,
                      const char *file,
                      int line,
-                     enum rx_severity severity)
+                     enum rx_severity severity,
+                     const char *failure_fmt,
+                     ...)
 {
     int result;
     char *failure_msg;
@@ -1831,11 +2024,19 @@ rx__bool_test_assess(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        if (rx__str_create(&failure_msg,
+        enum rx_status status;
+
+        if (failure_fmt == NULL) {
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be %s",
                            expr,
-                           expected ? "true" : "false")
-            != RX_SUCCESS) {
+                           expected ? "true" : "false");
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the failure message for the "
                           "boolean test located at %s:%d\n",
                           file,
@@ -1843,8 +2044,8 @@ rx__bool_test_assess(struct rx_context *context,
             failure_msg = NULL;
         }
 
-        if (rx__str_create(&diagnostic_msg, "%d == %d", x, expected)
-            != RX_SUCCESS) {
+        RX__STR_CREATE(status, diagnostic_msg, "%d == %d", x, expected);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "boolean test located at %s:%d\n",
                           file,
@@ -1884,7 +2085,9 @@ rx__int_test_assess_comparison(struct rx_context *context,
                                const char *expr2,
                                const char *file,
                                int line,
-                               enum rx_severity severity)
+                               enum rx_severity severity,
+                               const char *failure_fmt,
+                               ...)
 {
     int result;
     char *failure_msg;
@@ -1923,18 +2126,24 @@ rx__int_test_assess_comparison(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        const char *op_name;
+        enum rx_status status;
         const char *op_symbol;
 
-        rx__op_get_name(&op_name, op);
-        rx__op_get_symbol(&op_symbol, op);
+        if (failure_fmt == NULL) {
+            const char *op_name;
 
-        if (rx__str_create(&failure_msg,
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be %s ‘%s’",
                            expr1,
                            op_name,
-                           expr2)
-            != RX_SUCCESS) {
+                           expr2);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the failure message for the "
                           "integer comparison test located at %s:%d\n",
                           file,
@@ -1942,8 +2151,9 @@ rx__int_test_assess_comparison(struct rx_context *context,
             failure_msg = NULL;
         }
 
-        if (rx__str_create(&diagnostic_msg, "%jd %s %jd", x1, op_symbol, x2)
-            != RX_SUCCESS) {
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE(status, diagnostic_msg, "%jd %s %jd", x1, op_symbol, x2);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "integer comparison test located at %s:%d\n",
                           file,
@@ -1983,7 +2193,9 @@ rx__uint_test_assess_comparison(struct rx_context *context,
                                 const char *expr2,
                                 const char *file,
                                 int line,
-                                enum rx_severity severity)
+                                enum rx_severity severity,
+                                const char *failure_fmt,
+                                ...)
 {
     int result;
     char *failure_msg;
@@ -2022,18 +2234,24 @@ rx__uint_test_assess_comparison(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        const char *op_name;
+        enum rx_status status;
         const char *op_symbol;
 
-        rx__op_get_name(&op_name, op);
-        rx__op_get_symbol(&op_symbol, op);
+        if (failure_fmt == NULL) {
+            const char *op_name;
 
-        if (rx__str_create(&failure_msg,
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be %s ‘%s’",
                            expr1,
                            op_name,
-                           expr2)
-            != RX_SUCCESS) {
+                           expr2);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the failure message for the "
                           "unsigned integer comparison test located at %s:%d\n",
                           file,
@@ -2041,8 +2259,9 @@ rx__uint_test_assess_comparison(struct rx_context *context,
             failure_msg = NULL;
         }
 
-        if (rx__str_create(&diagnostic_msg, "%ju %s %ju", x1, op_symbol, x2)
-            != RX_SUCCESS) {
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE(status, diagnostic_msg, "%ju %s %ju", x1, op_symbol, x2);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "unsigned integer comparison test located at %s:%d\n",
                           file,
@@ -2082,7 +2301,9 @@ rx__real_test_assess_comparison(struct rx_context *context,
                                 const char *expr2,
                                 const char *file,
                                 int line,
-                                enum rx_severity severity)
+                                enum rx_severity severity,
+                                const char *failure_fmt,
+                                ...)
 {
     int result;
     char *failure_msg;
@@ -2121,27 +2342,34 @@ rx__real_test_assess_comparison(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        const char *op_name;
+        enum rx_status status;
         const char *op_symbol;
 
-        rx__op_get_name(&op_name, op);
-        rx__op_get_symbol(&op_symbol, op);
+        if (failure_fmt == NULL) {
+            const char *op_name;
 
-        if (rx__str_create(&failure_msg,
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be %s ‘%s’",
                            expr1,
                            op_name,
-                           expr2)
-            != RX_SUCCESS) {
-            RX__LOG_TRACE("failed to create the failure message for the real "
-                          "comparison test located at %s:%d\n",
+                           expr2);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
+            RX__LOG_TRACE("failed to create the failure message for the "
+                          "real comparison test located at %s:%d\n",
                           file,
                           line);
             failure_msg = NULL;
         }
 
-        if (rx__str_create(&diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2)
-            != RX_SUCCESS) {
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE(status, diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "real comparison test located at %s:%d\n",
                           file,
@@ -2182,7 +2410,9 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
                                       const char *expr2,
                                       const char *file,
                                       int line,
-                                      enum rx_severity severity)
+                                      enum rx_severity severity,
+                                      const char *failure_fmt,
+                                      ...)
 {
     int result;
     char *failure_msg;
@@ -2210,29 +2440,36 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        const char *op_name;
+        enum rx_status status;
         const char *op_symbol;
 
-        rx__op_get_name(&op_name, op);
-        rx__op_get_symbol(&op_symbol, op);
+        if (failure_fmt == NULL) {
+            const char *op_name;
 
-        if (rx__str_create(&failure_msg,
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be almost %s ‘%s’ "
                            "(tolerance: %Lf)",
                            expr1,
                            op_name,
                            expr2,
-                           tol)
-            != RX_SUCCESS) {
-            RX__LOG_TRACE("failed to create the failure message for the real "
-                          "almost equal test located at %s:%d\n",
+                           tol);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
+            RX__LOG_TRACE("failed to create the failure message for the "
+                          "real almost equal test located at %s:%d\n",
                           file,
                           line);
             failure_msg = NULL;
         }
 
-        if (rx__str_create(&diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2)
-            != RX_SUCCESS) {
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE(status, diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "real almost equal test located at %s:%d\n",
                           file,
@@ -2273,7 +2510,9 @@ rx__str_test_assess_comparison(struct rx_context *context,
                                const char *expr2,
                                const char *file,
                                int line,
-                               enum rx_severity severity)
+                               enum rx_severity severity,
+                               const char *failure_fmt,
+                               ...)
 {
     int result;
     char *failure_msg;
@@ -2307,21 +2546,27 @@ rx__str_test_assess_comparison(struct rx_context *context,
         failure_msg = NULL;
         diagnostic_msg = NULL;
     } else {
-        const char *str_case_type;
-        const char *op_name;
+        enum rx_status status;
         const char *op_symbol;
 
-        rx__str_case_get_type(&str_case_type, str_case);
-        rx__op_get_name(&op_name, op);
-        rx__op_get_symbol(&op_symbol, op);
+        if (failure_fmt == NULL) {
+            const char *str_case_type;
+            const char *op_name;
 
-        if (rx__str_create(&failure_msg,
+            rx__str_case_get_type(&str_case_type, str_case);
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE(status,
+                           failure_msg,
                            "‘%s’ is expected to be %s ‘%s’ (case: %s)",
                            expr1,
                            op_name,
                            expr2,
-                           str_case_type)
-            != RX_SUCCESS) {
+                           str_case_type);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the failure message for the "
                           "string comparison test located at %s:%d\n",
                           file,
@@ -2329,9 +2574,10 @@ rx__str_test_assess_comparison(struct rx_context *context,
             failure_msg = NULL;
         }
 
-        if (rx__str_create(
-                &diagnostic_msg, "\"%s\" %s \"%s\"", s1, op_symbol, s2)
-            != RX_SUCCESS) {
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE(
+            status, diagnostic_msg, "\"%s\" %s \"%s\"", s1, op_symbol, s2);
+        if (status != RX_SUCCESS) {
             RX__LOG_TRACE("failed to create the diagnostic message for the "
                           "string comparison test located at %s:%d\n",
                           file,
