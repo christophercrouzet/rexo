@@ -78,6 +78,16 @@ endmacro()
 enable_testing()
 
 rx_add_test(
+    NAME assertion-coverage
+    FILES tests/assertion-coverage.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME assertion-failure-messages
+    FILES tests/assertion-failure-messages.c
+    DEPENDS rexo)
+
+rx_add_test(
     NAME config-skip
     FILES tests/config-skip.c
     DEPENDS rexo)
