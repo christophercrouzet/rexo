@@ -20,12 +20,7 @@ endif
 
 # ------------------------------------------------------------------------------
 
-PROJECT := rexo
-
-# ------------------------------------------------------------------------------
-
-FORMAT_FILES :=
-TIDY_FILES :=
+FILES :=
 
 # ------------------------------------------------------------------------------
 
@@ -63,18 +58,30 @@ $(foreach _config,$(CONFIG),$(eval $(call \
 
 # ------------------------------------------------------------------------------
 
-FORMAT_FILES += $(wildcard include/*.h)
-TIDY_FILES += $(wildcard include/*.h)
+FILES += $(wildcard include/*.h)
+
+# ------------------------------------------------------------------------------
+
+# Create the rule to build a test.
+# $(1): path.
+define CREATE_TEST_RULES =
+_RULE := test-$$(basename $$(notdir $(1)))
+$(_RULE): $$(MAKE_FILES)
+	$$(call rx_forward_rule,$(_RULE))
+
+FILES += $(1)
+
+.PHONY: $(_RULE)
+endef
+
+# Create the rules for each test.
+$(foreach _i,$(wildcard tests/*),$(eval $(call \
+    CREATE_TEST_RULES,$(_i))))
 
 # ------------------------------------------------------------------------------
 
 tests: $(MAKE_FILES)
 	@ $(call rx_forward_rule,tests)
-
-.PHONY: tests
-
-FORMAT_FILES += $(wildcard tests/*.[ch])
-TIDY_FILES += $(wildcard tests/*.[ch])
 
 test: tests
 	@ $(call rx_forward_rule,test)
@@ -97,11 +104,11 @@ clang-format -style=file $(1) | diff --color -u $(1) -;
 endef
 
 format:
-	@ $(foreach _file,$(FORMAT_FILES),$(call \
+	@ $(foreach _file,$(FILES),$(call \
 		rx_format,$(_file)))
 
 tidy: $(MAKE_FILES)
-	@ clang-tidy $(TIDY_FILES) \
+	@ clang-tidy $(FILES) \
 		-p $(firstword $(BUILD_DIRS))/compile_commands.json \
 		-- -I$(CLANG_INCLUDE_DIR) -Iinclude
 
