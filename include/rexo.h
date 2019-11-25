@@ -764,63 +764,65 @@ typedef long double rx__real;
 #endif
 
 #ifndef RX_LOG
-    #define RX_LOG(level, args)                                                \
-        do {                                                                   \
-            if (RX__LOGGING && level <= RX__LOGGING_LEVEL) {                   \
-                rx__log args;                                                  \
-            }                                                                  \
-        } while (0)
+    #define RX_LOG rx__log
 #endif
 
+#define RX__LOG(level, args)                                                   \
+    do {                                                                       \
+        if (RX__LOGGING && level <= RX__LOGGING_LEVEL) {                       \
+            RX_LOG args;                                                       \
+        }                                                                      \
+    } while (0)
+
 #define RX__LOG_DEBUG(msg)                                                     \
-        RX_LOG(RX_LOG_LEVEL_DEBUG,                                             \
-               (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, msg))
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, msg))
 #define RX__LOG_DEBUG_1(fmt, _0)                                               \
-        RX_LOG(RX_LOG_LEVEL_DEBUG,                                             \
-               (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0))
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0))
 #define RX__LOG_DEBUG_2(fmt, _0, _1)                                           \
-        RX_LOG(RX_LOG_LEVEL_DEBUG,                                             \
-               (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0, _1))
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_TRACE(msg)                                                     \
-        RX_LOG(RX_LOG_LEVEL_TRACE,                                             \
-               (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, msg))
+        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
+                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, msg))
 #define RX__LOG_TRACE_1(fmt, _0)                                               \
-        RX_LOG(RX_LOG_LEVEL_TRACE,                                             \
-               (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0))
+        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
+                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0))
 #define RX__LOG_TRACE_2(fmt, _0, _1)                                           \
-        RX_LOG(RX_LOG_LEVEL_TRACE,                                             \
-               (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0, _1))
+        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
+                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_INFO(msg)                                                      \
-        RX_LOG(RX_LOG_LEVEL_INFO,                                              \
-               (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, msg))
+        RX__LOG(RX_LOG_LEVEL_INFO,                                             \
+                (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, msg))
 #define RX__LOG_INFO_1(fmt, _0)                                                \
-        RX_LOG(RX_LOG_LEVEL_INFO,                                              \
-               (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, _0))
+        RX__LOG(RX_LOG_LEVEL_INFO,                                             \
+                (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, _0))
 #define RX__LOG_INFO_2(fmt, _0, _1)                                            \
-        RX_LOG(RX_LOG_LEVEL_INFO,                                              \
-               (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, _0, _1))
+        RX__LOG(RX_LOG_LEVEL_INFO,                                             \
+                (RX_LOG_LEVEL_INFO, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_WARNING(msg)                                                   \
-        RX_LOG(RX_LOG_LEVEL_WARNING,                                           \
-               (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, msg))
+        RX__LOG(RX_LOG_LEVEL_WARNING,                                          \
+                (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, msg))
 #define RX__LOG_WARNING_1(fmt, _0)                                             \
-        RX_LOG(RX_LOG_LEVEL_WARNING,                                           \
-               (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, _0))
+        RX__LOG(RX_LOG_LEVEL_WARNING,                                          \
+                (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, _0))
 #define RX__LOG_WARNING_2(fmt, _0, _1)                                         \
-        RX_LOG(RX_LOG_LEVEL_WARNING,                                           \
-               (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, _0, _1))
+        RX__LOG(RX_LOG_LEVEL_WARNING,                                          \
+                (RX_LOG_LEVEL_WARNING, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_ERROR(msg)                                                     \
-        RX_LOG(RX_LOG_LEVEL_ERROR,                                             \
-               (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, msg))
+        RX__LOG(RX_LOG_LEVEL_ERROR,                                            \
+                (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, msg))
 #define RX__LOG_ERROR_1(fmt, _0)                                               \
-        RX_LOG(RX_LOG_LEVEL_ERROR,                                             \
-               (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, _0))
+        RX__LOG(RX_LOG_LEVEL_ERROR,                                            \
+                (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, _0))
 #define RX__LOG_ERROR_2(fmt, _0, _1)                                           \
-        RX_LOG(RX_LOG_LEVEL_ERROR,                                             \
-               (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, _0, _1))
+        RX__LOG(RX_LOG_LEVEL_ERROR,                                            \
+                (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, _0, _1))
 
 #if RX__LOG_STYLING
 enum rx__log_style {
