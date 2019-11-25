@@ -1000,8 +1000,8 @@ rx__log(enum rx_log_level level,
 /* Timer                                                           O-(''Q)
    -------------------------------------------------------------------------- */
 
-#define RX__TICKS_PER_SECOND 1000000000ull
-#define RX__TICKS_PER_MICROSECOND 1000ull
+#define RX__TICKS_PER_SECOND 1000000000ul
+#define RX__TICKS_PER_MICROSECOND 1000ul
 
 #if defined(RX__PLATFORM_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
