@@ -1001,6 +1001,7 @@ rx__log(enum rx_log_level level,
    -------------------------------------------------------------------------- */
 
 #define RX__TICKS_PER_SECOND 1000000000ull
+#define RX__TICKS_PER_MICROSECOND 1000ull
 
 #if defined(RX__PLATFORM_WINDOWS)
     #define WIN32_LEAN_AND_MEAN
@@ -1090,7 +1091,7 @@ rx__get_real_time(uint64_t *time)
             return RX_ERROR;
         }
 
-        *time = (uint64_t)t.tv_sec * 1000000000ull + (uint64_t)t.tv_nsec;
+        *time = (uint64_t)t.tv_sec * RX__TICKS_PER_SECOND + (uint64_t)t.tv_nsec;
         return RX_SUCCESS;
     }
     #else
@@ -1102,8 +1103,8 @@ rx__get_real_time(uint64_t *time)
             return RX_ERROR;
         }
 
-        *time = (uint64_t)t.tv_sec * 1000000000ull
-                + (uint64_t)t.tv_usec * 1000ull;
+        *time = (uint64_t)t.tv_sec * RX__TICKS_PER_SECOND
+                + (uint64_t)t.tv_usec * RX__TICKS_PER_MICROSECOND;
         return RX_SUCCESS;
     }
     #endif
