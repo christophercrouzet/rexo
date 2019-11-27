@@ -769,7 +769,7 @@ typedef long double rx__real;
 
 #define RX__LOG(level, args)                                                   \
     do {                                                                       \
-        if (RX__LOGGING && level <= RX__LOGGING_LEVEL) {                       \
+        if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                     \
             RX_LOG args;                                                       \
         }                                                                      \
     } while (0)
