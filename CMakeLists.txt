@@ -88,6 +88,12 @@ rx_add_test(
     DEPENDS rexo)
 
 rx_add_test(
+    NAME compat-c89
+    FILES tests/compat-c89.c
+    DEPENDS rexo)
+set_property(TARGET test-compat-c89 PROPERTY C_STANDARD 90)
+
+rx_add_test(
     NAME config-skip
     FILES tests/config-skip.c
     DEPENDS rexo)
@@ -123,13 +129,8 @@ rx_add_test(
     DEPENDS rexo)
 
 rx_add_test(
-    NAME run-semi-explicit-1
-    FILES tests/run-semi-explicit-1.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME run-semi-explicit-2
-    FILES tests/run-semi-explicit-2.c
+    NAME run-semi-explicit
+    FILES tests/run-semi-explicit.c
     DEPENDS rexo)
 
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
