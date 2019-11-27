@@ -2293,13 +2293,13 @@ rx__str_initialize_va_list(size_t *count,
                            const char *fmt,
                            va_list args)
 {
-    int result;
+    int size;
 
     RX_ASSERT(count != NULL);
 
     if (s == NULL) {
 #ifdef RX__PLATFORM_WINDOWS
-        result = _vscprintf(fmt, args);
+        size = _vscprintf(fmt, args);
 #elif RX__C89_COMPAT
         {
             FILE *file;
@@ -2310,28 +2310,28 @@ rx__str_initialize_va_list(size_t *count,
                 return RX_ERROR;
             }
 
-            result = vfprintf(file, fmt, args);
+            size = vfprintf(file, fmt, args);
         }
 #else
-        result = vsnprintf(NULL, 0, fmt, args);
+        size = vsnprintf(NULL, 0, fmt, args);
 #endif
 
-        if (result < 0) {
+        if (size < 0) {
             RX__LOG_TRACE("invalid string formatting\n");
             return RX_ERROR;
         }
 
-        *count = (size_t)result + 1;
+        *count = (size_t)size + 1;
         return RX_SUCCESS;
     }
 
-    result = vsprintf(s, fmt, args);
-    if (result < 0) {
+    size = vsprintf(s, fmt, args);
+    if (size < 0) {
         RX__LOG_TRACE("unexpected string formatting error\n");
         return RX_ERROR;
     }
 
-    *count = (size_t)result + 1;
+    *count = (size_t)size + 1;
     return RX_SUCCESS;
 }
 
