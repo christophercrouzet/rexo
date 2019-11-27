@@ -91,7 +91,6 @@ rx_add_test(
     NAME compat-c89
     FILES tests/compat-c89.c
     DEPENDS rexo)
-set_property(TARGET test-compat-c89 PROPERTY C_STANDARD 90)
 
 rx_add_test(
     NAME config-skip

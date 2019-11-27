@@ -1,3 +1,5 @@
+#define RX_ENABLE_C89_COMPAT
+
 #include <assert.h>
 
 #include <rexo.h>
