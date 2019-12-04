@@ -3572,6 +3572,8 @@ rx_test_cases_enumerate(size_t *test_case_count,
             test_case->tear_down = (*c_it)->fixture->tear_down;
         }
 
+        memset(&test_case->config, 0, sizeof test_case->config);
+
         if (s_it != &RX__TEST_SUITE_SECTION_END) {
             /* Inherit the config from the test suite's description. */
     #define RX__CONFIG_MEMBER(type, name)                                      \
