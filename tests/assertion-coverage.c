@@ -1,8 +1,13 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 #include <rexo.h>
+
+#define ASSERT(x)                                                              \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (abort(), 0))
 
 RX_TEST_CASE(my_test_suite, all_check_successes)
 {
@@ -286,7 +291,7 @@ main(int argc, const char **argv)
                     ++fatal_failure_count;
                     break;
                 default:
-                    assert(0);
+                    ASSERT(0);
             }
         }
 
@@ -295,8 +300,8 @@ main(int argc, const char **argv)
 
     free(test_cases);
 
-    assert(test_count == 108);
-    assert(nonfatal_failure_count == 27);
-    assert(fatal_failure_count == 27);
+    ASSERT(test_count == 108);
+    ASSERT(nonfatal_failure_count == 27);
+    ASSERT(fatal_failure_count == 27);
     return 0;
 }

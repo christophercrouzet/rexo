@@ -1,6 +1,12 @@
-#include <assert.h>
+#include <stdlib.h>
 
 #include <rexo.h>
+
+#define ASSERT(x)                                                              \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (abort(), 0))
 
 static int step = 0;
 
@@ -14,7 +20,7 @@ my_set_up(struct rx_context *context, struct my_data *data)
     (void)context;
 
     ++step;
-    assert(step == 2);
+    ASSERT(step == 2);
 
     data->value = 123;
     return RX_SUCCESS;
@@ -26,9 +32,9 @@ my_tear_down(struct rx_context *context, struct my_data *data)
     (void)context;
 
     ++step;
-    assert(step == 4);
+    ASSERT(step == 4);
 
-    assert(data->value == 123);
+    ASSERT(data->value == 123);
 }
 
 void
@@ -37,9 +43,9 @@ my_test_suite_my_test_case(struct rx_context *context, struct my_data *data)
     (void)context;
 
     ++step;
-    assert(step == 3);
+    ASSERT(step == 3);
 
-    assert(data->value == 123);
+    ASSERT(data->value == 123);
 }
 
 static struct my_data my_data;
@@ -60,12 +66,12 @@ int
 main(int argc, const char **argv)
 {
     ++step;
-    assert(step == 1);
+    ASSERT(step == 1);
 
-    assert(rx_run(argc, argv, 1, my_test_cases) == RX_SUCCESS);
+    ASSERT(rx_run(argc, argv, 1, my_test_cases) == RX_SUCCESS);
 
     ++step;
-    assert(step == 5);
+    ASSERT(step == 5);
 
     return 0;
 }

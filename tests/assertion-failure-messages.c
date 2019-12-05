@@ -1,9 +1,14 @@
-#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include <rexo.h>
+
+#define ASSERT(x)                                                              \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (abort(), 0))
 
 RX_TEST_CASE(my_test_suite, all_check_failures_simple_msg)
 {
@@ -375,7 +380,7 @@ main(int argc, const char **argv)
         }
 
         for (j = 0; j < summary.failure_count; ++j) {
-            assert(strcmp(summary.failures[j].msg, "hello, world!") == 0);
+            ASSERT(strcmp(summary.failures[j].msg, "hello, world!") == 0);
         }
 
         rx_summary_terminate(&summary);

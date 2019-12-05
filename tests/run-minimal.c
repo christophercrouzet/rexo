@@ -1,25 +1,31 @@
-#include <assert.h>
+#include <stdlib.h>
 
 #include <rexo.h>
+
+#define ASSERT(x)                                                              \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (abort(), 0))
 
 static int step = 0;
 
 RX_TEST_CASE(my_test_suite, my_test_case)
 {
     ++step;
-    assert(step == 2);
+    ASSERT(step == 2);
 }
 
 int
 main(int argc, const char **argv)
 {
     ++step;
-    assert(step == 1);
+    ASSERT(step == 1);
 
-    assert(rx_run(argc, argv, 0, NULL) == RX_SUCCESS);
+    ASSERT(rx_run(argc, argv, 0, NULL) == RX_SUCCESS);
 
     ++step;
-    assert(step == 3);
+    ASSERT(step == 3);
 
     return 0;
 }
