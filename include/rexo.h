@@ -1621,10 +1621,10 @@ rx__get_real_time(uint64_t *time)
         return RX_SUCCESS;
     }
     #endif
-#endif
-
+#else
     RX__LOG_ERROR("platform not supported\n");
     return RX_ERROR;
+#endif
 }
 
 /* Test Failure Array                                              O-(''Q)
@@ -1843,10 +1843,12 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxsuite$c", read))
 
     __declspec(allocate("rxsuite$a"))
-    const struct rx__test_suite_desc * const rx__test_suite_section_begin;
+    const struct rx__test_suite_desc * const
+    rx__test_suite_section_begin = NULL;
 
     __declspec(allocate("rxsuite$c"))
-    const struct rx__test_suite_desc * const rx__test_suite_section_end;
+    const struct rx__test_suite_desc * const
+    rx__test_suite_section_end = NULL;
 
     #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
         __declspec(allocate("rxsuite$b"))                                      \
@@ -1880,10 +1882,12 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxcase$c", read))
 
     __declspec(allocate("rxcase$a"))
-    const struct rx__test_case_desc * const rx__test_case_section_begin;
+    const struct rx__test_case_desc * const
+    rx__test_case_section_begin = NULL;
 
     __declspec(allocate("rxcase$c"))
-    const struct rx__test_case_desc * const rx__test_case_section_end;
+    const struct rx__test_case_desc * const
+    rx__test_case_section_end = NULL;
 
     #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
         __declspec(allocate("rxcase$b"))                                       \
@@ -2726,6 +2730,7 @@ rx__int_test_assess_comparison(struct rx_context *context,
             break;
         default:
             RX_ASSERT(0);
+            result = 0;
             break;
     }
 
@@ -2835,6 +2840,7 @@ rx__uint_test_assess_comparison(struct rx_context *context,
             break;
         default:
             RX_ASSERT(0);
+            result = 0;
             break;
     }
 
@@ -2946,6 +2952,7 @@ rx__real_test_assess_comparison(struct rx_context *context,
             break;
         default:
             RX_ASSERT(0);
+            result = 0;
             break;
     }
 
@@ -3045,6 +3052,7 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
             break;
         default:
             RX_ASSERT(0);
+            result = 0;
             break;
     }
 
@@ -3152,6 +3160,7 @@ rx__str_test_assess_comparison(struct rx_context *context,
             break;
         default:
             RX_ASSERT(0);
+            result = 0;
             break;
     }
 
