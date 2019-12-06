@@ -1814,7 +1814,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     return RX_SUCCESS;
 }
 
-/* Test Discovery                                                  O-(''Q)
+/* Automatic Test Registration                                     O-(''Q)
    -------------------------------------------------------------------------- */
 
 /* Compiler-specific code that allows grouping test suite and test case
@@ -1822,81 +1822,77 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
   by iterating over any data registered in these sections. */
 
 #if defined(__GNUC__)
-    #define RX__TEST_SUITE_SECTION_BEGIN __start_rxsuite
-    #define RX__TEST_SUITE_SECTION_END __stop_rxsuite
+    const struct rx__test_suite_desc * const __start_rxsuite;
+    const struct rx__test_suite_desc * const __stop_rxsuite;
 
-    extern const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_BEGIN;
-    extern const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_END;
-
-    __attribute__((used, section("rxsuite")))
-    const struct rx__test_suite_desc *rx__dummy_suite = NULL;
+    RX__FORCE_LINKING(rx__dummy_suite)
+    __attribute__((section("rxsuite")))
+    static const struct rx__test_suite_desc * const rx__dummy_suite = NULL;
 
     #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
-        __attribute__((used, section("rxsuite")))                              \
-        const struct rx__test_suite_desc                                       \
-        *RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                  \
+        __attribute__((section("rxsuite")))                                    \
+        const struct rx__test_suite_desc * const                               \
+        RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
             = &RX__TEST_SUITE_DESC_GET_ID(name)
+
+    #define RX__TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
+    #define RX__TEST_SUITE_SECTION_END (&__stop_rxsuite)
 #elif defined(_MSC_VER)
-    #define RX__TEST_SUITE_SECTION_BEGIN rx__test_suite_section_begin
-    #define RX__TEST_SUITE_SECTION_END rx__test_suite_section_end
-
     __pragma(section("rxsuite$a", read))
-    __pragma(section("rxsuite$s", read))
-    __pragma(section("rxsuite$z", read))
+    __pragma(section("rxsuite$b", read))
+    __pragma(section("rxsuite$c", read))
 
-     RX__FORCE_LINKING(RX__TEST_SUITE_SECTION_BEGIN)                           \
     __declspec(allocate("rxsuite$a"))
-    const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_BEGIN;
+    const struct rx__test_suite_desc * const rx__test_suite_section_begin;
 
-    RX__FORCE_LINKING(RX__TEST_SUITE_SECTION_END)                              \
-    __declspec(allocate("rxsuite$z"))
-    const struct rx__test_suite_desc *RX__TEST_SUITE_SECTION_END;
+    __declspec(allocate("rxsuite$c"))
+    const struct rx__test_suite_desc * const rx__test_suite_section_end;
 
     #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
-        RX__FORCE_LINKING(RX__TEST_SUITE_DESC_PTR_GET_ID(name))                \
-        __declspec(allocate("rxsuite$s"))                                      \
-        const struct rx__test_suite_desc                                       \
-        *RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                  \
+        __declspec(allocate("rxsuite$b"))                                      \
+        const struct rx__test_suite_desc * const                               \
+        RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
             = &RX__TEST_SUITE_DESC_GET_ID(name)
+
+    #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
+    #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
 #endif
 
 #if defined(__GNUC__)
-    #define RX__TEST_CASE_SECTION_BEGIN __start_rxcase
-    #define RX__TEST_CASE_SECTION_END __stop_rxcase
+    const struct rx__test_case_desc * const __start_rxcase;
+    const struct rx__test_case_desc * const __stop_rxcase;
 
-    extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_BEGIN;
-    extern const struct rx__test_case_desc *RX__TEST_CASE_SECTION_END;
-
-    __attribute__((used, section("rxcase")))
-    const struct rx__test_case_desc *rx__dummy_case = NULL;
+    RX__FORCE_LINKING(rx__dummy_case)
+    __attribute__((section("rxcase")))
+    static const struct rx__test_case_desc * const rx__dummy_case = NULL;
 
     #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
-        __attribute__((used, section("rxcase")))                               \
-        const struct rx__test_case_desc                                        \
-        *RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                       \
+        __attribute__((section("rxcase")))                                     \
+        const struct rx__test_case_desc * const                                \
+        RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
             = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
+
+    #define RX__TEST_CASE_SECTION_BEGIN (&__start_rxcase)
+    #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
 #elif defined(_MSC_VER)
-    #define RX__TEST_CASE_SECTION_BEGIN rx__test_case_section_begin
-    #define RX__TEST_CASE_SECTION_END rx__test_case_section_end
-
     __pragma(section("rxcase$a", read))
-    __pragma(section("rxcase$s", read))
-    __pragma(section("rxcase$z", read))
+    __pragma(section("rxcase$b", read))
+    __pragma(section("rxcase$c", read))
 
-    RX__FORCE_LINKING(RX__TEST_CASE_SECTION_BEGIN)                             \
     __declspec(allocate("rxcase$a"))
-    const struct rx__test_case_desc *RX__TEST_CASE_SECTION_BEGIN;
+    const struct rx__test_case_desc * const rx__test_case_section_begin;
 
-    RX__FORCE_LINKING(RX__TEST_CASE_SECTION_END)                               \
-    __declspec(allocate("rxcase$z"))
-    const struct rx__test_case_desc *RX__TEST_CASE_SECTION_END;
+    __declspec(allocate("rxcase$c"))
+    const struct rx__test_case_desc * const rx__test_case_section_end;
 
     #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
-        RX__FORCE_LINKING(RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name))     \
-        __declspec(allocate("rxcase$s"))                                       \
-        const struct rx__test_case_desc                                        \
-        *RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                       \
+        __declspec(allocate("rxcase$b"))                                       \
+        const struct rx__test_case_desc * const                                \
+        RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
             = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
+
+    #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
+    #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
 #endif
 
 /* Test Configuration                                              O-(''Q)
@@ -3516,14 +3512,14 @@ rx_test_cases_enumerate(size_t *test_case_count,
                   "in C89 compatibility mode\n");
 #else
     size_t count;
-    const struct rx__test_case_desc **c_it;
+    const struct rx__test_case_desc * const *c_it;
 
     if (test_cases == NULL) {
         RX_ASSERT(test_case_count != NULL);
 
         *test_case_count = 0;
-        for (c_it = &RX__TEST_CASE_SECTION_BEGIN;
-             c_it != &RX__TEST_CASE_SECTION_END;
+        for (c_it = RX__TEST_CASE_SECTION_BEGIN;
+             c_it != RX__TEST_CASE_SECTION_END;
              ++c_it) {
             if (*c_it != NULL) {
                 ++(*test_case_count);
@@ -3534,10 +3530,10 @@ rx_test_cases_enumerate(size_t *test_case_count,
     }
 
     count = 0;
-    for (c_it = &RX__TEST_CASE_SECTION_BEGIN;
-         c_it != &RX__TEST_CASE_SECTION_END;
+    for (c_it = RX__TEST_CASE_SECTION_BEGIN;
+         c_it != RX__TEST_CASE_SECTION_END;
          ++c_it) {
-        const struct rx__test_suite_desc **s_it;
+        const struct rx__test_suite_desc * const *s_it;
         struct rx_test_case *test_case;
 
         if (*c_it == NULL) {
@@ -3545,8 +3541,8 @@ rx_test_cases_enumerate(size_t *test_case_count,
         }
 
         /* Find the corresponding test suite description, if any. */
-        for (s_it = &RX__TEST_SUITE_SECTION_BEGIN;
-             s_it != &RX__TEST_SUITE_SECTION_END;
+        for (s_it = RX__TEST_SUITE_SECTION_BEGIN;
+             s_it != RX__TEST_SUITE_SECTION_END;
              ++s_it) {
             if (*s_it == NULL) {
                 continue;
@@ -3574,7 +3570,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 
         memset(&test_case->config, 0, sizeof test_case->config);
 
-        if (s_it != &RX__TEST_SUITE_SECTION_END) {
+        if (s_it != RX__TEST_SUITE_SECTION_END) {
             /* Inherit the config from the test suite's description. */
     #define RX__CONFIG_MEMBER(type, name)                                      \
         if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {        \
