@@ -959,11 +959,12 @@ enum rx_status {
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
 enum rx_log_level {
-    RX_LOG_LEVEL_ERROR = 0,
-    RX_LOG_LEVEL_WARNING = 1,
-    RX_LOG_LEVEL_INFO = 2,
-    RX_LOG_LEVEL_TRACE = 3,
-    RX_LOG_LEVEL_DEBUG = 4
+    RX_LOG_LEVEL_FATAL = 0,
+    RX_LOG_LEVEL_ERROR = 1,
+    RX_LOG_LEVEL_WARNING = 2,
+    RX_LOG_LEVEL_INFO = 3,
+    RX_LOG_LEVEL_DEBUG = 4,
+    RX_LOG_LEVEL_TRACE = 5
 };
 
 typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
@@ -1254,16 +1255,18 @@ typedef long double rx__real;
 #define RX__LOG_STYLING 0
 #endif
 
-#if defined(RX_SET_LOGGING_LEVEL_DEBUG)
-    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
-#elif defined(RX_SET_LOGGING_LEVEL_TRACE)
+#if defined(RX_SET_LOGGING_LEVEL_TRACE)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_TRACE
+#elif defined(RX_SET_LOGGING_LEVEL_DEBUG)
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #elif defined(RX_SET_LOGGING_LEVEL_INFO)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_INFO
 #elif defined(RX_SET_LOGGING_LEVEL_WARNING)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
 #elif defined(RX_SET_LOGGING_LEVEL_ERROR)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_ERROR
+#elif defined(RX_SET_LOGGING_LEVEL_FATAL)
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_FATAL
 #elif RX__DEBUGGING
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #else
@@ -1287,16 +1290,6 @@ typedef long double rx__real;
         }                                                                      \
     } while (0)
 
-#define RX__LOG_DEBUG(msg)                                                     \
-        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
-                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, msg))
-#define RX__LOG_DEBUG_1(fmt, _0)                                               \
-        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
-                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0))
-#define RX__LOG_DEBUG_2(fmt, _0, _1)                                           \
-        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
-                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0, _1))
-
 #define RX__LOG_TRACE(msg)                                                     \
         RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
                 (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, msg))
@@ -1306,6 +1299,16 @@ typedef long double rx__real;
 #define RX__LOG_TRACE_2(fmt, _0, _1)                                           \
         RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
                 (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0, _1))
+
+#define RX__LOG_DEBUG(msg)                                                     \
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, msg))
+#define RX__LOG_DEBUG_1(fmt, _0)                                               \
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0))
+#define RX__LOG_DEBUG_2(fmt, _0, _1)                                           \
+        RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
+                (RX_LOG_LEVEL_DEBUG, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_INFO(msg)                                                      \
         RX__LOG(RX_LOG_LEVEL_INFO,                                             \
@@ -1337,6 +1340,16 @@ typedef long double rx__real;
         RX__LOG(RX_LOG_LEVEL_ERROR,                                            \
                 (RX_LOG_LEVEL_ERROR, __FILE__, __LINE__, fmt, _0, _1))
 
+#define RX__LOG_FATAL(msg)                                                     \
+        RX__LOG(RX_LOG_LEVEL_FATAL,                                            \
+                (RX_LOG_LEVEL_FATAL, __FILE__, __LINE__, msg))
+#define RX__LOG_FATAL_1(fmt, _0)                                               \
+        RX__LOG(RX_LOG_LEVEL_FATAL,                                            \
+                (RX_LOG_LEVEL_FATAL, __FILE__, __LINE__, fmt, _0))
+#define RX__LOG_FATAL_2(fmt, _0, _1)                                           \
+        RX__LOG(RX_LOG_LEVEL_FATAL,                                            \
+                (RX_LOG_LEVEL_FATAL, __FILE__, __LINE__, fmt, _0, _1))
+
 #if RX__LOG_STYLING
 enum rx__log_style {
     RX__LOG_STYLE_RESET = 0,
@@ -1363,6 +1376,9 @@ rx__log_level_get_name(const char **name, enum rx_log_level level)
     RX_ASSERT(name != NULL);
 
     switch (level) {
+        case RX_LOG_LEVEL_FATAL:
+            *name = "fatal";
+            return;
         case RX_LOG_LEVEL_ERROR:
             *name = "error";
             return;
@@ -1372,11 +1388,11 @@ rx__log_level_get_name(const char **name, enum rx_log_level level)
         case RX_LOG_LEVEL_INFO:
             *name = "info";
             return;
-        case RX_LOG_LEVEL_TRACE:
-            *name = "trace";
-            return;
         case RX_LOG_LEVEL_DEBUG:
             *name = "debug";
+            return;
+        case RX_LOG_LEVEL_TRACE:
+            *name = "trace";
             return;
         default:
             RX_ASSERT(0);
@@ -1390,6 +1406,9 @@ rx__log_level_get_style(enum rx__log_style *style, enum rx_log_level level)
     RX_ASSERT(style != NULL);
 
     switch (level) {
+        case RX_LOG_LEVEL_FATAL:
+            *style = RX__LOG_STYLE_BRIGHT_MAGENTA;
+            return;
         case RX_LOG_LEVEL_ERROR:
             *style = RX__LOG_STYLE_BRIGHT_RED;
             return;
@@ -1399,11 +1418,11 @@ rx__log_level_get_style(enum rx__log_style *style, enum rx_log_level level)
         case RX_LOG_LEVEL_INFO:
             *style = RX__LOG_STYLE_BRIGHT_GREEN;
             return;
-        case RX_LOG_LEVEL_TRACE:
+        case RX_LOG_LEVEL_DEBUG:
             *style = RX__LOG_STYLE_BRIGHT_CYAN;
             return;
-        case RX_LOG_LEVEL_DEBUG:
-            *style = RX__LOG_STYLE_BRIGHT_MAGENTA;
+        case RX_LOG_LEVEL_TRACE:
+            *style = RX__LOG_STYLE_BRIGHT_BLUE;
             return;
         default:
             RX_ASSERT(0);
@@ -1555,7 +1574,7 @@ rx__get_real_time(uint64_t *time)
             LARGE_INTEGER frequency;
 
             if (!QueryPerformanceFrequency(&frequency)) {
-                RX__LOG_ERROR("failed to retrieve the time's frequency\n");
+                RX__LOG_ERROR("failed to retrieve the timer's frequency\n");
                 return RX_ERROR;
             }
 
@@ -1697,7 +1716,7 @@ rx__dyn_array_ensure_has_enough_capacity(void **block,
     RX_ASSERT(element_size > 0);
 
     if (requested_capacity > max_capacity) {
-        RX__LOG_TRACE("the requested capacity is too large\n");
+        RX__LOG_DEBUG("the requested capacity is too large\n");
         return RX_ERROR_MAX_SIZE_EXCEEDED;
     }
 
@@ -1714,7 +1733,7 @@ rx__dyn_array_ensure_has_enough_capacity(void **block,
         *block,
         sizeof(struct rx__dyn_array_header) + element_size * new_capacity);
     if (buf == NULL) {
-        RX__LOG_TRACE("failed to reallocate the block\n");
+        RX__LOG_DEBUG("failed to reallocate the block\n");
         return RX_ERROR_ALLOCATION;
     }
 
@@ -1739,8 +1758,8 @@ rx__test_failure_array_create(struct rx_failure **array, size_t size)
     block = RX_MALLOC(sizeof(struct rx__dyn_array_header)
                       + sizeof(struct rx_failure) * capacity);
     if (block == NULL) {
-        RX__LOG_TRACE_1("failed to reserve a large enough capacity for the "
-                        "test failure array (requested capacity: %zu)\n",
+        RX__LOG_DEBUG_1("failed to reserve a large enough capacity for "
+                        "the test failure array (requested capacity: %zu)\n",
                         size);
         return RX_ERROR_ALLOCATION;
     }
@@ -1790,8 +1809,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         rx__test_failure_array_max_capacity,
         sizeof(struct rx_failure));
     if (status != RX_SUCCESS) {
-        RX__LOG_TRACE_1("failed to reserve a large enough capacity for the "
-                        "test failure array (requested capacity: %zu)\n",
+        RX__LOG_DEBUG_1("failed to reserve a large enough capacity for "
+                        "the test failure array (requested capacity: %zu)\n",
                         RX__DYN_ARRAY_GET_HEADER(block)->size + size);
         return status;
     }
@@ -2223,7 +2242,7 @@ rx__op_get_name(const char **name, enum rx__op op)
         if ((status) == RX_SUCCESS) {                                          \
             (s) = (char *)RX_MALLOC(sizeof *(s) * RX__STR_LENGTH_ID);          \
             if ((s) == NULL) {                                                 \
-                RX__LOG_TRACE_1("failed to allocate the string (%zu bytes)\n", \
+                RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n", \
                                 sizeof *(s) * RX__STR_LENGTH_ID);              \
                 (status) = RX_ERROR_ALLOCATION;                                \
             } else {                                                           \
@@ -2247,7 +2266,7 @@ rx__op_get_name(const char **name, enum rx__op op)
         if ((status) == RX_SUCCESS) {                                          \
             (s) = (char *)RX_MALLOC(sizeof *(s) * RX__STR_LENGTH_ID);          \
             if ((s) == NULL) {                                                 \
-                RX__LOG_TRACE_1("failed to allocate the string (%zu bytes)\n", \
+                RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n", \
                                 sizeof *(s) * RX__STR_LENGTH_ID);              \
                 (status) = RX_ERROR_ALLOCATION;                                \
             } else {                                                           \
@@ -2312,7 +2331,7 @@ rx__str_initialize_va_list(size_t *count,
 
             file = fopen("/dev/null", "w");
             if (file == NULL) {
-                RX__LOG_TRACE("could not open ‘/dev/null’\n");
+                RX__LOG_DEBUG("could not open ‘/dev/null’\n");
                 return RX_ERROR;
             }
 
@@ -2323,7 +2342,7 @@ rx__str_initialize_va_list(size_t *count,
 #endif
 
         if (size < 0) {
-            RX__LOG_TRACE("invalid string formatting\n");
+            RX__LOG_DEBUG("invalid string formatting\n");
             return RX_ERROR;
         }
 
@@ -2333,7 +2352,7 @@ rx__str_initialize_va_list(size_t *count,
 
     size = vsprintf(s, fmt, args);
     if (size < 0) {
-        RX__LOG_TRACE("unexpected string formatting error\n");
+        RX__LOG_DEBUG("unexpected string formatting error\n");
         return RX_ERROR;
     }
 
@@ -2365,7 +2384,7 @@ rx__str_copy(char **s, const char *original)
 
     *s = (char *)RX_MALLOC(sizeof **s * size);
     if (*s == NULL) {
-        RX__LOG_TRACE_1("failed to allocate the string (%zu bytes)\n",
+        RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n",
                         sizeof **s * size);
         return RX_ERROR_ALLOCATION;
     }
@@ -2522,7 +2541,7 @@ rx__test_cases_run_registered(void)
     test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
                                                   * test_case_count);
     if (test_cases == NULL) {
-        RX__LOG_TRACE("failed to allocate the test cases\n");
+        RX__LOG_DEBUG("failed to allocate the test cases\n");
         return RX_ERROR_ALLOCATION;
     }
 
@@ -2571,8 +2590,8 @@ rx__test_assess(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -2580,8 +2599,8 @@ rx__test_assess(struct rx_context *context,
 
         RX__STR_CREATE_1(status, diagnostic_msg, "%d", value);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -2591,7 +2610,7 @@ rx__test_assess(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the test "
+        RX__LOG_DEBUG_2("failed to handle the test result for the test "
                         "located at %s:%d\n",
                         file,
                         line);
@@ -2648,8 +2667,8 @@ rx__bool_test_assess(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "boolean test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the boolean test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -2657,8 +2676,8 @@ rx__bool_test_assess(struct rx_context *context,
 
         RX__STR_CREATE_2(status, diagnostic_msg, "%d == %d", x, expected);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "boolean test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the boolean test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -2668,7 +2687,7 @@ rx__bool_test_assess(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the boolean test "
+        RX__LOG_DEBUG_2("failed to handle the test result for the boolean test "
                         "located at %s:%d\n",
                         file,
                         line);
@@ -2756,8 +2775,8 @@ rx__int_test_assess_comparison(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "integer comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the integer comparison test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -2767,8 +2786,8 @@ rx__int_test_assess_comparison(struct rx_context *context,
         RX__STR_CREATE_3(
             status, diagnostic_msg, "%jd %s %jd", x1, op_symbol, x2);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "integer comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the integer comparison test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -2778,7 +2797,7 @@ rx__int_test_assess_comparison(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the integer "
+        RX__LOG_DEBUG_2("failed to handle the test result for the integer "
                         "comparison test located at %s:%d\n",
                         file,
                         line);
@@ -2866,8 +2885,8 @@ rx__uint_test_assess_comparison(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "unsigned integer comparison test located at "
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the unsigned integer comparison test located at "
                             "%s:%d\n",
                             file,
                             line);
@@ -2878,8 +2897,8 @@ rx__uint_test_assess_comparison(struct rx_context *context,
         RX__STR_CREATE_3(
             status, diagnostic_msg, "%ju %s %ju", x1, op_symbol, x2);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "unsigned integer comparison test located at "
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the unsigned integer comparison test located at "
                             "%s:%d\n",
                             file,
                             line);
@@ -2890,7 +2909,7 @@ rx__uint_test_assess_comparison(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the unsigned "
+        RX__LOG_DEBUG_2("failed to handle the test result for the unsigned "
                         "integer comparison test located at %s:%d\n",
                         file,
                         line);
@@ -2978,8 +2997,8 @@ rx__real_test_assess_comparison(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "real comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the real comparison test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -2989,8 +3008,8 @@ rx__real_test_assess_comparison(struct rx_context *context,
         RX__STR_CREATE_3(
             status, diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "real comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the real comparison test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -3000,7 +3019,7 @@ rx__real_test_assess_comparison(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the real "
+        RX__LOG_DEBUG_2("failed to handle the test result for the real "
                         "comparison test located at %s:%d\n",
                         file,
                         line);
@@ -3080,8 +3099,8 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "real almost equal test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the real almost equal test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -3091,8 +3110,8 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
         RX__STR_CREATE_3(
             status, diagnostic_msg, "%Lf %s %Lf", x1, op_symbol, x2);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "real almost equal test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the real almost equal test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -3102,7 +3121,7 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the real "
+        RX__LOG_DEBUG_2("failed to handle the test result for the real "
                         "almost equal test located at %s:%d\n",
                         file,
                         line);
@@ -3189,8 +3208,8 @@ rx__str_test_assess_comparison(struct rx_context *context,
         }
 
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the failure message for the "
-                            "string comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the string comparison test located at %s:%d\n",
                             file,
                             line);
             failure_msg = NULL;
@@ -3200,8 +3219,8 @@ rx__str_test_assess_comparison(struct rx_context *context,
         RX__STR_CREATE_3(
             status, diagnostic_msg, "\"%s\" %s \"%s\"", s1, op_symbol, s2);
         if (status != RX_SUCCESS) {
-            RX__LOG_TRACE_2("failed to create the diagnostic message for the "
-                            "string comparison test located at %s:%d\n",
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the string comparison test located at %s:%d\n",
                             file,
                             line);
             diagnostic_msg = NULL;
@@ -3211,7 +3230,7 @@ rx__str_test_assess_comparison(struct rx_context *context,
     if (rx_handle_test_result(
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
-        RX__LOG_TRACE_2("failed to handle the test result for the string "
+        RX__LOG_DEBUG_2("failed to handle the test result for the string "
                         "comparison test located at %s:%d\n",
                         file,
                         line);
@@ -3282,10 +3301,10 @@ rx_handle_test_result(struct rx_context *context,
 
         status = rx__str_copy(&buf, file);
         if (status != RX_SUCCESS) {
-            RX__LOG_WARNING_2("failed to allocate the file name for the "
-                              "test located at %s:%d\n",
-                              file,
-                              line);
+            RX__LOG_ERROR_2("failed to allocate the file name for the test "
+                            "located at %s:%d\n",
+                            file,
+                            line);
         }
 
         failure->file = buf;
@@ -3301,10 +3320,10 @@ rx_handle_test_result(struct rx_context *context,
 
         status = rx__str_copy(&buf, failure_msg);
         if (status != RX_SUCCESS) {
-            RX__LOG_WARNING_2("failed to allocate the failure message for the "
-                              "test located at %s:%d\n",
-                              file,
-                              line);
+            RX__LOG_ERROR_2("failed to allocate the failure message for "
+                            "the test located at %s:%d\n",
+                            file,
+                            line);
             failure->msg = NULL;
         } else {
             failure->msg = buf;
@@ -3318,10 +3337,10 @@ rx_handle_test_result(struct rx_context *context,
 
         status = rx__str_copy(&buf, diagnostic_msg);
         if (status != RX_SUCCESS) {
-            RX__LOG_WARNING_2("failed to allocate the diagnostic message for "
-                              "the test located at %s:%d\n",
-                              file,
-                              line);
+            RX__LOG_ERROR_2("failed to allocate the diagnostic message for "
+                            "the test located at %s:%d\n",
+                            file,
+                            line);
             failure->diagnostic_msg = NULL;
         } else {
             failure->diagnostic_msg = buf;
@@ -3492,10 +3511,10 @@ rx_test_case_run(struct rx_summary *summary,
 
     if (time_begin == (uint64_t)-1
         || rx__get_real_time(&time_end) != RX_SUCCESS) {
-        RX__LOG_WARNING_2("failed to measure the time elapsed "
-                          "(suite: \"%s\", case: \"%s\")\n",
-                          test_case->suite_name,
-                          test_case->name);
+        RX__LOG_ERROR_2("failed to measure the time elapsed "
+                        "(suite: \"%s\", case: \"%s\")\n",
+                        test_case->suite_name,
+                        test_case->name);
         summary->elapsed = 0;
     } else {
         RX_ASSERT(time_end >= time_begin);
