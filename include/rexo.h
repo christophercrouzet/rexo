@@ -42,13 +42,13 @@
     #define RX__C89_COMPAT 0
 #endif
 
-#ifdef RX_ENABLE_EXTERNAL_LINKING
+#if defined(RX_ENABLE_EXTERNAL_LINKING)
     #define RX__STORAGE extern
 #else
     #define RX__STORAGE static
 #endif
 
-#ifdef __GNUC__
+#if defined(__GNUC__)
     #define RX__MAYBE_UNUSED __attribute__((unused))
 #else
     #define RX__MAYBE_UNUSED
@@ -1006,7 +1006,7 @@ struct rx_context {
     struct rx_summary *summary;
 };
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 extern "C" {
 #endif
 
@@ -1046,7 +1046,7 @@ rx_run(int argc,
        size_t test_case_count,
        const struct rx_test_case *test_cases);
 
-#ifdef __cplusplus
+#if defined(__cplusplus)
 }
 #endif
 
@@ -1097,7 +1097,7 @@ rx_run(int argc,
     #define RX_FREE free
 #endif
 
-#ifdef RX__PLATFORM_WINDOWS
+#if defined(RX__PLATFORM_WINDOWS)
     #include <io.h>
     #define RX__ISATTY _isatty
     #define RX__FILENO _fileno
@@ -1190,7 +1190,7 @@ rx_run(int argc,
     #define RX__STRUCT_INITIALIZE_STATIC_0(id, type, assigner)                 \
         static const type id = {0}
 
-    #ifdef __cplusplus
+    #if defined(__cplusplus)
         #define RX__STRUCT_DEFAULT_MEMBER_ASSIGN(x) out x;
         #define RX__STRUCT_INITIALIZE_STATIC_1(id, type, assigner, ...)        \
             static const type id##_initialize()                                \
@@ -1283,7 +1283,7 @@ typedef long double rx__real;
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_WARNING
 #endif
 
-#ifdef RX_DISABLE_LOGGING
+#if defined(RX_DISABLE_LOGGING)
     #define RX__LOGGING 0
 #else
     #define RX__LOGGING 1
@@ -1971,7 +1971,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    the C++ version of the macro `RX__STRUCT_INITIALIZE_STATIC`. */
 
 #if !RX__C89_COMPAT
-    #ifdef __cplusplus
+    #if defined(__cplusplus)
         struct rx__config_desc {
             struct {
         #define RX__CONFIG_MEMBER(type, name) type name;
@@ -2333,7 +2333,7 @@ rx__str_initialize_va_list(size_t *count,
     RX_ASSERT(count != NULL);
 
     if (s == NULL) {
-#ifdef RX__PLATFORM_WINDOWS
+#if defined(RX__PLATFORM_WINDOWS)
         size = _vscprintf(fmt, args);
 #elif RX__C89_COMPAT
         {
