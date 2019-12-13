@@ -1096,6 +1096,16 @@ rx_run(int argc,
     #define RX_FREE free
 #endif
 
+#ifdef RX__PLATFORM_WINDOWS
+    #include <io.h>
+    #define RX__ISATTY _isatty
+    #define RX__FILENO _fileno
+#else
+    #include <unistd.h>
+    #define RX__ISATTY isatty
+    #define RX__FILENO fileno
+#endif
+
 #define RX__UNUSED(x) (void)(x)
 
 #define RX__REQUIRE_SEMICOLON void rx__dummy(void)
@@ -1247,12 +1257,11 @@ typedef long double rx__real;
 /* Logger                                                          O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if !defined(RX_DISABLE_LOG_STYLING) && defined(RX__PLATFORM_UNIX)             \
+#if !defined(RX_DISABLE_LOG_STYLING)                                           \
     && defined(_POSIX_C_SOURCE) && _POSIX_C_SOURCE >= 1
-#include <unistd.h>
-#define RX__LOG_STYLING 1
+    #define RX__LOG_STYLING 1
 #else
-#define RX__LOG_STYLING 0
+    #define RX__LOG_STYLING 0
 #endif
 
 #if defined(RX_SET_LOGGING_LEVEL_TRACE)
@@ -1504,7 +1513,7 @@ rx__log(enum rx_log_level level,
     rx__log_level_get_name(&level_name, level);
 
 #if RX__LOG_STYLING
-    if (isatty(fileno(stderr))) {
+    if (RX__ISATTY(RX__FILENO(stderr))) {
         enum rx__log_style level_style;
 
         rx__log_level_get_style(&level_style, level);
@@ -3421,7 +3430,7 @@ rx_summary_print(const struct rx_summary *summary)
     passed = summary->failure_count == 0;
 
 #if RX__LOG_STYLING
-    if (isatty(fileno(stderr))) {
+    if (RX__ISATTY(RX__FILENO(stderr))) {
         rx__log_style_get_ansi_code(
             &style_begin,
             passed ? RX__LOG_STYLE_BRIGHT_GREEN : RX__LOG_STYLE_BRIGHT_RED);
