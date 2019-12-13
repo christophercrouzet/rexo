@@ -25,13 +25,8 @@
 #ifndef REXO_REXO_H
 #define REXO_REXO_H
 
-#include <ctype.h>
 #include <setjmp.h>
-#include <stdarg.h>
-#include <stddef.h>
 #include <stdint.h>
-#include <stdio.h>
-#include <string.h>
 
 #define RX_MAJOR_VERSION 0
 #define RX_MINOR_VERSION 1
@@ -1075,6 +1070,12 @@ rx_run(int argc,
         #define RX__PLATFORM_LINUX
     #endif
 #endif
+
+#include <ctype.h>
+#include <stdarg.h>
+#include <stddef.h>
+#include <stdio.h>
+#include <string.h>
 
 #ifndef RX_ASSERT
     #include <assert.h>
