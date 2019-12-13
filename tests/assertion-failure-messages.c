@@ -346,7 +346,7 @@ int
 main(int argc, const char **argv)
 {
     size_t i;
-    size_t test_case_count;
+    rx_size test_case_count;
     struct rx_test_case *test_cases;
 
     (void)(argc);

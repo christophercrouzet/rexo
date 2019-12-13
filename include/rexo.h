@@ -26,7 +26,6 @@
 #define REXO_REXO_H
 
 #include <setjmp.h>
-#include <stdint.h>
 
 #define RX_MAJOR_VERSION 0
 #define RX_MINOR_VERSION 1
@@ -52,6 +51,53 @@
     #define RX__MAYBE_UNUSED __attribute__((unused))
 #else
     #define RX__MAYBE_UNUSED
+#endif
+
+/*
+   The environment macro represents whether the code is to be generated for a
+   32-bit or 64-bit target platform. Some CPUs, such as the x86-64 processors,
+   allow running code in 32-bit mode if compiled using the -m32 or -mx32
+   compiler switches, in which case `RX__ENVIRONMENT` is set to 32.
+*/
+#if (!(defined(__x86_64__) || defined(_M_X64)) || defined(__ILP32__))          \
+    && !(defined(__itanium__) || defined(_M_IA64))                             \
+    && !(defined(__powerpc64__) || defined(__ppc64__))                         \
+    && !defined(__aarch64__)
+    #define RX__ENVIRONMENT 32
+#else
+    #define RX__ENVIRONMENT 64
+#endif
+
+/*
+   The common data models, that is ILP32 (most recent 32-bit systems),
+   LP64 (Unix-like systems), and LLP64 (Windows), all the `int` type set to
+   32 bits, and the `long long` type to 64 bits.
+*/
+#if defined(RX_UINT32_TYPE)
+    typedef RX_UINT32_TYPE rx_uint32;
+#else
+    typedef unsigned int rx_uint32;
+#endif
+typedef char rx__invalid_uint32_type[sizeof(rx_uint32) == 4 ? 1 : -1];
+
+#if defined(RX_UINT64_TYPE)
+    typedef RX_UINT64_TYPE rx_uint64;
+#else
+    typedef unsigned long long rx_uint64;
+#endif
+typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
+
+/*
+   The C standard provides no guarantees about the size of the type `size_t`,
+   and some exotic platforms will in fact provide original values, but this
+   should cover most of the use cases.
+*/
+#if defined(RX_SIZE_TYPE)
+    typedef RX_SIZE_TYPE rx_size;
+#elif RX__ENVIRONMENT == 32
+    typedef rx_uint32 rx_size;
+#else
+    typedef rx_uint64 rx_size;
 #endif
 
 #define RX__FALSE ((int)0)
@@ -995,10 +1041,10 @@ struct rx_failure {
 
 struct rx_summary {
     const struct rx_test_case *test_case;
-    size_t test_count;
-    size_t failure_count;
+    rx_size test_count;
+    rx_size failure_count;
     struct rx_failure *failures;
-    uint64_t elapsed;
+    rx_uint64 elapsed;
 };
 
 struct rx_context {
@@ -1037,13 +1083,13 @@ rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_case *test_case);
 
 RX__STORAGE void
-rx_test_cases_enumerate(size_t *test_case_count,
+rx_test_cases_enumerate(rx_size *test_case_count,
                         struct rx_test_case *test_cases);
 
 RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
-       size_t test_case_count,
+       rx_size test_case_count,
        const struct rx_test_case *test_cases);
 
 #if defined(__cplusplus)
@@ -1075,6 +1121,7 @@ rx_run(int argc,
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
+#include <stdint.h>
 #include <string.h>
 
 #ifndef RX_ASSERT
@@ -1106,6 +1153,8 @@ rx_run(int argc,
     #define RX__ISATTY isatty
     #define RX__FILENO fileno
 #endif
+
+typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 
 #define RX__UNUSED(x) (void)(x)
 
@@ -2540,7 +2589,7 @@ RX__MAYBE_UNUSED static enum rx_status
 rx__test_cases_run_registered(void)
 {
     enum rx_status out;
-    size_t test_case_count;
+    rx_size test_case_count;
     struct rx_test_case *test_cases;
 
     rx_test_cases_enumerate(&test_case_count, NULL);
@@ -3280,6 +3329,7 @@ rx_handle_test_result(struct rx_context *context,
     enum rx_status status;
     struct rx_summary *summary;
     struct rx_failure *failure;
+    size_t failure_count;
 
     RX_ASSERT(context != NULL);
     RX_ASSERT(context->summary != NULL);
@@ -3304,7 +3354,8 @@ rx_handle_test_result(struct rx_context *context,
         return status;
     }
 
-    rx__test_failure_array_get_size(&summary->failure_count, summary->failures);
+    rx__test_failure_array_get_size(&failure_count, summary->failures);
+    summary->failure_count = failure_count;
 
     {
         char *buf;
@@ -3382,8 +3433,7 @@ rx_summary_initialize(struct rx_summary *summary,
         return status;
     }
 
-    rx__test_failure_array_get_size(&summary->failure_count, summary->failures);
-    RX_ASSERT(summary->failure_count == 0);
+    summary->failure_count = 0;
     return RX_SUCCESS;
 }
 
@@ -3528,7 +3578,7 @@ rx_test_case_run(struct rx_summary *summary,
         summary->elapsed = 0;
     } else {
         RX_ASSERT(time_end >= time_begin);
-        summary->elapsed = time_end - time_begin;
+        summary->elapsed = (rx_uint64)(time_end - time_begin);
     }
 
     if (test_case->tear_down != NULL) {
@@ -3539,7 +3589,7 @@ rx_test_case_run(struct rx_summary *summary,
 }
 
 RX__MAYBE_UNUSED RX__STORAGE void
-rx_test_cases_enumerate(size_t *test_case_count,
+rx_test_cases_enumerate(rx_size *test_case_count,
                         struct rx_test_case *test_cases)
 {
 #if RX__C89_COMPAT
@@ -3641,7 +3691,7 @@ rx_test_cases_enumerate(size_t *test_case_count,
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_run(int argc,
        const char **argv,
-       size_t test_case_count,
+       rx_size test_case_count,
        const struct rx_test_case *test_cases)
 {
     RX__UNUSED(argc);
