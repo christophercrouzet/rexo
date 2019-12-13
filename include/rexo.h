@@ -101,8 +101,6 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
 
-struct rx_context;
-
 #define RX__PARAM_CONTEXT rx__context
 #define RX__PARAM_DATA rx__data
 
@@ -1005,6 +1003,8 @@ enum rx_log_level {
     RX_LOG_LEVEL_DEBUG = 4,
     RX_LOG_LEVEL_TRACE = 5
 };
+
+struct rx_context;
 
 typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
