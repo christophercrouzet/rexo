@@ -25,8 +25,6 @@
 #ifndef REXO_REXO_H
 #define REXO_REXO_H
 
-#include <setjmp.h>
-
 #define RX_MAJOR_VERSION 0
 #define RX_MINOR_VERSION 1
 #define RX_PATCH_VERSION 0
@@ -1047,11 +1045,6 @@ struct rx_summary {
     rx_uint64 elapsed;
 };
 
-struct rx_context {
-    jmp_buf env;
-    struct rx_summary *summary;
-};
-
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -1118,6 +1111,7 @@ rx_run(int argc,
 #endif
 
 #include <ctype.h>
+#include <setjmp.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -1303,6 +1297,11 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 typedef intmax_t rx__int;
 typedef uintmax_t rx__uint;
 typedef long double rx__real;
+
+struct rx_context {
+    jmp_buf env;
+    struct rx_summary *summary;
+};
 
 /* Logger                                                          O-(''Q)
    -------------------------------------------------------------------------- */
