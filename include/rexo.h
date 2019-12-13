@@ -1213,9 +1213,7 @@ rx_run(int argc,
             )(__VA_ARGS__))
 #endif
 
-#if defined(__GNUC__)
-    #define RX__FORCE_LINKING(id) __attribute__((used))
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
     #if defined(_WIN64)
         #define RX__FORCE_LINKING(id)                                          \
             __pragma(comment(linker, "/include:" RX__STRINGIFY(id)))
@@ -1223,6 +1221,8 @@ rx_run(int argc,
         #define RX__FORCE_LINKING(id)                                          \
             __pragma(comment(linker, "/include:_" RX__STRINGIFY(id)))
     #endif
+#else
+    #define RX__FORCE_LINKING(id) __attribute__((used))
 #endif
 
 #define RX__SET_UP_GET_WRAPPER_ID(id)                                          \
@@ -1849,23 +1849,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
   descriptions into specific data sections, thus enabling automatic discovery
   by iterating over any data registered in these sections. */
 
-#if defined(__GNUC__)
-    const struct rx__test_suite_desc * const __start_rxsuite;
-    const struct rx__test_suite_desc * const __stop_rxsuite;
-
-    RX__FORCE_LINKING(rx__dummy_suite)
-    __attribute__((section("rxsuite")))
-    static const struct rx__test_suite_desc * const rx__dummy_suite = NULL;
-
-    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
-        __attribute__((section("rxsuite")))                                    \
-        const struct rx__test_suite_desc * const                               \
-        RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
-            = &RX__TEST_SUITE_DESC_GET_ID(name)
-
-    #define RX__TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
-    #define RX__TEST_SUITE_SECTION_END (&__stop_rxsuite)
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
     __pragma(section("rxsuite$a", read))
     __pragma(section("rxsuite$b", read))
     __pragma(section("rxsuite$c", read))
@@ -1886,25 +1870,25 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
     #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
+#else
+    const struct rx__test_suite_desc * const __start_rxsuite;
+    const struct rx__test_suite_desc * const __stop_rxsuite;
+
+    RX__FORCE_LINKING(rx__dummy_suite)
+    __attribute__((section("rxsuite")))
+    static const struct rx__test_suite_desc * const rx__dummy_suite = NULL;
+
+    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
+        __attribute__((section("rxsuite")))                                    \
+        const struct rx__test_suite_desc * const                               \
+        RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
+            = &RX__TEST_SUITE_DESC_GET_ID(name)
+
+    #define RX__TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
+    #define RX__TEST_SUITE_SECTION_END (&__stop_rxsuite)
 #endif
 
-#if defined(__GNUC__)
-    const struct rx__test_case_desc * const __start_rxcase;
-    const struct rx__test_case_desc * const __stop_rxcase;
-
-    RX__FORCE_LINKING(rx__dummy_case)
-    __attribute__((section("rxcase")))
-    static const struct rx__test_case_desc * const rx__dummy_case = NULL;
-
-    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
-        __attribute__((section("rxcase")))                                     \
-        const struct rx__test_case_desc * const                                \
-        RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
-            = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
-
-    #define RX__TEST_CASE_SECTION_BEGIN (&__start_rxcase)
-    #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
-#elif defined(_MSC_VER)
+#if defined(_MSC_VER)
     __pragma(section("rxcase$a", read))
     __pragma(section("rxcase$b", read))
     __pragma(section("rxcase$c", read))
@@ -1925,6 +1909,22 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
     #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
+#else
+    const struct rx__test_case_desc * const __start_rxcase;
+    const struct rx__test_case_desc * const __stop_rxcase;
+
+    RX__FORCE_LINKING(rx__dummy_case)
+    __attribute__((section("rxcase")))
+    static const struct rx__test_case_desc * const rx__dummy_case = NULL;
+
+    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
+        __attribute__((section("rxcase")))                                     \
+        const struct rx__test_case_desc * const                                \
+        RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
+            = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
+
+    #define RX__TEST_CASE_SECTION_BEGIN (&__start_rxcase)
+    #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
 #endif
 
 /* Test Configuration                                              O-(''Q)
