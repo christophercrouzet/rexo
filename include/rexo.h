@@ -457,30 +457,30 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__UINT_TEST_DEFINE(severity, op, x1, x2, msg)                    \
         rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                       (x1),                                   \
-                                       (x2),                                   \
-                                       op,                                     \
-                                       #x1,                                    \
-                                       #x2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       msg)
+                                        (x1),                                  \
+                                        (x2),                                  \
+                                        op,                                    \
+                                        #x1,                                   \
+                                        #x2,                                   \
+                                        __FILE__,                              \
+                                        __LINE__,                              \
+                                        severity,                              \
+                                        msg)
 #else
     #define RX__UINT_TEST_DEFINE_0(severity, op, x1, x2)                       \
         RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, NULL)
 
     #define RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, ...)                  \
         rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                       (x1),                                   \
-                                       (x2),                                   \
-                                       op,                                     \
-                                       #x1,                                    \
-                                       #x2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       __VA_ARGS__)
+                                        (x1),                                  \
+                                        (x2),                                  \
+                                        op,                                    \
+                                        #x1,                                   \
+                                        #x2,                                   \
+                                        __FILE__,                              \
+                                        __LINE__,                              \
+                                        severity,                              \
+                                        __VA_ARGS__)
 
     #define RX__UINT_TEST_DEFINE(...)                                          \
         RX__EXPAND(                                                            \
