@@ -1832,10 +1832,6 @@ rx__test_failure_array_create(struct rx_failure **array, size_t size)
 static void
 rx__test_failure_array_destroy(struct rx_failure *array)
 {
-    if (array == NULL) {
-        return;
-    }
-
     RX_FREE(RX__DYN_ARRAY_GET_BLOCK(array));
 }
 
@@ -2675,13 +2671,8 @@ rx__test_assess(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -2752,13 +2743,8 @@ rx__bool_test_assess(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -2862,13 +2848,8 @@ rx__int_test_assess_comparison(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -2974,13 +2955,8 @@ rx__uint_test_assess_comparison(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -3084,13 +3060,8 @@ rx__real_test_assess_comparison(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -3186,13 +3157,8 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -3295,13 +3261,8 @@ rx__str_test_assess_comparison(struct rx_context *context,
                         line);
     }
 
-    if (failure_msg != NULL) {
-        RX_FREE(failure_msg);
-    }
-
-    if (diagnostic_msg != NULL) {
-        RX_FREE(diagnostic_msg);
-    }
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
         rx_abort_test(context);
@@ -3451,14 +3412,8 @@ rx_summary_terminate(struct rx_summary *summary)
         failure = &summary->failures[i];
 
         RX_FREE((void *)(uintptr_t)failure->file);
-
-        if (failure->msg != NULL) {
-            RX_FREE((void *)(uintptr_t)failure->msg);
-        }
-
-        if (failure->diagnostic_msg != NULL) {
-            RX_FREE((void *)(uintptr_t)failure->diagnostic_msg);
-        }
+        RX_FREE((void *)(uintptr_t)failure->msg);
+        RX_FREE((void *)(uintptr_t)failure->diagnostic_msg);
     }
 
     rx__test_failure_array_destroy(summary->failures);
