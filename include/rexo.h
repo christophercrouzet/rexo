@@ -1011,13 +1011,8 @@ typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
-#define RX__CONFIG_MEMBERS                                                     \
-    RX__CONFIG_MEMBER(int, skip)
-
 struct rx_config {
-#define RX__CONFIG_MEMBER(type, name) type name;
-    RX__CONFIG_MEMBERS
-#undef RX__CONFIG_MEMBER
+    int skip;
 };
 
 struct rx_test_case {
@@ -1286,10 +1281,10 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     rx__test_suite_desc_ptr_##id
 #define RX__TEST_CASE_DESC_PTR_GET_ID(suite_id, id)                            \
     rx__test_case_desc_ptr_##suite_id##_##id
-#define RX__TEST_SUITE_CONFIG_DESC_GET_ID(id)                                  \
-    rx__test_suite_config_desc_##id
-#define RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id)                         \
-    rx__test_case_config_desc_##suite_id##_##id
+#define RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id)                        \
+    rx__test_suite_config_set_members_fn_##id
+#define RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id)               \
+    rx__test_case_config_set_members_fn_##suite_id##_##id
 #define RX__TEST_CASE_DATA_GET_ID(suite_id, id)                                \
     rx__test_case_data_##suite_id##_##id
 #define RX__TEST_CASE_GET_ID(suite_id, id)                                     \
@@ -1976,97 +1971,17 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 /* Test Configuration                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
-/* Providing a designated initializer-like API like `DEFINE_DATA(.foo = 1.23);`,
-   that tracks whether a member is explicitely defined or not, builds upon the
-   `RX__STRUCT_INITIALIZE_STATIC` macro but provides an alternative way of
-   setting members that also sets a ‘defined’ flag alongside each member that
-   is being set through this macro.
-
-   How the members and their respective boolean flags are set depends on
-   the language.
-
-   The designated initializer syntax available in C99 states that implicit
-   initializers initialize struct elements in order of declaration after any
-   previous designator used. So if we define a struct where each member value
-   is followed by a corresponding boolean flag, as in
-
-   struct data {
-       double foo;
-       int foo_defined;
-   };
-
-   then we are able to expand the macro to `.foo = 1.23, 1`, that is being used
-   to fill up the structure as expected.
-
-   C++ requires a different trick where the values and boolean flags are
-   separatated into two named structs, such as
-
-   struct data {
-       struct {
-           double foo;
-       } value;
-       struct {
-           int foo;
-       } defined;
-   };
-
-   In this scenario, the macro prefixes each given assignment to produce
-   an expression like `out.value.foo = 1.23; out.defined.foo = 1.23 ? 1 : 1`
-   that is used to initialize the structure inside the function defined by
-   the C++ version of the macro `RX__STRUCT_INITIALIZE_STATIC`. */
-
 #if !RX__C89_COMPAT
-    #if defined(__cplusplus)
-        struct rx__config_desc {
-            struct {
-        #define RX__CONFIG_MEMBER(type, name) type name;
-                RX__CONFIG_MEMBERS
-        #undef RX__CONFIG_MEMBER
-            } value;
-            struct {
-        #define RX__CONFIG_MEMBER(type, name) int name;
-                RX__CONFIG_MEMBERS
-        #undef RX__CONFIG_MEMBER
-            } defined;
-        };
+    typedef void (*rx__config_set_members_fn)(struct rx_config *config);
 
-        #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name)                  \
-            data->defined . name
-        #define RX__CONFIG_DESC_MEMBER_GET(data, name)                         \
-            data->value . name
-        #define RX__CONFIG_DESC_MEMBER_ASSIGN(x)                               \
-            out.value x; out.defined x ? 1 : 1;
-    #else
-        struct rx__config_desc {
-        #define RX__CONFIG_MEMBER(type, name) type name; int name##_defined;
-            RX__CONFIG_MEMBERS
-        #undef RX__CONFIG_MEMBER
-        };
+    #define RX__CONFIG_MEMBER_ASSIGN(x) (*config) x;
 
-        #define RX__CONFIG_DESC_MEMBER_IS_DEFINED(data, name)                  \
-            data->name##_defined
-        #define RX__CONFIG_DESC_MEMBER_GET(data, name)                         \
-            data->name
-        #define RX__CONFIG_DESC_MEMBER_ASSIGN(x)                               \
-            x, 1,
-    #endif
-
-    #define RX__CONFIG_DESC_INITIALIZE_STATIC_0(id)                            \
-        RX__STRUCT_INITIALIZE_STATIC_0(                                        \
-            id, struct rx__config_desc, RX__CONFIG_DESC_MEMBER_ASSIGN)
-
-    #define RX__CONFIG_DESC_INITIALIZE_STATIC_1(id, ...)                       \
-        RX__STRUCT_INITIALIZE_STATIC_1(id,                                     \
-                                       struct rx__config_desc,                 \
-                                       RX__CONFIG_DESC_MEMBER_ASSIGN,          \
-                                       __VA_ARGS__)
-
-    #define RX__CONFIG_DESC_INITIALIZE_STATIC(...)                             \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__CONFIG_DESC_INITIALIZE_STATIC_,                            \
-                RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
+    #define RX__CONFIG_DEFINE_SET_MEMBERS_FN(id, ...)                          \
+        static void                                                            \
+        id(struct rx_config *config)                                           \
+        {                                                                      \
+            RX__APPLY(RX__CONFIG_MEMBER_ASSIGN, __VA_ARGS__);                  \
+        }
 #endif
 
 /* Fixture Macros                                                  O-(''Q)
@@ -2107,23 +2022,21 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 #if !RX__C89_COMPAT
     struct rx__test_suite_desc {
         const char *name;
-        const struct rx__config_desc *config;
+        const rx__config_set_members_fn config_set_members;
     };
 
-    #define RX__TEST_SUITE_(id)                                                \
+    #define RX__TEST_SUITE_(id, config_set_members)                            \
         static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id) \
-            = {#id, &RX__TEST_SUITE_CONFIG_DESC_GET_ID(id)};                   \
+            = {#id, config_set_members};                                       \
         RX__TEST_SUITE_DESC_DEFINE_PTR(id)
 
     #define RX__TEST_SUITE_0(id)                                               \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_SUITE_CONFIG_DESC_GET_ID(id));                            \
-        RX_TEST_SUITE_(id);
+        RX_TEST_SUITE_(id, NULL);
 
     #define RX__TEST_SUITE_1(id, ...)                                          \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_SUITE_CONFIG_DESC_GET_ID(id), __VA_ARGS__);               \
-        RX_TEST_SUITE_(id);
+        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
+            RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id), __VA_ARGS__)      \
+        RX_TEST_SUITE_(id, &RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id));
 #endif
 
 /* Test Case Macros                                                O-(''Q)
@@ -2135,59 +2048,75 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         const char *suite_name;
         void *data;
         const struct rx__fixture_desc *fixture;
-        const struct rx__config_desc *config;
+        const rx__config_set_members_fn config_set_members;
         const rx_test_case_run_fn run;
     };
 
-    #define RX__TEST_CASE_(suite_id, id, type, data, fixture)                  \
-        static void RX__TEST_CASE_GET_ID(suite_id, id)                         \
-            (RX__DEFINE_PARAMS(type));                                         \
+    #define RX__TEST_CASE_(suite_id,                                           \
+                           id,                                                 \
+                           type,                                               \
+                           data,                                               \
+                           fixture,                                            \
+                           config_set_members)                                 \
+        static void                                                            \
+        RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));           \
         static const struct rx__test_case_desc                                 \
         RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                \
             = {#id,                                                            \
                #suite_id,                                                      \
                data,                                                           \
                fixture,                                                        \
-               &RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id),                \
+               config_set_members,                                             \
                (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};       \
         RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                           \
-        static void RX__TEST_CASE_GET_ID(suite_id, id)                         \
-            (RX__DEFINE_PARAMS(type))
+        static void                                                            \
+        RX__TEST_CASE_GET_ID(suite_id, id) (RX__DEFINE_PARAMS(type))
 
     #define RX__TEST_CASE_0(suite_id, id)                                      \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                   \
-        RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
+        RX__TEST_CASE_(suite_id,                                               \
+                       id,                                                     \
+                       void *,                                                 \
+                       NULL,                                                   \
+                       NULL,                                                   \
+                       NULL)
 
     #define RX__TEST_CASE_1(suite_id, id, ...)                                 \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id), __VA_ARGS__);      \
-        RX__TEST_CASE_(suite_id, id, void *, NULL, NULL)
+        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
+            RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id),          \
+            __VA_ARGS__)                                                       \
+        RX__TEST_CASE_(suite_id,                                               \
+                       id,                                                     \
+                       void *,                                                 \
+                       NULL,                                                   \
+                       NULL,                                                   \
+                       &RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id,   \
+                                                                   id))
 
     #define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                      \
         static RX__FIXTURE_GET_DATA_TYPE(fixture)                              \
         RX__TEST_CASE_DATA_GET_ID(suite_id, id);                               \
 
     #define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                     \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                   \
-        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
-        RX__TEST_CASE_(suite_id,                                               \
-                       id,                                                     \
-                       RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
-                       &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
-                       &RX__FIXTURE_DESC_GET_ID(fixture))
-
-    #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                \
-        RX__CONFIG_DESC_INITIALIZE_STATIC(                                     \
-            RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id, id));                   \
         RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
         RX__TEST_CASE_(suite_id,                                               \
                        id,                                                     \
                        RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
                        &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
                        &RX__FIXTURE_DESC_GET_ID(fixture),                      \
-                       __VA_ARGS__)
+                       NULL)
+
+    #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                \
+        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
+            RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id),          \
+            __VA_ARGS__)                                                       \
+        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
+        RX__TEST_CASE_(suite_id,                                               \
+                       id,                                                     \
+                       RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
+                       &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
+                       &RX__FIXTURE_DESC_GET_ID(fixture),                      \
+                       &RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id,   \
+                                                                   id))
 #endif
 
 /* Operators                                                       O-(''Q)
@@ -3613,25 +3542,16 @@ rx_test_cases_enumerate(rx_size *test_case_count,
 
         memset(&test_case->config, 0, sizeof test_case->config);
 
-        if (s_it != RX__TEST_SUITE_SECTION_END) {
+        if (s_it != RX__TEST_SUITE_SECTION_END
+            && (*s_it)->config_set_members != NULL) {
             /* Inherit the config from the test suite's description. */
-    #define RX__CONFIG_MEMBER(type, name)                                      \
-        if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*s_it)->config, name)) {        \
-            test_case->config.name                                             \
-                = RX__CONFIG_DESC_MEMBER_GET((*s_it)->config, name);           \
-        }
-            RX__CONFIG_MEMBERS
-    #undef RX__CONFIG_MEMBER
+            (*s_it)->config_set_members(&test_case->config);
         }
 
-        /* Inherit the config from the test case's description. */
-    #define RX__CONFIG_MEMBER(type, name)                                      \
-        if (RX__CONFIG_DESC_MEMBER_IS_DEFINED((*c_it)->config, name)) {        \
-            test_case->config.name                                             \
-                = RX__CONFIG_DESC_MEMBER_GET((*c_it)->config, name);           \
+        if ((*c_it)->config_set_members != NULL) {
+            /* Inherit the config from the test case's description. */
+            (*c_it)->config_set_members(&test_case->config);
         }
-        RX__CONFIG_MEMBERS
-    #undef RX__CONFIG_MEMBER
 
         ++count;
     }
