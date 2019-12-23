@@ -1162,6 +1162,23 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 #define RX__CONCAT_(a, b) a##b
 #define RX__CONCAT(a, b) RX__CONCAT_(a, b)
 
+#define RX__APPLY_1(x, _0)                                                     \
+    x(_0)
+#define RX__APPLY_2(x, _0, _1)                                                 \
+    x(_0) RX__APPLY_1(x, _1)
+#define RX__APPLY_3(x, _0, _1, _2)                                             \
+    x(_0) RX__APPLY_2(x, _1, _2)
+#define RX__APPLY_4(x, _0, _1, _2, _3)                                         \
+    x(_0) RX__APPLY_3(x, _1, _2, _3)
+#define RX__APPLY_5(x, _0, _1, _2, _3, _4)                                     \
+    x(_0) RX__APPLY_4(x, _1, _2, _3, _4)
+#define RX__APPLY_6(x, _0, _1, _2, _3, _4, _5)                                 \
+    x(_0) RX__APPLY_5(x, _1, _2, _3, _4, _5)
+#define RX__APPLY_7(x, _0, _1, _2, _3, _4, _5, _6)                             \
+    x(_0) RX__APPLY_6(x, _1, _2, _3, _4, _5, _6)
+#define RX__APPLY_8(x, _0, _1, _2, _3, _4, _5, _6, _7)                         \
+    x(_0) RX__APPLY_7(x, _1, _2, _3, _4, _5, _6, _7)
+
 #if !RX__C89_COMPAT
     #define RX__ARG(                                                           \
          _0,  _1,  _2,  _3,  _4,  _5,  _6,  _7,                                \
@@ -1204,15 +1221,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
             16, 15, 14, 13, 12, 11, 10,  9,                                    \
              8,  7,  6,  5,  4,  3,  2,  1,                                    \
              0,))
-
-    #define RX__APPLY_1(x, first) x(first)
-    #define RX__APPLY_2(x, first, ...) x(first) RX__APPLY_1(x, __VA_ARGS__)
-    #define RX__APPLY_3(x, first, ...) x(first) RX__APPLY_2(x, __VA_ARGS__)
-    #define RX__APPLY_4(x, first, ...) x(first) RX__APPLY_3(x, __VA_ARGS__)
-    #define RX__APPLY_5(x, first, ...) x(first) RX__APPLY_4(x, __VA_ARGS__)
-    #define RX__APPLY_6(x, first, ...) x(first) RX__APPLY_5(x, __VA_ARGS__)
-    #define RX__APPLY_7(x, first, ...) x(first) RX__APPLY_6(x, __VA_ARGS__)
-    #define RX__APPLY_8(x, first, ...) x(first) RX__APPLY_7(x, __VA_ARGS__)
 
     #define RX__APPLY(x, ...)                                                  \
         RX__EXPAND(                                                            \
