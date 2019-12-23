@@ -52,8 +52,7 @@ static const struct rx_test_case my_test_cases[] = {
         "my_test_suite",
         (rx_test_case_run_fn)my_test_suite_my_test_case,
         &my_data,
-        (rx_set_up_fn)my_set_up,
-        (rx_tear_down_fn)my_tear_down,
+        {(rx_set_up_fn)my_set_up, (rx_tear_down_fn)my_tear_down},
         {0},
     },
 };

@@ -1011,6 +1011,11 @@ typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
+struct rx_fixture {
+    rx_set_up_fn set_up;
+    rx_tear_down_fn tear_down;
+};
+
 struct rx_config {
     int skip;
 };
@@ -1020,8 +1025,7 @@ struct rx_test_case {
     const char *suite_name;
     rx_test_case_run_fn run;
     void *data;
-    rx_set_up_fn set_up;
-    rx_tear_down_fn tear_down;
+    struct rx_fixture fixture;
     struct rx_config config;
 };
 
@@ -1220,37 +1224,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     #define RX__APPLY(x, ...)                                                  \
         RX__EXPAND(                                                            \
             RX__CONCAT(RX__APPLY_, RX__COUNT_ARGS(__VA_ARGS__))(x, __VA_ARGS__))
-
-    /* Initializing data at compile-time in C99 can be done conveniently using
-      designated initializers but these are not available in C++ prior to C++20.
-      As a workaround, we use a feature specific to C++ that allows running
-      a function at file scope to initialize the content of our static data. */
-
-    #define RX__STRUCT_INITIALIZE_STATIC_0(id, type, assigner)                 \
-        static const type id = {0}
-
-    #if defined(__cplusplus)
-        #define RX__STRUCT_DEFAULT_MEMBER_ASSIGN(x) out x;
-        #define RX__STRUCT_INITIALIZE_STATIC_1(id, type, assigner, ...)        \
-            static const type id##_initialize()                                \
-            {                                                                  \
-                type out = {0};                                                \
-                RX__APPLY(assigner, __VA_ARGS__);                              \
-                return out;                                                    \
-            }                                                                  \
-            static const type id = id##_initialize()
-    #else
-        #define RX__STRUCT_DEFAULT_MEMBER_ASSIGN(x) x,
-        #define RX__STRUCT_INITIALIZE_STATIC_1(id, type, assigner, ...)        \
-            static const type id = { RX__APPLY(assigner, __VA_ARGS__) }
-    #endif
-
-    #define RX__STRUCT_INITIALIZE_STATIC(...)                                  \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__STRUCT_INITIALIZE_STATIC_,                                 \
-                RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #if defined(_MSC_VER)
@@ -1271,8 +1244,8 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     rx__tear_down_wrapper_##id
 #define RX__FIXTURE_GET_DATA_TYPE(id)                                          \
     rx__fixture_data_type_##id
-#define RX__FIXTURE_DESC_GET_ID(id)                                            \
-    rx__fixture_desc_##id
+#define RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)                                  \
+    rx__fixture_set_members_fn_##id
 #define RX__TEST_SUITE_DESC_GET_ID(id)                                         \
     rx__test_suite_desc_##id
 #define RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                \
@@ -1988,25 +1961,27 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    -------------------------------------------------------------------------- */
 
 #if !RX__C89_COMPAT
-    struct rx__fixture_desc {
-        rx_set_up_fn set_up;
-        rx_tear_down_fn tear_down;
-    };
+    typedef void (*rx__fixture_set_members_fn)(struct rx_fixture *fixture);
+
+    #define RX__FIXTURE_MEMBER_ASSIGN(x) (*fixture) x;
 
     #define RX__FIXTURE_(id, type)                                             \
         typedef type RX__FIXTURE_GET_DATA_TYPE(id);
 
     #define RX__FIXTURE_0(id, type)                                            \
-        RX__STRUCT_INITIALIZE_STATIC(RX__FIXTURE_DESC_GET_ID(id),              \
-                                     struct rx__fixture_desc,                  \
-                                     RX__STRUCT_DEFAULT_MEMBER_ASSIGN);        \
+        static void                                                            \
+        RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)(struct rx_fixture *fixture)      \
+        {                                                                      \
+            (void)(fixture);                                                   \
+        }                                                                      \
         RX__FIXTURE_(id, type)
 
     #define RX__FIXTURE_1(id, type, ...)                                       \
-        RX__STRUCT_INITIALIZE_STATIC(RX__FIXTURE_DESC_GET_ID(id),              \
-                                     struct rx__fixture_desc,                  \
-                                     RX__STRUCT_DEFAULT_MEMBER_ASSIGN,         \
-                                     __VA_ARGS__);                             \
+        static void                                                            \
+        RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)(struct rx_fixture *fixture)      \
+        {                                                                      \
+            RX__APPLY(RX__FIXTURE_MEMBER_ASSIGN, __VA_ARGS__);                 \
+        }                                                                      \
         RX__FIXTURE_(id, type)
 
     #define RX__FIXTURE_VOID_0(id)                                             \
@@ -2047,7 +2022,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         const char *name;
         const char *suite_name;
         void *data;
-        const struct rx__fixture_desc *fixture;
+        const rx__fixture_set_members_fn fixture_set_members;
         const rx__config_set_members_fn config_set_members;
         const rx_test_case_run_fn run;
     };
@@ -2056,7 +2031,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
                            id,                                                 \
                            type,                                               \
                            data,                                               \
-                           fixture,                                            \
+                           fixture_set_members,                                \
                            config_set_members)                                 \
         static void                                                            \
         RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));           \
@@ -2065,7 +2040,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
             = {#id,                                                            \
                #suite_id,                                                      \
                data,                                                           \
-               fixture,                                                        \
+               fixture_set_members,                                            \
                config_set_members,                                             \
                (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};       \
         RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                           \
@@ -2102,19 +2077,19 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
                        id,                                                     \
                        RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
                        &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
-                       &RX__FIXTURE_DESC_GET_ID(fixture),                      \
+                       &RX__FIXTURE_SET_MEMBERS_FN_GET_ID(fixture),            \
                        NULL)
 
     #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                \
+        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
         RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
             RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id),          \
             __VA_ARGS__)                                                       \
-        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
         RX__TEST_CASE_(suite_id,                                               \
                        id,                                                     \
                        RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
                        &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
-                       &RX__FIXTURE_DESC_GET_ID(fixture),                      \
+                       &RX__FIXTURE_SET_MEMBERS_FN_GET_ID(fixture),            \
                        &RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id,   \
                                                                    id))
 #endif
@@ -3432,10 +3407,10 @@ rx_test_case_run(struct rx_summary *summary,
 
     context.summary = summary;
 
-    if (test_case->set_up != NULL) {
+    if (test_case->fixture.set_up != NULL) {
         enum rx_status status;
 
-        status = test_case->set_up(&context, test_case->data);
+        status = test_case->fixture.set_up(&context, test_case->data);
         if (status != RX_SUCCESS) {
             RX__LOG_ERROR_2("failed to set-up the fixture "
                             "(suite: \"%s\", case: \"%s\")\n",
@@ -3465,8 +3440,8 @@ rx_test_case_run(struct rx_summary *summary,
         summary->elapsed = (rx_uint64)(time_end - time_begin);
     }
 
-    if (test_case->tear_down != NULL) {
-        test_case->tear_down(&context, test_case->data);
+    if (test_case->fixture.tear_down != NULL) {
+        test_case->fixture.tear_down(&context, test_case->data);
     }
 
     return RX_SUCCESS;
@@ -3529,15 +3504,13 @@ rx_test_cases_enumerate(rx_size *test_case_count,
 
         test_case->name = (*c_it)->name;
         test_case->suite_name = (*c_it)->suite_name;
-        test_case->run = (*c_it)->run;
         test_case->data = (*c_it)->data;
+        test_case->run = (*c_it)->run;
 
-        if ((*c_it)->fixture == NULL) {
-            test_case->set_up = NULL;
-            test_case->tear_down = NULL;
-        } else {
-            test_case->set_up = (*c_it)->fixture->set_up;
-            test_case->tear_down = (*c_it)->fixture->tear_down;
+        memset(&test_case->fixture, 0, sizeof test_case->fixture);
+
+        if ((*c_it)->fixture_set_members != NULL) {
+            (*c_it)->fixture_set_members(&test_case->fixture);
         }
 
         memset(&test_case->config, 0, sizeof test_case->config);
