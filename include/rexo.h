@@ -32,9 +32,10 @@
 #define RX_VERSION                                                             \
     ((RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION))
 
-#if defined(RX_ENABLE_C89_COMPAT) || (defined(__STDC__)                        \
-                                      && (!defined(__STDC_VERSION__)           \
-                                          || __STDC_VERSION__ < 199901L))
+#if !defined(RX_DISABLE_C89_COMPAT)                                            \
+    && (defined(RX_ENABLE_C89_COMPAT)                                          \
+        || (defined(__STDC__)                                                  \
+            && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)))
     #define RX__C89_COMPAT 1
 #else
     #define RX__C89_COMPAT 0
