@@ -1093,8 +1093,8 @@ rx_run(int argc,
 /* Implementation                                                  O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if defined(RX_ENABLE_DEBUGGING) || (!defined(RX_DISABLE_DEBUGGING)            \
-                                     && (defined(DEBUG) || !defined(NDEBUG)))
+#if defined(RX_ENABLE_DEBUGGING)                                               \
+    || (!defined(RX_DISABLE_DEBUGGING) && (defined(DEBUG) || !defined(NDEBUG)))
     #define RX__DEBUGGING 1
 #else
     #define RX__DEBUGGING 0
