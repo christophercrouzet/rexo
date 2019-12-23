@@ -1213,14 +1213,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     #define RX__APPLY_6(x, first, ...) x(first) RX__APPLY_5(x, __VA_ARGS__)
     #define RX__APPLY_7(x, first, ...) x(first) RX__APPLY_6(x, __VA_ARGS__)
     #define RX__APPLY_8(x, first, ...) x(first) RX__APPLY_7(x, __VA_ARGS__)
-    #define RX__APPLY_9(x, first, ...) x(first) RX__APPLY_8(x, __VA_ARGS__)
-    #define RX__APPLY_10(x, first, ...) x(first) RX__APPLY_9(x, __VA_ARGS__)
-    #define RX__APPLY_11(x, first, ...) x(first) RX__APPLY_10(x, __VA_ARGS__)
-    #define RX__APPLY_12(x, first, ...) x(first) RX__APPLY_11(x, __VA_ARGS__)
-    #define RX__APPLY_13(x, first, ...) x(first) RX__APPLY_12(x, __VA_ARGS__)
-    #define RX__APPLY_14(x, first, ...) x(first) RX__APPLY_13(x, __VA_ARGS__)
-    #define RX__APPLY_15(x, first, ...) x(first) RX__APPLY_14(x, __VA_ARGS__)
-    #define RX__APPLY_16(x, first, ...) x(first) RX__APPLY_15(x, __VA_ARGS__)
 
     #define RX__APPLY(x, ...)                                                  \
         RX__EXPAND(                                                            \
