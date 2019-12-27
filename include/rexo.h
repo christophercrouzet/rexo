@@ -136,44 +136,140 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     static void RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                              \
         RX__DEFINE_PARAMS(type))
 
-#if !RX__C89_COMPAT
+#if RX__C89_COMPAT
+    #define RX_FIXTURE(id, type)                                               \
+        RX__FIXTURE_0(id, type)                                                \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_1(id, type, _0)                                         \
+        RX__FIXTURE_1(id, type, 1, (_0))                                       \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_2(id, type, _0, _1)                                     \
+        RX__FIXTURE_1(id, type, 2, (_0, _1))                                   \
+        RX__REQUIRE_SEMICOLON
+#else
     #define RX_FIXTURE(...)                                                    \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__FIXTURE_,                                                  \
+                RX__FIXTURE_DISPATCH_,                                         \
                 RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))                                                    \
         RX__REQUIRE_SEMICOLON
 
+    #define RX__FIXTURE_DISPATCH_0(id, type)                                   \
+        RX__FIXTURE_0(id, type)
+
+    #define RX__FIXTURE_DISPATCH_1(id, type, ...)                              \
+        RX__FIXTURE_1(id,                                                      \
+                      type,                                                    \
+                      RX__COUNT_ARGS(__VA_ARGS__),                             \
+                      (__VA_ARGS__))
+#endif
+
+#if RX__C89_COMPAT
+    #define RX_FIXTURE_VOID(id)                                                \
+        RX__FIXTURE_VOID_0(id)                                                 \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_VOID_1(id, _0)                                          \
+        RX__FIXTURE_VOID_1(id, 1, (_0))                                        \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_VOID_2(id, _0, _1)                                      \
+        RX__FIXTURE_VOID_1(id, 2, (_0, _1))                                    \
+        RX__REQUIRE_SEMICOLON
+#else
     #define RX_FIXTURE_VOID(...)                                               \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__FIXTURE_VOID_,                                             \
+                RX__FIXTURE_VOID_DISPATCH_,                                    \
                 RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))                                                    \
         RX__REQUIRE_SEMICOLON
 
+    #define RX__FIXTURE_VOID_DISPATCH_0(id)                                    \
+        RX__FIXTURE_VOID_0(id)
+
+    #define RX__FIXTURE_VOID_DISPATCH_1(id, ...)                               \
+        RX__FIXTURE_VOID_1(id,                                                 \
+                           RX__COUNT_ARGS(__VA_ARGS__),                        \
+                           (__VA_ARGS__))
+#endif
+
+#if RX__C89_COMPAT
+    #define RX_TEST_SUITE(id)                                                  \
+        RX__TEST_SUITE_0(id)                                                   \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_TEST_SUITE_1(id, _0)                                            \
+        RX__TEST_SUITE_1(id, 1, (_0))                                          \
+        RX__REQUIRE_SEMICOLON
+#else
     #define RX_TEST_SUITE(...)                                                 \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__TEST_SUITE_,                                               \
+                RX__TEST_SUITE_DISPATCH_,                                      \
                 RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))                                                    \
         RX__REQUIRE_SEMICOLON
 
+    #define RX__TEST_SUITE_DISPATCH_0(id)                                      \
+        RX__TEST_SUITE_0(id)
+
+    #define RX__TEST_SUITE_DISPATCH_1(id, ...)                                 \
+        RX__TEST_SUITE_1(id,                                                   \
+                         RX__COUNT_ARGS(__VA_ARGS__),                          \
+                         (__VA_ARGS__))
+#endif
+
+#if RX__C89_COMPAT
+    #define RX_TEST_CASE(suite_id, id)                                         \
+        RX__TEST_CASE_0(suite_id, id)
+
+    #define RX_TEST_CASE_1(suite_id, id, _0)                                   \
+        RX__TEST_CASE_1(suite_id, id, 1, (_0))
+#else
     #define RX_TEST_CASE(...)                                                  \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__TEST_CASE_,                                                \
+                RX__TEST_CASE_DISPATCH_,                                       \
                 RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 
+    #define RX__TEST_CASE_DISPATCH_0(suite_id, id)                             \
+        RX__TEST_CASE_0(suite_id, id)
+
+    #define RX__TEST_CASE_DISPATCH_1(suite_id, id, ...)                        \
+        RX__TEST_CASE_1(suite_id,                                              \
+                        id,                                                    \
+                        RX__COUNT_ARGS(__VA_ARGS__),                           \
+                        (__VA_ARGS__))
+#endif
+
+#if RX__C89_COMPAT
+    #define RX_TEST_CASE_FIXTURE(suite_id, id, fixture)                        \
+        RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)
+
+    #define RX_TEST_CASE_FIXTURE_1(suite_id, id, fixture, _0)                  \
+        RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, 1, (_0))
+#else
     #define RX_TEST_CASE_FIXTURE(...)                                          \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__TEST_CASE_FIXTURE_,                                        \
+                RX__TEST_CASE_FIXTURE_DISPATCH_,                               \
                 RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
+
+    #define RX__TEST_CASE_FIXTURE_DISPATCH_0(suite_id, id, fixture)            \
+        RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)
+
+    #define RX__TEST_CASE_FIXTURE_DISPATCH_1(suite_id, id, fixture, ...)       \
+        RX__TEST_CASE_FIXTURE_1(suite_id,                                      \
+                                id,                                            \
+                                fixture,                                       \
+                                RX__COUNT_ARGS(__VA_ARGS__),                   \
+                                (__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
@@ -1020,13 +1116,21 @@ typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
+/*
+   Match the number of members to the variations offered for the macros:
+   `RX_FIXTURE_*`, and `RX_FIXTURE_VOID_*`.
+*/
+struct rx_config {
+    int skip;
+};
+
+/*
+   Match the number of members to the variations offered for the macros:
+   `RX_TEST_SUITE_*`, `RX_TEST_CASE_*`, and `RX_TEST_CASE_FIXTURE_*`.
+*/
 struct rx_fixture {
     rx_set_up_fn set_up;
     rx_tear_down_fn tear_down;
-};
-
-struct rx_config {
-    int skip;
 };
 
 struct rx_test_case {
@@ -1170,69 +1274,84 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 #define RX__CONCAT_(a, b) a##b
 #define RX__CONCAT(a, b) RX__CONCAT_(a, b)
 
-#define RX__APPLY_1(x, _0)                                                     \
-    x(_0)
-#define RX__APPLY_2(x, _0, _1)                                                 \
-    x(_0) RX__APPLY_1(x, _1)
-#define RX__APPLY_3(x, _0, _1, _2)                                             \
-    x(_0) RX__APPLY_2(x, _1, _2)
-#define RX__APPLY_4(x, _0, _1, _2, _3)                                         \
-    x(_0) RX__APPLY_3(x, _1, _2, _3)
-#define RX__APPLY_5(x, _0, _1, _2, _3, _4)                                     \
-    x(_0) RX__APPLY_4(x, _1, _2, _3, _4)
-#define RX__APPLY_6(x, _0, _1, _2, _3, _4, _5)                                 \
-    x(_0) RX__APPLY_5(x, _1, _2, _3, _4, _5)
-#define RX__APPLY_7(x, _0, _1, _2, _3, _4, _5, _6)                             \
-    x(_0) RX__APPLY_6(x, _1, _2, _3, _4, _5, _6)
-#define RX__APPLY_8(x, _0, _1, _2, _3, _4, _5, _6, _7)                         \
-    x(_0) RX__APPLY_7(x, _1, _2, _3, _4, _5, _6, _7)
+#define RX__STRUCT_SET_MEMBER(x) (*obj) x;
+
+#define RX__STRUCT_UPDATE_0()
+
+#define RX__STRUCT_UPDATE_1(_0)                                                \
+    RX__STRUCT_SET_MEMBER(_0)
+
+#define RX__STRUCT_UPDATE_2(_0, _1)                                            \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_1(_1)
+
+#define RX__STRUCT_UPDATE_3(_0, _1, _2)                                        \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_2(_1, _2)
+
+#define RX__STRUCT_UPDATE_4(_0, _1, _2, _3)                                    \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_3(_1, _2, _3)
+
+#define RX__STRUCT_UPDATE_5(_0, _1, _2, _3, _4)                                \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_3(_1, _2, _3, _4)
+
+#define RX__STRUCT_UPDATE_6(_0, _1, _2, _3, _4, _5)                            \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5)
+
+#define RX__STRUCT_UPDATE_7(_0, _1, _2, _3, _4, _5, _6)                        \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5, _6)
+
+#define RX__STRUCT_UPDATE_8(_0, _1, _2, _3, _4, _5, _6, _7)                    \
+    RX__STRUCT_SET_MEMBER(_0)                                                  \
+    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5, _6, _7)
+
+#define RX__STRUCT_DEFINE_UPDATE_FN(id, type, arg_count, args)                 \
+    static void                                                                \
+    id(type *obj)                                                              \
+    {                                                                          \
+        RX__UNUSED(obj);                                                       \
+        RX__EXPAND(RX__CONCAT(RX__STRUCT_UPDATE_, arg_count) args)             \
+    }
 
 #if !RX__C89_COMPAT
     #define RX__ARG(                                                           \
-         _0,  _1,  _2,  _3,  _4,  _5,  _6,  _7,                                \
-         _8,  _9, _10, _11, _12, _13, _14, _15,                                \
-        _16, ...) _16
+        _0, _1, _2, _3, _4, _5, _6, _7,                                        \
+        _8, ...) _8
 
     #define RX__HAS_AT_LEAST_2_ARGS(...)                                       \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 1, 1, 1,                                            \
             1, 1, 1, 1, 1, 1, 1, 0,))
 
     #define RX__HAS_AT_LEAST_3_ARGS(...)                                       \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 1, 1, 1,                                            \
             1, 1, 1, 1, 1, 1, 0, 0,))
 
     #define RX__HAS_AT_LEAST_4_ARGS(...)                                       \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 1, 1, 1,                                            \
             1, 1, 1, 1, 1, 0, 0, 0,))
 
     #define RX__HAS_AT_LEAST_5_ARGS(...)                                       \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 1, 1, 1,                                            \
             1, 1, 1, 1, 0, 0, 0, 0,))
 
     #define RX__HAS_AT_LEAST_6_ARGS(...)                                       \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 1, 1, 1,                                            \
             1, 1, 1, 0, 0, 0, 0, 0,))
 
     #define RX__COUNT_ARGS(...)                                                \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
-            16, 15, 14, 13, 12, 11, 10,  9,                                    \
              8,  7,  6,  5,  4,  3,  2,  1,                                    \
              0,))
-
-    #define RX__APPLY(x, ...)                                                  \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(RX__APPLY_, RX__COUNT_ARGS(__VA_ARGS__))(x, __VA_ARGS__))
 #endif
 
 #if defined(_MSC_VER)
@@ -1253,8 +1372,8 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     rx__tear_down_wrapper_##id
 #define RX__FIXTURE_GET_DATA_TYPE(id)                                          \
     rx__fixture_data_type_##id
-#define RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)                                  \
-    rx__fixture_set_members_fn_##id
+#define RX__FIXTURE_GET_UPDATE_FN_ID(id)                                       \
+    rx__fixture_update_fn_##id
 #define RX__TEST_SUITE_DESC_GET_ID(id)                                         \
     rx__test_suite_desc_##id
 #define RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                \
@@ -1263,10 +1382,10 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     rx__test_suite_desc_ptr_##id
 #define RX__TEST_CASE_DESC_PTR_GET_ID(suite_id, id)                            \
     rx__test_case_desc_ptr_##suite_id##_##id
-#define RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id)                        \
-    rx__test_suite_config_set_members_fn_##id
-#define RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id)               \
-    rx__test_case_config_set_members_fn_##suite_id##_##id
+#define RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id)                             \
+    rx__test_suite_config_update_fn_##id
+#define RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id)                    \
+    rx__test_case_config_update_fn_##suite_id##_##id
 #define RX__TEST_CASE_DATA_GET_ID(suite_id, id)                                \
     rx__test_case_data_##suite_id##_##id
 #define RX__TEST_CASE_GET_ID(suite_id, id)                                     \
@@ -1275,6 +1394,9 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 typedef intmax_t rx__int;
 typedef uintmax_t rx__uint;
 typedef long double rx__real;
+
+typedef void (*rx__config_update_fn)(struct rx_config *);
+typedef void (*rx__fixture_update_fn)(struct rx_fixture *);
 
 struct rx_context {
     jmp_buf env;
@@ -1950,158 +2072,137 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
 #endif
 
-/* Test Configuration                                              O-(''Q)
+/* Fixture                                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if !RX__C89_COMPAT
-    typedef void (*rx__config_set_members_fn)(struct rx_config *config);
+#define RX__FIXTURE_(id, type)                                                 \
+    typedef type RX__FIXTURE_GET_DATA_TYPE(id);
 
-    #define RX__CONFIG_MEMBER_ASSIGN(x) (*config) x;
+#define RX__FIXTURE_0(id, type)                                                \
+    RX__STRUCT_DEFINE_UPDATE_FN(                                               \
+        RX__FIXTURE_GET_UPDATE_FN_ID(id),                                      \
+        struct rx_fixture,                                                     \
+        0,                                                                     \
+        ())                                                                    \
+    RX__FIXTURE_(id, type)
 
-    #define RX__CONFIG_DEFINE_SET_MEMBERS_FN(id, ...)                          \
-        static void                                                            \
-        id(struct rx_config *config)                                           \
-        {                                                                      \
-            RX__APPLY(RX__CONFIG_MEMBER_ASSIGN, __VA_ARGS__);                  \
-        }
-#endif
+#define RX__FIXTURE_1(id, type, arg_count, args)                               \
+    RX__STRUCT_DEFINE_UPDATE_FN(                                               \
+        RX__FIXTURE_GET_UPDATE_FN_ID(id),                                      \
+        struct rx_fixture,                                                     \
+        arg_count,                                                             \
+        args)                                                                  \
+    RX__FIXTURE_(id, type)
 
-/* Fixture Macros                                                  O-(''Q)
+#define RX__FIXTURE_VOID_0(id)                                                 \
+    RX__FIXTURE_0(id, void *)
+
+#define RX__FIXTURE_VOID_1(id, arg_count, args)                                \
+    RX__FIXTURE_1(id, void *, arg_count, args)
+
+/* Test Suite                                                      O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if !RX__C89_COMPAT
-    typedef void (*rx__fixture_set_members_fn)(struct rx_fixture *fixture);
+struct rx__test_suite_desc {
+    const char *name;
+    const rx__config_update_fn config_set_members;
+};
 
-    #define RX__FIXTURE_MEMBER_ASSIGN(x) (*fixture) x;
+#define RX__TEST_SUITE_(id, config_set_members)                                \
+    static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id)     \
+        = {#id, config_set_members};                                           \
+    RX__TEST_SUITE_DESC_DEFINE_PTR(id)
 
-    #define RX__FIXTURE_(id, type)                                             \
-        typedef type RX__FIXTURE_GET_DATA_TYPE(id);
+#define RX__TEST_SUITE_0(id)                                                   \
+    RX__TEST_SUITE_(id, NULL);
 
-    #define RX__FIXTURE_0(id, type)                                            \
-        static void                                                            \
-        RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)(struct rx_fixture *fixture)      \
-        {                                                                      \
-            (void)(fixture);                                                   \
-        }                                                                      \
-        RX__FIXTURE_(id, type)
+#define RX__TEST_SUITE_1(id, arg_count, args)                                  \
+    RX__STRUCT_DEFINE_UPDATE_FN(                                               \
+        RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id),                            \
+        struct rx_config,                                                      \
+        arg_count,                                                             \
+        args)                                                                  \
+    RX__TEST_SUITE_(id, &RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id));
 
-    #define RX__FIXTURE_1(id, type, ...)                                       \
-        static void                                                            \
-        RX__FIXTURE_SET_MEMBERS_FN_GET_ID(id)(struct rx_fixture *fixture)      \
-        {                                                                      \
-            RX__APPLY(RX__FIXTURE_MEMBER_ASSIGN, __VA_ARGS__);                 \
-        }                                                                      \
-        RX__FIXTURE_(id, type)
-
-    #define RX__FIXTURE_VOID_0(id)                                             \
-        RX__FIXTURE_0(id, void *)
-
-    #define RX__FIXTURE_VOID_1(id, ...)                                        \
-        RX__FIXTURE_1(id, void *, __VA_ARGS__)
-#endif
-
-/* Test Suite Macros                                               O-(''Q)
+/* Test Case                                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if !RX__C89_COMPAT
-    struct rx__test_suite_desc {
-        const char *name;
-        const rx__config_set_members_fn config_set_members;
-    };
+struct rx__test_case_desc {
+    const char *name;
+    const char *suite_name;
+    void *data;
+    const rx__fixture_update_fn fixture_set_members;
+    const rx__config_update_fn config_set_members;
+    const rx_test_case_run_fn run;
+};
 
-    #define RX__TEST_SUITE_(id, config_set_members)                            \
-        static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id) \
-            = {#id, config_set_members};                                       \
-        RX__TEST_SUITE_DESC_DEFINE_PTR(id)
-
-    #define RX__TEST_SUITE_0(id)                                               \
-        RX_TEST_SUITE_(id, NULL);
-
-    #define RX__TEST_SUITE_1(id, ...)                                          \
-        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
-            RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id), __VA_ARGS__)      \
-        RX_TEST_SUITE_(id, &RX__TEST_SUITE_CONFIG_SET_MEMBERS_FN_GET_ID(id));
-#endif
-
-/* Test Case Macros                                                O-(''Q)
-   -------------------------------------------------------------------------- */
-
-#if !RX__C89_COMPAT
-    struct rx__test_case_desc {
-        const char *name;
-        const char *suite_name;
-        void *data;
-        const rx__fixture_set_members_fn fixture_set_members;
-        const rx__config_set_members_fn config_set_members;
-        const rx_test_case_run_fn run;
-    };
-
-    #define RX__TEST_CASE_(suite_id,                                           \
-                           id,                                                 \
-                           type,                                               \
-                           data,                                               \
-                           fixture_set_members,                                \
-                           config_set_members)                                 \
-        static void                                                            \
-        RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));           \
-        static const struct rx__test_case_desc                                 \
-        RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                \
-            = {#id,                                                            \
-               #suite_id,                                                      \
-               data,                                                           \
-               fixture_set_members,                                            \
-               config_set_members,                                             \
-               (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};       \
-        RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                           \
-        static void                                                            \
-        RX__TEST_CASE_GET_ID(suite_id, id) (RX__DEFINE_PARAMS(type))
-
-    #define RX__TEST_CASE_0(suite_id, id)                                      \
-        RX__TEST_CASE_(suite_id,                                               \
+#define RX__TEST_CASE_(suite_id,                                               \
                        id,                                                     \
-                       void *,                                                 \
-                       NULL,                                                   \
-                       NULL,                                                   \
-                       NULL)
+                       type,                                                   \
+                       data,                                                   \
+                       fixture_set_members,                                    \
+                       config_set_members)                                     \
+    static void                                                                \
+    RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));               \
+    static const struct rx__test_case_desc                                     \
+    RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                    \
+        = {#id,                                                                \
+           #suite_id,                                                          \
+           data,                                                               \
+           fixture_set_members,                                                \
+           config_set_members,                                                 \
+           (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};           \
+    RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                               \
+    static void                                                                \
+    RX__TEST_CASE_GET_ID(suite_id, id) (RX__DEFINE_PARAMS(type))
 
-    #define RX__TEST_CASE_1(suite_id, id, ...)                                 \
-        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
-            RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id),          \
-            __VA_ARGS__)                                                       \
-        RX__TEST_CASE_(suite_id,                                               \
-                       id,                                                     \
-                       void *,                                                 \
-                       NULL,                                                   \
-                       NULL,                                                   \
-                       &RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id,   \
-                                                                   id))
+#define RX__TEST_CASE_0(suite_id, id)                                          \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   void *,                                                     \
+                   NULL,                                                       \
+                   NULL,                                                       \
+                   NULL)
 
-    #define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                      \
-        static RX__FIXTURE_GET_DATA_TYPE(fixture)                              \
-        RX__TEST_CASE_DATA_GET_ID(suite_id, id);                               \
+#define RX__TEST_CASE_1(suite_id, id, arg_count, args)                         \
+    RX__STRUCT_DEFINE_UPDATE_FN(                                               \
+        RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id),                   \
+        struct rx_config,                                                      \
+        arg_count,                                                             \
+        args)                                                                  \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   void *,                                                     \
+                   NULL,                                                       \
+                   NULL,                                                       \
+                   &RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id))
 
-    #define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                     \
-        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
-        RX__TEST_CASE_(suite_id,                                               \
-                       id,                                                     \
-                       RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
-                       &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
-                       &RX__FIXTURE_SET_MEMBERS_FN_GET_ID(fixture),            \
-                       NULL)
+#define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
+    static RX__FIXTURE_GET_DATA_TYPE(fixture)                                  \
+    RX__TEST_CASE_DATA_GET_ID(suite_id, id);                                   \
 
-    #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, ...)                \
-        RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
-        RX__CONFIG_DEFINE_SET_MEMBERS_FN(                                      \
-            RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id, id),          \
-            __VA_ARGS__)                                                       \
-        RX__TEST_CASE_(suite_id,                                               \
-                       id,                                                     \
-                       RX__FIXTURE_GET_DATA_TYPE(fixture),                     \
-                       &RX__TEST_CASE_DATA_GET_ID(suite_id, id),               \
-                       &RX__FIXTURE_SET_MEMBERS_FN_GET_ID(fixture),            \
-                       &RX__TEST_CASE_CONFIG_SET_MEMBERS_FN_GET_ID(suite_id,   \
-                                                                   id))
-#endif
+#define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                         \
+    RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
+                   &RX__FIXTURE_GET_UPDATE_FN_ID(fixture),                     \
+                   NULL)
+
+#define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, arg_count, args)        \
+    RX__STRUCT_DEFINE_UPDATE_FN(                                               \
+        RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id),                   \
+        struct rx_config,                                                      \
+        arg_count,                                                             \
+        args)                                                                  \
+    RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
+    RX__TEST_CASE_(suite_id,                                                   \
+                   id,                                                         \
+                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
+                   &RX__FIXTURE_GET_UPDATE_FN_ID(fixture),                     \
+                   &RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id))
 
 /* Operators                                                       O-(''Q)
    -------------------------------------------------------------------------- */
@@ -2364,30 +2465,28 @@ rx__str_copy(char **s, const char *original)
 /* Helpers                                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if !RX__C89_COMPAT
-    static int
-    rx__compare_test_cases(const void *a, const void *b)
-    {
-        int out;
-        const struct rx_test_case *aa;
-        const struct rx_test_case *bb;
+static int
+rx__compare_test_cases(const void *a, const void *b)
+{
+    int out;
+    const struct rx_test_case *aa;
+    const struct rx_test_case *bb;
 
-        aa = (const struct rx_test_case *)a;
-        bb = (const struct rx_test_case *)b;
+    aa = (const struct rx_test_case *)a;
+    bb = (const struct rx_test_case *)b;
 
-        out = strcmp(aa->suite_name, bb->suite_name);
-        if (out != 0) {
-            return out;
-        }
-
-        out = strcmp(aa->name, bb->name);
-        if (out != 0) {
-            return out;
-        }
-
+    out = strcmp(aa->suite_name, bb->suite_name);
+    if (out != 0) {
         return out;
     }
-#endif
+
+    out = strcmp(aa->name, bb->name);
+    if (out != 0) {
+        return out;
+    }
+
+    return out;
+}
 
 static void
 rx__real_are_equal_fuzzy(int *result, rx__real a, rx__real b, rx__real tol)
@@ -3460,13 +3559,6 @@ RX__MAYBE_UNUSED RX__STORAGE void
 rx_test_cases_enumerate(rx_size *test_case_count,
                         struct rx_test_case *test_cases)
 {
-#if RX__C89_COMPAT
-    RX__UNUSED(test_cases);
-
-    *test_case_count = 0;
-    RX__LOG_ERROR("the automatic registration framework is not available "
-                  "in C89 compatibility mode\n");
-#else
     size_t count;
     const struct rx__test_case_desc * const *c_it;
 
@@ -3542,7 +3634,6 @@ rx_test_cases_enumerate(rx_size *test_case_count,
        in an undefined order, so these need to be manually sorted afterwards
        in a sensible way. */
     qsort(test_cases, count, sizeof *test_cases, rx__compare_test_cases);
-#endif
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
