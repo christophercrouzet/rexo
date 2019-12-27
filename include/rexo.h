@@ -157,7 +157,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
                 RX__TEST_SUITE_,                                               \
-                RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                           \
+                RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))                                                    \
         RX__REQUIRE_SEMICOLON
 
