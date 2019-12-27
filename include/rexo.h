@@ -166,7 +166,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
             RX__CONCAT(                                                        \
                 RX__TEST_CASE_,                                                \
                 RX__HAS_AT_LEAST_3_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))                                                    \
+            )(__VA_ARGS__))
 
     #define RX_TEST_CASE_FIXTURE(...)                                          \
         RX__EXPAND(                                                            \
