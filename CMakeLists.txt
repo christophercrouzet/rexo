@@ -78,6 +78,26 @@ endmacro()
 enable_testing()
 
 rx_add_test(
+    NAME c89-assertion-failure-messages
+    FILES tests/c89/assertion-failure-messages.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME c89-config-inherit
+    FILES tests/c89/config-inherit.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME c89-fixture
+    FILES tests/c89/fixture.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME c89-minimal
+    FILES tests/c89/minimal.c
+    DEPENDS rexo)
+
+rx_add_test(
     NAME assertion-coverage
     FILES tests/assertion-coverage.c
     DEPENDS rexo)
@@ -88,13 +108,28 @@ rx_add_test(
     DEPENDS rexo)
 
 rx_add_test(
-    NAME compat-c89
-    FILES tests/compat-c89.c
+    NAME config-inherit
+    FILES tests/config-inherit.c
     DEPENDS rexo)
 
 rx_add_test(
     NAME config-skip
     FILES tests/config-skip.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME empty
+    FILES tests/empty.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME explicit
+    FILES tests/explicit.c
+    DEPENDS rexo)
+
+rx_add_test(
+    NAME fixture
+    FILES tests/fixture.c
     DEPENDS rexo)
 
 rx_add_test(
@@ -108,28 +143,13 @@ rx_add_test(
     DEPENDS rexo)
 
 rx_add_test(
-    NAME run-empty
-    FILES tests/run-empty.c
+    NAME minimal
+    FILES tests/minimal.c
     DEPENDS rexo)
 
 rx_add_test(
-    NAME run-explicit
-    FILES tests/run-explicit.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME run-fixture
-    FILES tests/run-fixture.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME run-minimal
-    FILES tests/run-minimal.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME run-semi-explicit
-    FILES tests/run-semi-explicit.c
+    NAME semi-explicit
+    FILES tests/semi-explicit.c
     DEPENDS rexo)
 
 add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})

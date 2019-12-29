@@ -33,29 +33,18 @@ RX_TEAR_DOWN(my_tear_down, struct my_data)
     ASSERT(RX_DATA->value == 123);
 }
 
-void
-my_test_suite_my_test_case(struct rx_context *context, struct my_data *data)
-{
-    (void)context;
+RX_FIXTURE_2(my_fixture,
+             struct my_data,
+             .set_up = my_set_up,
+             .tear_down = my_tear_down);
 
+RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
+{
     ++step;
     ASSERT(step == 3);
 
-    ASSERT(data->value == 123);
+    ASSERT(RX_DATA->value == 123);
 }
-
-static struct my_data my_data;
-
-static const struct rx_test_case my_test_cases[] = {
-    {
-        "my_test_case",
-        "my_test_suite",
-        (rx_test_case_run_fn)my_test_suite_my_test_case,
-        &my_data,
-        {(rx_set_up_fn)my_set_up, (rx_tear_down_fn)my_tear_down},
-        {0},
-    },
-};
 
 int
 main(int argc, const char **argv)
@@ -63,7 +52,7 @@ main(int argc, const char **argv)
     ++step;
     ASSERT(step == 1);
 
-    ASSERT(rx_run(argc, argv, 1, my_test_cases) == RX_SUCCESS);
+    ASSERT(rx_run(argc, argv, 0, NULL) == RX_SUCCESS);
 
     ++step;
     ASSERT(step == 5);
