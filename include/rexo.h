@@ -113,28 +113,32 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     type *RX__PARAM_DATA RX__MAYBE_UNUSED
 
 #define RX_SET_UP(id, type)                                                    \
-    static enum rx_status RX__SET_UP_GET_WRAPPER_ID(id)(                       \
-        RX__DEFINE_PARAMS(type));                                              \
+    static enum rx_status                                                      \
+    RX__SET_UP_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type));                    \
+                                                                               \
     static enum rx_status                                                      \
     id(RX__DEFINE_PARAMS(void))                                                \
     {                                                                          \
-        return RX__SET_UP_GET_WRAPPER_ID(id)(                                  \
-            RX__PARAM_CONTEXT, (type *)RX__PARAM_DATA);                        \
+        return RX__SET_UP_WRAPPER_GET_ID(id)(RX__PARAM_CONTEXT,                \
+                                             (type *)RX__PARAM_DATA);          \
     }                                                                          \
-    static enum rx_status RX__SET_UP_GET_WRAPPER_ID(id)(                       \
-        RX__DEFINE_PARAMS(type))
+                                                                               \
+    static enum rx_status                                                      \
+    RX__SET_UP_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type))
 
 #define RX_TEAR_DOWN(id, type)                                                 \
-    static void RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                              \
-        RX__DEFINE_PARAMS(type));                                              \
+    static void                                                                \
+    RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type));                 \
+                                                                               \
     static void                                                                \
     id(RX__DEFINE_PARAMS(void))                                                \
     {                                                                          \
-        RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                                      \
-            RX__PARAM_CONTEXT, (type *)RX__PARAM_DATA);                        \
+        RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX__PARAM_CONTEXT,                    \
+                                         (type *)RX__PARAM_DATA);              \
     }                                                                          \
-    static void RX__TEAR_DOWN_GET_WRAPPER_ID(id)(                              \
-        RX__DEFINE_PARAMS(type))
+                                                                               \
+    static void                                                                \
+    RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type))
 
 #if RX__C89_COMPAT
     #define RX_FIXTURE(id, type)                                               \
@@ -273,712 +277,712 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__TEST_DEFINE(severity, expected, condition, msg)                \
-        rx__test_assess(RX__PARAM_CONTEXT,                                     \
-                        !!(condition),                                         \
-                        expected,                                              \
-                        #condition,                                            \
-                        __FILE__,                                              \
-                        __LINE__,                                              \
-                        severity,                                              \
-                        msg)
+    #define RX__DEFINE_TEST(severity, expected, condition, msg)                \
+        rx__assess_value(RX__PARAM_CONTEXT,                                    \
+                         !!(condition),                                        \
+                         expected,                                             \
+                         #condition,                                           \
+                         __FILE__,                                             \
+                         __LINE__,                                             \
+                         severity,                                             \
+                         msg)
 #else
-    #define RX__TEST_DEFINE_0(severity, expected, condition)                   \
-        RX__TEST_DEFINE_1(severity, expected, condition, NULL)
+    #define RX__DEFINE_TEST_0(severity, expected, condition)                   \
+        RX__DEFINE_TEST_1(severity, expected, condition, NULL)
 
-    #define RX__TEST_DEFINE_1(severity, expected, condition, ...)              \
-        rx__test_assess(RX__PARAM_CONTEXT,                                     \
-                        !!(condition),                                         \
-                        expected,                                              \
-                        #condition,                                            \
-                        __FILE__,                                              \
-                        __LINE__,                                              \
-                        severity,                                              \
-                        __VA_ARGS__)
+    #define RX__DEFINE_TEST_1(severity, expected, condition, ...)              \
+        rx__assess_value(RX__PARAM_CONTEXT,                                    \
+                         !!(condition),                                        \
+                         expected,                                             \
+                         #condition,                                           \
+                         __FILE__,                                             \
+                         __LINE__,                                             \
+                         severity,                                             \
+                         __VA_ARGS__)
 
-    #define RX__TEST_DEFINE(...)                                               \
+    #define RX__DEFINE_TEST(...)                                               \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__TEST_DEFINE_,                                              \
+                RX__DEFINE_TEST_,                                              \
                 RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REQUIRE(condition)                                              \
-        RX__TEST_DEFINE(RX_FATAL, RX__TRUE, condition, NULL)
+        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL)
 
     #define RX_REQUIRE_MSG(condition, msg)                                     \
-        RX__TEST_DEFINE(RX_FATAL, RX__TRUE, condition, msg)
+        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg)
 
     #define RX_CHECK(condition)                                                \
-        RX__TEST_DEFINE(RX_NONFATAL, RX__TRUE, condition, NULL)
+        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL)
 
     #define RX_CHECK_MSG(condition, msg)                                       \
-        RX__TEST_DEFINE(RX_NONFATAL, RX__TRUE, condition, msg)
+        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg)
 #else
     #define RX_REQUIRE(...)                                                    \
-        RX__TEST_DEFINE(RX_FATAL, RX__TRUE, __VA_ARGS__)
+        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, __VA_ARGS__)
 
     #define RX_CHECK(...)                                                      \
-        RX__TEST_DEFINE(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
+        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__BOOL_TEST_DEFINE(severity, expected, condition, msg)           \
-        rx__bool_test_assess(RX__PARAM_CONTEXT,                                \
-                             !!(condition),                                    \
-                             expected,                                         \
-                             #condition,                                       \
-                             __FILE__,                                         \
-                             __LINE__,                                         \
-                             severity,                                         \
-                             msg)
+    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg)           \
+        rx__bool_assess_value(RX__PARAM_CONTEXT,                               \
+                              !!(condition),                                   \
+                              expected,                                        \
+                              #condition,                                      \
+                              __FILE__,                                        \
+                              __LINE__,                                        \
+                              severity,                                        \
+                              msg)
 #else
-    #define RX__BOOL_TEST_DEFINE_0(severity, expected, condition)              \
-        RX__BOOL_TEST_DEFINE_1(severity, expected, condition, NULL)
+    #define RX__BOOL_DEFINE_TEST_0(severity, expected, condition)              \
+        RX__BOOL_DEFINE_TEST_1(severity, expected, condition, NULL)
 
-    #define RX__BOOL_TEST_DEFINE_1(severity, expected, condition, ...)         \
-        rx__bool_test_assess(RX__PARAM_CONTEXT,                                \
-                             !!(condition),                                    \
-                             expected,                                         \
-                             #condition,                                       \
-                             __FILE__,                                         \
-                             __LINE__,                                         \
-                             severity,                                         \
-                             __VA_ARGS__)
+    #define RX__BOOL_DEFINE_TEST_1(severity, expected, condition, ...)         \
+        rx__bool_assess_value(RX__PARAM_CONTEXT,                               \
+                              !!(condition),                                   \
+                              expected,                                        \
+                              #condition,                                      \
+                              __FILE__,                                        \
+                              __LINE__,                                        \
+                              severity,                                        \
+                              __VA_ARGS__)
 
-    #define RX__BOOL_TEST_DEFINE(...)                                          \
+    #define RX__BOOL_DEFINE_TEST(...)                                          \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__BOOL_TEST_DEFINE_,                                         \
+                RX__BOOL_DEFINE_TEST_,                                         \
                 RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_BOOL_REQUIRE_TRUE(condition)                                    \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__TRUE, condition, NULL)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL)
 
     #define RX_BOOL_REQUIRE_TRUE_MSG(condition, msg)                           \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__TRUE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg)
 
     #define RX_BOOL_CHECK_TRUE(condition)                                      \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__TRUE, condition, NULL)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL)
 
     #define RX_BOOL_CHECK_TRUE_MSG(condition, msg)                             \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__TRUE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg)
 #else
     #define RX_BOOL_REQUIRE_TRUE(...)                                          \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__TRUE, __VA_ARGS__)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, __VA_ARGS__)
 
     #define RX_BOOL_CHECK_TRUE(...)                                            \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_BOOL_REQUIRE_FALSE(condition)                                   \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__FALSE, condition, NULL)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, NULL)
 
     #define RX_BOOL_REQUIRE_FALSE_MSG(condition, msg)                          \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__FALSE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg)
 
     #define RX_BOOL_CHECK_FALSE(condition)                                     \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__FALSE, condition, NULL)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, NULL)
 
     #define RX_BOOL_CHECK_FALSE_MSG(condition, msg)                            \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__FALSE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg)
 #else
     #define RX_BOOL_REQUIRE_FALSE(...)                                         \
-        RX__BOOL_TEST_DEFINE(RX_FATAL, RX__FALSE, __VA_ARGS__)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, __VA_ARGS__)
 
     #define RX_BOOL_CHECK_FALSE(...)                                           \
-        RX__BOOL_TEST_DEFINE(RX_NONFATAL, RX__FALSE, __VA_ARGS__)
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__INT_TEST_DEFINE(severity, op, x1, x2, msg)                     \
-        rx__int_test_assess_comparison(RX__PARAM_CONTEXT,                      \
-                                       (x1),                                   \
-                                       (x2),                                   \
-                                       op,                                     \
-                                       #x1,                                    \
-                                       #x2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       msg)
+    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg)                     \
+        rx__int_assess_comparison(RX__PARAM_CONTEXT,                           \
+                                  (x1),                                        \
+                                  (x2),                                        \
+                                  op,                                          \
+                                  #x1,                                         \
+                                  #x2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  msg)
 #else
-    #define RX__INT_TEST_DEFINE_0(severity, op, x1, x2)                        \
-        RX__INT_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+    #define RX__INT_DEFINE_TEST_0(severity, op, x1, x2)                        \
+        RX__INT_DEFINE_TEST_1(severity, op, x1, x2, NULL)
 
-    #define RX__INT_TEST_DEFINE_1(severity, op, x1, x2, ...)                   \
-        rx__int_test_assess_comparison(RX__PARAM_CONTEXT,                      \
-                                       (x1),                                   \
-                                       (x2),                                   \
-                                       op,                                     \
-                                       #x1,                                    \
-                                       #x2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       __VA_ARGS__)
+    #define RX__INT_DEFINE_TEST_1(severity, op, x1, x2, ...)                   \
+        rx__int_assess_comparison(RX__PARAM_CONTEXT,                           \
+                                  (x1),                                        \
+                                  (x2),                                        \
+                                  op,                                          \
+                                  #x1,                                         \
+                                  #x2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  __VA_ARGS__)
 
-    #define RX__INT_TEST_DEFINE(...)                                           \
+    #define RX__INT_DEFINE_TEST(...)                                           \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__INT_TEST_DEFINE_,                                          \
+                RX__INT_DEFINE_TEST_,                                          \
                 RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_EQUAL(x1, x2)                                       \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, msg)                              \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
 
     #define RX_INT_CHECK_EQUAL(x1, x2)                                         \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_INT_CHECK_EQUAL_MSG(x1, x2, msg)                                \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_EQUAL(...)                                          \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
     #define RX_INT_CHECK_EQUAL(...)                                            \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                   \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                          \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 
     #define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                     \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                            \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_NOT_EQUAL(...)                                      \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
     #define RX_INT_CHECK_NOT_EQUAL(...)                                        \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_GREATER(x1, x2)                                     \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, msg)                            \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
 
     #define RX_INT_CHECK_GREATER(x1, x2)                                       \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_INT_CHECK_GREATER_MSG(x1, x2, msg)                              \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_GREATER(...)                                        \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
     #define RX_INT_CHECK_GREATER(...)                                          \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_LESSER(x1, x2)                                      \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, msg)                             \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
 
     #define RX_INT_CHECK_LESSER(x1, x2)                                        \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_INT_CHECK_LESSER_MSG(x1, x2, msg)                               \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_LESSER(...)                                         \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
     #define RX_INT_CHECK_LESSER(...)                                           \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                            \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 
     #define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                              \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL(...)                               \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_INT_CHECK_GREATER_OR_EQUAL(...)                                 \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                             \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 
     #define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                               \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                      \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL(...)                                \
-        RX__INT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_INT_CHECK_LESSER_OR_EQUAL(...)                                  \
-        RX__INT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__UINT_TEST_DEFINE(severity, op, x1, x2, msg)                    \
-        rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                        (x1),                                  \
-                                        (x2),                                  \
-                                        op,                                    \
-                                        #x1,                                   \
-                                        #x2,                                   \
-                                        __FILE__,                              \
-                                        __LINE__,                              \
-                                        severity,                              \
-                                        msg)
+    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg)                    \
+        rx__uint_assess_comparison(RX__PARAM_CONTEXT,                          \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   msg)
 #else
-    #define RX__UINT_TEST_DEFINE_0(severity, op, x1, x2)                       \
-        RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+    #define RX__UINT_DEFINE_TEST_0(severity, op, x1, x2)                       \
+        RX__UINT_DEFINE_TEST_1(severity, op, x1, x2, NULL)
 
-    #define RX__UINT_TEST_DEFINE_1(severity, op, x1, x2, ...)                  \
-        rx__uint_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                        (x1),                                  \
-                                        (x2),                                  \
-                                        op,                                    \
-                                        #x1,                                   \
-                                        #x2,                                   \
-                                        __FILE__,                              \
-                                        __LINE__,                              \
-                                        severity,                              \
-                                        __VA_ARGS__)
+    #define RX__UINT_DEFINE_TEST_1(severity, op, x1, x2, ...)                  \
+        rx__uint_assess_comparison(RX__PARAM_CONTEXT,                          \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   __VA_ARGS__)
 
-    #define RX__UINT_TEST_DEFINE(...)                                          \
+    #define RX__UINT_DEFINE_TEST(...)                                          \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__UINT_TEST_DEFINE_,                                         \
+                RX__UINT_DEFINE_TEST_,                                         \
                 RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_EQUAL(x1, x2)                                      \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
 
     #define RX_UINT_CHECK_EQUAL(x1, x2)                                        \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, msg)                               \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_EQUAL(...)                                         \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
     #define RX_UINT_CHECK_EQUAL(...)                                           \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                  \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 
     #define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                    \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_NOT_EQUAL(...)                                     \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
     #define RX_UINT_CHECK_NOT_EQUAL(...)                                       \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_GREATER(x1, x2)                                    \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
 
     #define RX_UINT_CHECK_GREATER(x1, x2)                                      \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_UINT_CHECK_GREATER_MSG(x1, x2, msg)                             \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_GREATER(...)                                       \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
     #define RX_UINT_CHECK_GREATER(...)                                         \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_LESSER(x1, x2)                                     \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
 
     #define RX_UINT_CHECK_LESSER(x1, x2)                                       \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_UINT_CHECK_LESSER_MSG(x1, x2, msg)                              \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_LESSER(...)                                        \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
     #define RX_UINT_CHECK_LESSER(...)                                          \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                           \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 
     #define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                             \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL(...)                              \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_UINT_CHECK_GREATER_OR_EQUAL(...)                                \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                            \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 
     #define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                              \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL(...)                               \
-        RX__UINT_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_UINT_CHECK_LESSER_OR_EQUAL(...)                                 \
-        RX__UINT_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__REAL_TEST_DEFINE(severity, op, x1, x2, msg)                    \
-        rx__real_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                        (x1),                                  \
-                                        (x2),                                  \
-                                        op,                                    \
-                                        #x1,                                   \
-                                        #x2,                                   \
-                                        __FILE__,                              \
-                                        __LINE__,                              \
-                                        severity,                              \
-                                        msg)
+    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg)                    \
+        rx__real_assess_comparison(RX__PARAM_CONTEXT,                          \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   msg)
 #else
-    #define RX__REAL_TEST_DEFINE_0(severity, op, x1, x2)                       \
-        RX__REAL_TEST_DEFINE_1(severity, op, x1, x2, NULL)
+    #define RX__REAL_DEFINE_TEST_0(severity, op, x1, x2)                       \
+        RX__REAL_DEFINE_TEST_1(severity, op, x1, x2, NULL)
 
-    #define RX__REAL_TEST_DEFINE_1(severity, op, x1, x2, ...)                  \
-        rx__real_test_assess_comparison(RX__PARAM_CONTEXT,                     \
-                                        (x1),                                  \
-                                        (x2),                                  \
-                                        op,                                    \
-                                        #x1,                                   \
-                                        #x2,                                   \
-                                        __FILE__,                              \
-                                        __LINE__,                              \
-                                        severity,                              \
-                                        __VA_ARGS__)
+    #define RX__REAL_DEFINE_TEST_1(severity, op, x1, x2, ...)                  \
+        rx__real_assess_comparison(RX__PARAM_CONTEXT,                          \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   __VA_ARGS__)
 
-    #define RX__REAL_TEST_DEFINE(...)                                          \
+    #define RX__REAL_DEFINE_TEST(...)                                          \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__REAL_TEST_DEFINE_,                                         \
+                RX__REAL_DEFINE_TEST_,                                         \
                 RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_EQUAL(x1, x2)                                      \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
 
     #define RX_REAL_CHECK_EQUAL(x1, x2)                                        \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, msg)                               \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_EQUAL(...)                                         \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_EQUAL(...)                                           \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                  \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 
     #define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                    \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_NOT_EQUAL(...)                                     \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_NOT_EQUAL(...)                                       \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_GREATER(x1, x2)                                    \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
 
     #define RX_REAL_CHECK_GREATER(x1, x2)                                      \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
 
     #define RX_REAL_CHECK_GREATER_MSG(x1, x2, msg)                             \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_GREATER(...)                                       \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, __VA_ARGS__)
 
     #define RX_REAL_CHECK_GREATER(...)                                         \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_LESSER(x1, x2)                                     \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
 
     #define RX_REAL_CHECK_LESSER(x1, x2)                                       \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
 
     #define RX_REAL_CHECK_LESSER_MSG(x1, x2, msg)                              \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_LESSER(...)                                        \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, __VA_ARGS__)
 
     #define RX_REAL_CHECK_LESSER(...)                                          \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                           \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 
     #define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                             \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL(...)                              \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_GREATER_OR_EQUAL(...)                                \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                            \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 
     #define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                              \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
 
     #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
 #else
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL(...)                               \
-        RX__REAL_TEST_DEFINE(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_LESSER_OR_EQUAL(...)                                 \
-        RX__REAL_TEST_DEFINE(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
-    #define RX__REAL_TEST_DEFINE_FUZZY(severity, op, x1, x2, tol, msg)         \
-        rx__real_test_assess_comparison_fuzzy(RX__PARAM_CONTEXT,               \
-                                              (x1),                            \
-                                              (x2),                            \
-                                              (tol),                           \
-                                              op,                              \
-                                              #x1,                             \
-                                              #x2,                             \
-                                              __FILE__,                        \
-                                              __LINE__,                        \
-                                              severity,                        \
-                                              msg)
+    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, msg)         \
+        rx__real_assess_fuzzy_comparison(RX__PARAM_CONTEXT,                    \
+                                         (x1),                                 \
+                                         (x2),                                 \
+                                         (tol),                                \
+                                         op,                                   \
+                                         #x1,                                  \
+                                         #x2,                                  \
+                                         __FILE__,                             \
+                                         __LINE__,                             \
+                                         severity,                             \
+                                         msg)
 #else
-    #define RX__REAL_TEST_DEFINE_FUZZY_0(severity, op, x1, x2, tol)            \
-        RX__REAL_TEST_DEFINE_FUZZY_1(severity, op, x1, x2, tol, NULL)
+    #define RX__REAL_DEFINE_FUZZY_TEST_0(severity, op, x1, x2, tol)            \
+        RX__REAL_DEFINE_FUZZY_TEST_1(severity, op, x1, x2, tol, NULL)
 
-    #define RX__REAL_TEST_DEFINE_FUZZY_1(severity, op, x1, x2, tol, ...)       \
-        rx__real_test_assess_comparison_fuzzy(RX__PARAM_CONTEXT,               \
-                                              (x1),                            \
-                                              (x2),                            \
-                                              (tol),                           \
-                                              op,                              \
-                                              #x1,                             \
-                                              #x2,                             \
-                                              __FILE__,                        \
-                                              __LINE__,                        \
-                                              severity,                        \
-                                              __VA_ARGS__)
+    #define RX__REAL_DEFINE_FUZZY_TEST_1(severity, op, x1, x2, tol, ...)       \
+        rx__real_assess_fuzzy_comparison(RX__PARAM_CONTEXT,                    \
+                                         (x1),                                 \
+                                         (x2),                                 \
+                                         (tol),                                \
+                                         op,                                   \
+                                         #x1,                                  \
+                                         #x2,                                  \
+                                         __FILE__,                             \
+                                         __LINE__,                             \
+                                         severity,                             \
+                                         __VA_ARGS__)
 
-    #define RX__REAL_TEST_DEFINE_FUZZY(...)                                    \
+    #define RX__REAL_DEFINE_FUZZY_TEST(...)                                    \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__REAL_TEST_DEFINE_FUZZY_,                                   \
+                RX__REAL_DEFINE_FUZZY_TEST_,                                   \
                 RX__HAS_AT_LEAST_6_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_EQUAL_FUZZY(x1, x2, tol)                           \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_EQUAL, x1, x2, tol, NULL)
 
     #define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                  \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg)
 
     #define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                             \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, NULL)
 
     #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                    \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg)
 #else
     #define RX_REAL_REQUIRE_EQUAL_FUZZY(...)                                   \
-        RX__REAL_TEST_DEFINE_FUZZY(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_EQUAL_FUZZY(...)                                     \
-        RX__REAL_TEST_DEFINE_FUZZY(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                       \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL)
 
     #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)              \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg)
 
     #define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                         \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL)
 
     #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                \
-        RX__REAL_TEST_DEFINE_FUZZY(                                            \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg)
 #else
     #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(...)                               \
-        RX__REAL_TEST_DEFINE_FUZZY(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 
     #define RX_REAL_CHECK_NOT_EQUAL_FUZZY(...)                                 \
-        RX__REAL_TEST_DEFINE_FUZZY(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, __VA_ARGS__)
 #endif
 
 #if RX__C89_COMPAT
     #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg)           \
-        rx__str_test_assess_comparison(RX__PARAM_CONTEXT,                      \
-                                       (s1),                                   \
-                                       (s2),                                   \
-                                       str_case,                               \
-                                       op,                                     \
-                                       #s1,                                    \
-                                       #s2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       msg)
+        rx__str_assess_comparison(RX__PARAM_CONTEXT,                           \
+                                  (s1),                                        \
+                                  (s2),                                        \
+                                  str_case,                                    \
+                                  op,                                          \
+                                  #s1,                                         \
+                                  #s2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  msg)
 #else
     #define RX__STR_TEST_DEFINE_0(severity, op, str_case, s1, s2)              \
         RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, NULL)
 
     #define RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, ...)         \
-        rx__str_test_assess_comparison(RX__PARAM_CONTEXT,                      \
-                                       (s1),                                   \
-                                       (s2),                                   \
-                                       str_case,                               \
-                                       op,                                     \
-                                       #s1,                                    \
-                                       #s2,                                    \
-                                       __FILE__,                               \
-                                       __LINE__,                               \
-                                       severity,                               \
-                                       __VA_ARGS__)
+        rx__str_assess_comparison(RX__PARAM_CONTEXT,                           \
+                                  (s1),                                        \
+                                  (s2),                                        \
+                                  str_case,                                    \
+                                  op,                                          \
+                                  #s1,                                         \
+                                  #s2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  __VA_ARGS__)
 
     #define RX__STR_TEST_DEFINE(...)                                           \
         RX__EXPAND(                                                            \
@@ -1366,11 +1370,11 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     #define RX__FORCE_LINKING(id) __attribute__((used))
 #endif
 
-#define RX__SET_UP_GET_WRAPPER_ID(id)                                          \
+#define RX__SET_UP_WRAPPER_GET_ID(id)                                          \
     rx__set_up_wrapper_##id
-#define RX__TEAR_DOWN_GET_WRAPPER_ID(id)                                       \
+#define RX__TEAR_DOWN_WRAPPER_GET_ID(id)                                       \
     rx__tear_down_wrapper_##id
-#define RX__FIXTURE_GET_DATA_TYPE(id)                                          \
+#define RX__FIXTURE_DATA_TYPE_GET_ID(id)                                       \
     rx__fixture_data_type_##id
 #define RX__FIXTURE_GET_UPDATE_FN_ID(id)                                       \
     rx__fixture_update_fn_##id
@@ -1382,9 +1386,9 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     rx__test_suite_desc_ptr_##id
 #define RX__TEST_CASE_DESC_PTR_GET_ID(suite_id, id)                            \
     rx__test_case_desc_ptr_##suite_id##_##id
-#define RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id)                             \
+#define RX__TEST_SUITE_CONFIG_UPDATE_FN_GET_ID(id)                             \
     rx__test_suite_config_update_fn_##id
-#define RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id)                    \
+#define RX__TEST_CASE_CONFIG_UPDATE_FN_GET_ID(suite_id, id)                    \
     rx__test_case_config_update_fn_##suite_id##_##id
 #define RX__TEST_CASE_DATA_GET_ID(suite_id, id)                                \
     rx__test_case_data_##suite_id##_##id
@@ -2000,12 +2004,12 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxsuite$c", read))
 
     __declspec(allocate("rxsuite$a"))
-    const struct rx__test_suite_desc * const
-    rx__test_suite_section_begin = NULL;
+    const struct rx__test_suite_desc * const rx__test_suite_section_begin
+        = NULL;
 
     __declspec(allocate("rxsuite$c"))
-    const struct rx__test_suite_desc * const
-    rx__test_suite_section_end = NULL;
+    const struct rx__test_suite_desc * const rx__test_suite_section_end
+        = NULL;
 
     #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
         __declspec(allocate("rxsuite$b"))                                      \
@@ -2039,12 +2043,12 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxcase$c", read))
 
     __declspec(allocate("rxcase$a"))
-    const struct rx__test_case_desc * const
-    rx__test_case_section_begin = NULL;
+    const struct rx__test_case_desc * const rx__test_case_section_begin
+        = NULL;
 
     __declspec(allocate("rxcase$c"))
-    const struct rx__test_case_desc * const
-    rx__test_case_section_end = NULL;
+    const struct rx__test_case_desc * const rx__test_case_section_end
+        = NULL;
 
     #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
         __declspec(allocate("rxcase$b"))                                       \
@@ -2076,7 +2080,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    -------------------------------------------------------------------------- */
 
 #define RX__FIXTURE_(id, type)                                                 \
-    typedef type RX__FIXTURE_GET_DATA_TYPE(id);
+    typedef type RX__FIXTURE_DATA_TYPE_GET_ID(id);
 
 #define RX__FIXTURE_0(id, type)                                                \
     RX__STRUCT_DEFINE_UPDATE_FN(                                               \
@@ -2118,11 +2122,11 @@ struct rx__test_suite_desc {
 
 #define RX__TEST_SUITE_1(id, arg_count, args)                                  \
     RX__STRUCT_DEFINE_UPDATE_FN(                                               \
-        RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id),                            \
+        RX__TEST_SUITE_CONFIG_UPDATE_FN_GET_ID(id),                            \
         struct rx_config,                                                      \
         arg_count,                                                             \
         args)                                                                  \
-    RX__TEST_SUITE_(id, &RX__TEST_SUITE_CONFIG_GET_UPDATE_FN_ID(id));
+    RX__TEST_SUITE_(id, &RX__TEST_SUITE_CONFIG_UPDATE_FN_GET_ID(id));
 
 /* Test Case                                                       O-(''Q)
    -------------------------------------------------------------------------- */
@@ -2166,7 +2170,7 @@ struct rx__test_case_desc {
 
 #define RX__TEST_CASE_1(suite_id, id, arg_count, args)                         \
     RX__STRUCT_DEFINE_UPDATE_FN(                                               \
-        RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id),                   \
+        RX__TEST_CASE_CONFIG_UPDATE_FN_GET_ID(suite_id, id),                   \
         struct rx_config,                                                      \
         arg_count,                                                             \
         args)                                                                  \
@@ -2175,34 +2179,34 @@ struct rx__test_case_desc {
                    void *,                                                     \
                    NULL,                                                       \
                    NULL,                                                       \
-                   &RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id))
+                   &RX__TEST_CASE_CONFIG_UPDATE_FN_GET_ID(suite_id, id))
 
 #define RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                          \
-    static RX__FIXTURE_GET_DATA_TYPE(fixture)                                  \
+    static RX__FIXTURE_DATA_TYPE_GET_ID(fixture)                               \
     RX__TEST_CASE_DATA_GET_ID(suite_id, id);                                   \
 
 #define RX__TEST_CASE_FIXTURE_0(suite_id, id, fixture)                         \
     RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
     RX__TEST_CASE_(suite_id,                                                   \
                    id,                                                         \
-                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   RX__FIXTURE_DATA_TYPE_GET_ID(fixture),                      \
                    &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
                    &RX__FIXTURE_GET_UPDATE_FN_ID(fixture),                     \
                    NULL)
 
 #define RX__TEST_CASE_FIXTURE_1(suite_id, id, fixture, arg_count, args)        \
     RX__STRUCT_DEFINE_UPDATE_FN(                                               \
-        RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id),                   \
+        RX__TEST_CASE_CONFIG_UPDATE_FN_GET_ID(suite_id, id),                   \
         struct rx_config,                                                      \
         arg_count,                                                             \
         args)                                                                  \
     RX__TEST_CASE_FIXTURE_(suite_id, id, fixture)                              \
     RX__TEST_CASE_(suite_id,                                                   \
                    id,                                                         \
-                   RX__FIXTURE_GET_DATA_TYPE(fixture),                         \
+                   RX__FIXTURE_DATA_TYPE_GET_ID(fixture),                      \
                    &RX__TEST_CASE_DATA_GET_ID(suite_id, id),                   \
                    &RX__FIXTURE_GET_UPDATE_FN_ID(fixture),                     \
-                   &RX__TEST_CASE_CONFIG_GET_UPDATE_FN_ID(suite_id, id))
+                   &RX__TEST_CASE_CONFIG_UPDATE_FN_GET_ID(suite_id, id))
 
 /* Operators                                                       O-(''Q)
    -------------------------------------------------------------------------- */
@@ -2622,15 +2626,15 @@ rx__test_cases_run_registered(void)
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED static void
-rx__test_assess(struct rx_context *context,
-                int value,
-                int expected,
-                const char *expr,
-                const char *file,
-                int line,
-                enum rx_severity severity,
-                const char *failure_fmt,
-                ...)
+rx__assess_value(struct rx_context *context,
+                 int x,
+                 int expected,
+                 const char *expr,
+                 const char *file,
+                 int line,
+                 enum rx_severity severity,
+                 const char *failure_fmt,
+                 ...)
 {
     int result;
     char *failure_msg;
@@ -2639,7 +2643,7 @@ rx__test_assess(struct rx_context *context,
     RX_ASSERT(context != NULL);
     RX_ASSERT(file != NULL);
 
-    result = ((value && expected) || (!value && !expected));
+    result = ((x && expected) || (!x && !expected));
 
     if (result) {
         failure_msg = NULL;
@@ -2664,7 +2668,7 @@ rx__test_assess(struct rx_context *context,
             failure_msg = NULL;
         }
 
-        RX__STR_CREATE_1(status, diagnostic_msg, "%d", value);
+        RX__STR_CREATE_1(status, diagnostic_msg, "%d", x);
         if (status != RX_SUCCESS) {
             RX__LOG_DEBUG_2("failed to create the diagnostic message for "
                             "the test located at %s:%d\n",
@@ -2692,15 +2696,15 @@ rx__test_assess(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__bool_test_assess(struct rx_context *context,
-                     int x,
-                     int expected,
-                     const char *expr,
-                     const char *file,
-                     int line,
-                     enum rx_severity severity,
-                     const char *failure_fmt,
-                     ...)
+rx__bool_assess_value(struct rx_context *context,
+                      int x,
+                      int expected,
+                      const char *expr,
+                      const char *file,
+                      int line,
+                      enum rx_severity severity,
+                      const char *failure_fmt,
+                      ...)
 {
     int result;
     char *failure_msg;
@@ -2764,17 +2768,17 @@ rx__bool_test_assess(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__int_test_assess_comparison(struct rx_context *context,
-                               rx__int x1,
-                               rx__int x2,
-                               enum rx__op op,
-                               const char *expr1,
-                               const char *expr2,
-                               const char *file,
-                               int line,
-                               enum rx_severity severity,
-                               const char *failure_fmt,
-                               ...)
+rx__int_assess_comparison(struct rx_context *context,
+                          rx__int x1,
+                          rx__int x2,
+                          enum rx__op op,
+                          const char *expr1,
+                          const char *expr2,
+                          const char *file,
+                          int line,
+                          enum rx_severity severity,
+                          const char *failure_fmt,
+                          ...)
 {
     int result;
     char *failure_msg;
@@ -2869,17 +2873,17 @@ rx__int_test_assess_comparison(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__uint_test_assess_comparison(struct rx_context *context,
-                                rx__uint x1,
-                                rx__uint x2,
-                                enum rx__op op,
-                                const char *expr1,
-                                const char *expr2,
-                                const char *file,
-                                int line,
-                                enum rx_severity severity,
-                                const char *failure_fmt,
-                                ...)
+rx__uint_assess_comparison(struct rx_context *context,
+                           rx__uint x1,
+                           rx__uint x2,
+                           enum rx__op op,
+                           const char *expr1,
+                           const char *expr2,
+                           const char *file,
+                           int line,
+                           enum rx_severity severity,
+                           const char *failure_fmt,
+                           ...)
 {
     int result;
     char *failure_msg;
@@ -2976,17 +2980,17 @@ rx__uint_test_assess_comparison(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__real_test_assess_comparison(struct rx_context *context,
-                                rx__real x1,
-                                rx__real x2,
-                                enum rx__op op,
-                                const char *expr1,
-                                const char *expr2,
-                                const char *file,
-                                int line,
-                                enum rx_severity severity,
-                                const char *failure_fmt,
-                                ...)
+rx__real_assess_comparison(struct rx_context *context,
+                           rx__real x1,
+                           rx__real x2,
+                           enum rx__op op,
+                           const char *expr1,
+                           const char *expr2,
+                           const char *file,
+                           int line,
+                           enum rx_severity severity,
+                           const char *failure_fmt,
+                           ...)
 {
     int result;
     char *failure_msg;
@@ -3081,18 +3085,18 @@ rx__real_test_assess_comparison(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
-                                      rx__real x1,
-                                      rx__real x2,
-                                      rx__real tol,
-                                      enum rx__op op,
-                                      const char *expr1,
-                                      const char *expr2,
-                                      const char *file,
-                                      int line,
-                                      enum rx_severity severity,
-                                      const char *failure_fmt,
-                                      ...)
+rx__real_assess_fuzzy_comparison(struct rx_context *context,
+                                 rx__real x1,
+                                 rx__real x2,
+                                 rx__real tol,
+                                 enum rx__op op,
+                                 const char *expr1,
+                                 const char *expr2,
+                                 const char *file,
+                                 int line,
+                                 enum rx_severity severity,
+                                 const char *failure_fmt,
+                                 ...)
 {
     int result;
     char *failure_msg;
@@ -3178,18 +3182,18 @@ rx__real_test_assess_comparison_fuzzy(struct rx_context *context,
 }
 
 RX__MAYBE_UNUSED static void
-rx__str_test_assess_comparison(struct rx_context *context,
-                               const char *s1,
-                               const char *s2,
-                               enum rx__str_case str_case,
-                               enum rx__op op,
-                               const char *expr1,
-                               const char *expr2,
-                               const char *file,
-                               int line,
-                               enum rx_severity severity,
-                               const char *failure_fmt,
-                               ...)
+rx__str_assess_comparison(struct rx_context *context,
+                          const char *s1,
+                          const char *s2,
+                          enum rx__str_case str_case,
+                          enum rx__op op,
+                          const char *expr1,
+                          const char *expr2,
+                          const char *file,
+                          int line,
+                          enum rx_severity severity,
+                          const char *failure_fmt,
+                          ...)
 {
     int result;
     char *failure_msg;
