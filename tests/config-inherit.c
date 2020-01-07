@@ -1,5 +1,3 @@
-#define RX_ENABLE_C89_COMPAT
-
 #include <stdlib.h>
 
 #include <rexo.h>
@@ -12,7 +10,7 @@
 
 static int step = 0;
 
-RX_TEST_SUITE_1(my_test_suite, .skip = 1);
+RX_TEST_SUITE(my_test_suite, .skip = 1);
 
 RX_TEST_CASE(my_test_suite, my_test_case_1)
 {
@@ -20,7 +18,7 @@ RX_TEST_CASE(my_test_suite, my_test_case_1)
     ASSERT(0);
 }
 
-RX_TEST_CASE_1(my_test_suite, my_test_case_2, .skip = 0)
+RX_TEST_CASE(my_test_suite, my_test_case_2, .skip = 0)
 {
     ++step;
     ASSERT(step == 2);
