@@ -1134,8 +1134,8 @@ struct rx_fixture {
 };
 
 struct rx_test_case {
-    const char *name;
     const char *suite_name;
+    const char *name;
     rx_test_case_run_fn run;
     void *data;
     struct rx_fixture fixture;
@@ -2128,8 +2128,8 @@ struct rx__test_suite_desc {
    -------------------------------------------------------------------------- */
 
 struct rx__test_case_desc {
-    const char *name;
     const char *suite_name;
+    const char *name;
     void *data;
     const rx__fixture_update_fn fixture_set_members;
     const rx__config_update_fn config_set_members;
@@ -2146,8 +2146,8 @@ struct rx__test_case_desc {
     RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type));               \
     static const struct rx__test_case_desc                                     \
     RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                    \
-        = {#id,                                                                \
-           #suite_id,                                                          \
+        = {#suite_id,                                                          \
+           #id,                                                                \
            data,                                                               \
            fixture_set_members,                                                \
            config_set_members,                                                 \
@@ -2559,8 +2559,8 @@ rx__test_cases_run(size_t test_case_count,
 
         test_case = &test_cases[i];
 
-        RX_ASSERT(test_case->name != NULL);
         RX_ASSERT(test_case->suite_name != NULL);
+        RX_ASSERT(test_case->name != NULL);
 
         status = rx_summary_initialize(&summary, test_case);
         if (status != RX_SUCCESS) {
@@ -3441,8 +3441,8 @@ rx_summary_print(const struct rx_summary *summary)
 
     RX_ASSERT(summary != NULL);
     RX_ASSERT(summary->test_case != NULL);
-    RX_ASSERT(summary->test_case->name != NULL);
     RX_ASSERT(summary->test_case->suite_name != NULL);
+    RX_ASSERT(summary->test_case->name != NULL);
     RX_ASSERT(summary->failures != NULL);
 
     passed = summary->failure_count == 0;
@@ -3505,8 +3505,8 @@ rx_test_case_run(struct rx_summary *summary,
 
     RX_ASSERT(summary != NULL);
     RX_ASSERT(test_case != NULL);
-    RX_ASSERT(test_case->name != NULL);
     RX_ASSERT(test_case->suite_name != NULL);
+    RX_ASSERT(test_case->name != NULL);
     RX_ASSERT(test_case->run != NULL);
 
     if (test_case->config.skip) {
@@ -3603,8 +3603,8 @@ rx_test_cases_enumerate(rx_size *test_case_count,
 
         test_case = &test_cases[count];
 
-        test_case->name = (*c_it)->name;
         test_case->suite_name = (*c_it)->suite_name;
+        test_case->name = (*c_it)->name;
         test_case->data = (*c_it)->data;
         test_case->run = (*c_it)->run;
 
