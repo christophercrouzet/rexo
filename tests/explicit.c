@@ -15,37 +15,40 @@ struct my_data {
 };
 
 enum rx_status
-my_set_up(struct rx_context *context, struct my_data *data)
+my_set_up(struct rx_context *RX_CONTEXT, struct my_data *RX_DATA)
 {
-    (void)context;
+    (void)RX_CONTEXT;
 
     ++step;
     ASSERT(step == 2);
 
-    data->value = 123;
+    RX_DATA->value = 123;
     return RX_SUCCESS;
 }
 
 void
-my_tear_down(struct rx_context *context, struct my_data *data)
+my_tear_down(struct rx_context *RX_CONTEXT, struct my_data *RX_DATA)
 {
-    (void)context;
+    (void)RX_CONTEXT;
 
     ++step;
     ASSERT(step == 4);
 
-    ASSERT(data->value == 123);
+    ASSERT(RX_DATA->value == 123);
 }
 
 void
-my_test_suite_my_test_case(struct rx_context *context, struct my_data *data)
+my_test_suite_my_test_case(struct rx_context *RX_CONTEXT,
+                           struct my_data *RX_DATA)
 {
-    (void)context;
+    (void)RX_CONTEXT;
 
     ++step;
     ASSERT(step == 3);
 
-    ASSERT(data->value == 123);
+    ASSERT(RX_DATA->value == 123);
+
+    RX_INT_REQUIRE_EQUAL(42, 42);
 }
 
 static struct my_data my_data;

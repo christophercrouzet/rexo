@@ -30,6 +30,8 @@ RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
 {
     ++step;
     ASSERT(step == 3);
+
+    RX_INT_REQUIRE_EQUAL(42, 42);
 }
 
 int

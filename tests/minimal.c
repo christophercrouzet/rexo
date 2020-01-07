@@ -14,6 +14,8 @@ RX_TEST_CASE(my_test_suite, my_test_case)
 {
     ++step;
     ASSERT(step == 2);
+
+    RX_INT_REQUIRE_EQUAL(42, 42);
 }
 
 int
