@@ -2154,7 +2154,7 @@ struct rx__test_case_desc {
            (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};           \
     RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                               \
     static void                                                                \
-    RX__TEST_CASE_GET_ID(suite_id, id) (RX__DEFINE_PARAMS(type))
+    RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type))
 
 #define RX__TEST_CASE_0(suite_id, id)                                          \
     RX__TEST_CASE_(suite_id,                                                   \
