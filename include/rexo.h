@@ -1118,7 +1118,7 @@ typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
 
 /*
    Match the number of members to the variations offered for the macros:
-   `RX_FIXTURE_*`, and `RX_FIXTURE_VOID_*`.
+   `RX_TEST_SUITE_*`, `RX_TEST_CASE_*`, and `RX_TEST_CASE_FIXTURE_*`.
 */
 struct rx_config {
     int skip;
@@ -1126,7 +1126,7 @@ struct rx_config {
 
 /*
    Match the number of members to the variations offered for the macros:
-   `RX_TEST_SUITE_*`, `RX_TEST_CASE_*`, and `RX_TEST_CASE_FIXTURE_*`.
+   `RX_FIXTURE_*`, and `RX_FIXTURE_VOID_*`.
 */
 struct rx_fixture {
     rx_set_up_fn set_up;
