@@ -2548,8 +2548,7 @@ rx__test_cases_run(size_t test_case_count,
 
     if (test_case_count == 0) {
         RX__LOG_INFO("nothing to run\n");
-        status = RX_SUCCESS;
-        goto exit;
+        return RX_SUCCESS;
     }
 
     RX_ASSERT(test_cases != NULL);
@@ -2568,7 +2567,7 @@ rx__test_cases_run(size_t test_case_count,
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
                             test_case->name);
-            goto exit;
+            return status;
         }
 
         status = rx_test_case_run(&summary, test_case);
