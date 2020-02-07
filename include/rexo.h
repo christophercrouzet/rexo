@@ -169,15 +169,15 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 
 #if RX__C89_COMPAT
     #define RX_FIXTURE_VOID(id)                                                \
-        RX__FIXTURE_VOID_0(id)                                                 \
+        RX__FIXTURE_0(id, void *)                                              \
         RX__REQUIRE_SEMICOLON
 
     #define RX_FIXTURE_VOID_1(id, _0)                                          \
-        RX__FIXTURE_VOID_1(id, 1, (_0))                                        \
+        RX__FIXTURE_1(id, void *, 1, (_0))                                     \
         RX__REQUIRE_SEMICOLON
 
     #define RX_FIXTURE_VOID_2(id, _0, _1)                                      \
-        RX__FIXTURE_VOID_1(id, 2, (_0, _1))                                    \
+        RX__FIXTURE_1(id, void *, 2, (_0, _1))                                 \
         RX__REQUIRE_SEMICOLON
 #else
     #define RX_FIXTURE_VOID(...)                                               \
@@ -189,12 +189,13 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
         RX__REQUIRE_SEMICOLON
 
     #define RX__FIXTURE_VOID_DISPATCH_0(id)                                    \
-        RX__FIXTURE_VOID_0(id)
+        RX__FIXTURE_0(id, void *)
 
     #define RX__FIXTURE_VOID_DISPATCH_1(id, ...)                               \
-        RX__FIXTURE_VOID_1(id,                                                 \
-                           RX__COUNT_ARGS(__VA_ARGS__),                        \
-                           (__VA_ARGS__))
+        RX__FIXTURE_1(id,                                                      \
+                      void *,                                                  \
+                      RX__COUNT_ARGS(__VA_ARGS__),                             \
+                      (__VA_ARGS__))
 #endif
 
 #if RX__C89_COMPAT
@@ -2093,12 +2094,6 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         arg_count,                                                             \
         args)                                                                  \
     RX__FIXTURE_(id, type)
-
-#define RX__FIXTURE_VOID_0(id)                                                 \
-    RX__FIXTURE_0(id, void *)
-
-#define RX__FIXTURE_VOID_1(id, arg_count, args)                                \
-    RX__FIXTURE_1(id, void *, arg_count, args)
 
 /* Test Suite                                                      O-(''Q)
    -------------------------------------------------------------------------- */
