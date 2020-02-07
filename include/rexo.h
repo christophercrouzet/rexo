@@ -2008,7 +2008,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     const struct rx__test_suite_desc * const rx__test_suite_section_end
         = NULL;
 
-    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
+    #define RX__TEST_SUITE_REGISTER(name)                                      \
         __declspec(allocate("rxsuite$b"))                                      \
         const struct rx__test_suite_desc * const                               \
         RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
@@ -2024,7 +2024,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __attribute__((section("rxsuite")))
     static const struct rx__test_suite_desc * const rx__dummy_suite = NULL;
 
-    #define RX__TEST_SUITE_DESC_DEFINE_PTR(name)                               \
+    #define RX__TEST_SUITE_REGISTER(name)                                      \
         __attribute__((section("rxsuite")))                                    \
         const struct rx__test_suite_desc * const                               \
         RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
@@ -2047,7 +2047,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     const struct rx__test_case_desc * const rx__test_case_section_end
         = NULL;
 
-    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
+    #define RX__TEST_CASE_REGISTER(suite_name, name)                           \
         __declspec(allocate("rxcase$b"))                                       \
         const struct rx__test_case_desc * const                                \
         RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
@@ -2063,7 +2063,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     __attribute__((section("rxcase")))
     static const struct rx__test_case_desc * const rx__dummy_case = NULL;
 
-    #define RX__TEST_CASE_DESC_DEFINE_PTR(suite_name, name)                    \
+    #define RX__TEST_CASE_REGISTER(suite_name, name)                           \
         __attribute__((section("rxcase")))                                     \
         const struct rx__test_case_desc * const                                \
         RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
@@ -2106,7 +2106,7 @@ struct rx__test_suite_desc {
 #define RX__TEST_SUITE_(id, config_set_members)                                \
     static const struct rx__test_suite_desc RX__TEST_SUITE_DESC_GET_ID(id)     \
         = {#id, config_set_members};                                           \
-    RX__TEST_SUITE_DESC_DEFINE_PTR(id)
+    RX__TEST_SUITE_REGISTER(id)
 
 #define RX__TEST_SUITE_0(id)                                                   \
     RX__TEST_SUITE_(id, NULL);
@@ -2147,7 +2147,7 @@ struct rx__test_case_desc {
            fixture_set_members,                                                \
            config_set_members,                                                 \
            (rx_test_case_run_fn)RX__TEST_CASE_GET_ID(suite_id, id)};           \
-    RX__TEST_CASE_DESC_DEFINE_PTR(suite_id, id);                               \
+    RX__TEST_CASE_REGISTER(suite_id, id);                                      \
     static void                                                                \
     RX__TEST_CASE_GET_ID(suite_id, id)(RX__DEFINE_PARAMS(type))
 
