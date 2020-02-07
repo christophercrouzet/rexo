@@ -14,21 +14,29 @@ struct my_data {
     int value;
 };
 
-RX_SET_UP(my_set_up, struct my_data)
+RX_SET_UP(my_set_up)
 {
+    struct my_data *data;
+
+    data = (struct my_data *)RX_DATA;
+
     ++step;
     ASSERT(step == 2);
 
-    RX_DATA->value = 123;
+    data->value = 123;
     return RX_SUCCESS;
 }
 
-RX_TEAR_DOWN(my_tear_down, struct my_data)
+RX_TEAR_DOWN(my_tear_down)
 {
+    struct my_data *data;
+
+    data = (struct my_data *)RX_DATA;
+
     ++step;
     ASSERT(step == 4);
 
-    ASSERT(RX_DATA->value == 123);
+    ASSERT(data->value == 123);
 }
 
 RX_FIXTURE(my_fixture,

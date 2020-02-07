@@ -110,31 +110,13 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     struct rx_context *RX_CONTEXT RX__MAYBE_UNUSED,                            \
     type *RX_DATA RX__MAYBE_UNUSED
 
-#define RX_SET_UP(id, type)                                                    \
+#define RX_SET_UP(id)                                                          \
     static enum rx_status                                                      \
-    RX__SET_UP_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type));                    \
-                                                                               \
-    static enum rx_status                                                      \
-    id(RX__DEFINE_PARAMS(void))                                                \
-    {                                                                          \
-        return RX__SET_UP_WRAPPER_GET_ID(id)(RX_CONTEXT, (type *)RX_DATA);     \
-    }                                                                          \
-                                                                               \
-    static enum rx_status                                                      \
-    RX__SET_UP_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type))
+    id(RX__DEFINE_PARAMS(void))
 
-#define RX_TEAR_DOWN(id, type)                                                 \
+#define RX_TEAR_DOWN(id)                                                       \
     static void                                                                \
-    RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type));                 \
-                                                                               \
-    static void                                                                \
-    id(RX__DEFINE_PARAMS(void))                                                \
-    {                                                                          \
-        RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX_CONTEXT, (type *)RX_DATA);         \
-    }                                                                          \
-                                                                               \
-    static void                                                                \
-    RX__TEAR_DOWN_WRAPPER_GET_ID(id)(RX__DEFINE_PARAMS(type))
+    id(RX__DEFINE_PARAMS(void))
 
 #if RX__C89_COMPAT
     #define RX_FIXTURE(id, type)                                               \
@@ -1367,10 +1349,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
     #define RX__FORCE_LINKING(id) __attribute__((used))
 #endif
 
-#define RX__SET_UP_WRAPPER_GET_ID(id)                                          \
-    rx__set_up_wrapper_##id
-#define RX__TEAR_DOWN_WRAPPER_GET_ID(id)                                       \
-    rx__tear_down_wrapper_##id
 #define RX__FIXTURE_DATA_TYPE_GET_ID(id)                                       \
     rx__fixture_data_type_##id
 #define RX__FIXTURE_GET_UPDATE_FN_ID(id)                                       \

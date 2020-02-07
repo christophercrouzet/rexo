@@ -10,7 +10,7 @@
 
 static int step = 0;
 
-RX_SET_UP(my_set_up, void *)
+RX_SET_UP(my_set_up)
 {
     ++step;
     ASSERT(step == 2);
@@ -18,7 +18,7 @@ RX_SET_UP(my_set_up, void *)
     return RX_SUCCESS;
 }
 
-RX_TEAR_DOWN(my_tear_down, void *)
+RX_TEAR_DOWN(my_tear_down)
 {
     ++step;
     ASSERT(step == 4);
