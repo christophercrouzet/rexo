@@ -64,19 +64,31 @@ FILES += $(wildcard include/*.h)
 
 # Create the rule to build a test.
 # $(1): path.
-define CREATE_TEST_RULES =
-_RULE := test-$$(basename $$(notdir $(1)))
-$(_RULE): $$(MAKE_FILES)
-	$$(call rx_forward_rule,$(_RULE))
+define rx_create_test_rules =
+_rule := test-$$(subst /,-,$(1:tests/%.c=%))
+
+$$(_rule): $$(MAKE_FILES)
+	$$(call rx_forward_rule,$$(_rule))
 
 FILES += $(1)
 
-.PHONY: $(_RULE)
+.PHONY: $$(_rule)
+endef
+
+# $(1): parent directory.
+define rx_find_tests_impl =
+$(foreach _x,$(wildcard $(1:=/*)),$(call \
+	rx_find_tests_impl,$(_x)) $(filter %.c,$(_x)))
+endef
+
+# Recursively find all the tests.
+define rx_find_tests =
+$(call rx_find_tests_impl,tests)
 endef
 
 # Create the rules for each test.
-$(foreach _i,$(wildcard tests/*),$(eval $(call \
-    CREATE_TEST_RULES,$(_i))))
+$(foreach _x,$(rx_find_tests),$(eval $(call \
+    rx_create_test_rules,$(_x))))
 
 # ------------------------------------------------------------------------------
 
