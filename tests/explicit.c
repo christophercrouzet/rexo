@@ -62,16 +62,12 @@ my_test_suite_my_test_case(struct rx_context *RX_CONTEXT, void *RX_DATA)
     RX_INT_REQUIRE_EQUAL(42, 42);
 }
 
-static struct my_data my_data;
-
 static const struct rx_test_case my_test_cases[] = {
     {
         "my_test_suite",
         "my_test_case",
         my_test_suite_my_test_case,
-        &my_data,
-        {my_set_up, my_tear_down},
-        {0},
+        {0, {sizeof(struct my_data), {my_set_up, my_tear_down}}},
     },
 };
 

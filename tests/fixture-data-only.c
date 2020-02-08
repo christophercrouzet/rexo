@@ -16,12 +16,16 @@ struct my_data {
 
 RX_FIXTURE(my_fixture, struct my_data);
 
-RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
+RX_TEST_CASE(my_test_suite, my_test_case, .fixture = my_fixture)
 {
+    struct my_data *data;
+
+    data = (struct my_data *)RX_DATA;
+
     ++step;
     ASSERT(step == 2);
 
-    RX_DATA->value = 123;
+    data->value = 123;
 }
 
 int
