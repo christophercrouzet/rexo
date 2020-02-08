@@ -1079,7 +1079,7 @@ struct rx_context;
 
 typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
 typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
-typedef void (*rx_test_case_run_fn)(RX__DEFINE_PARAMS(void));
+typedef void (*rx_run_fn)(RX__DEFINE_PARAMS(void));
 
 struct rx_fixture_config {
     rx_set_up_fn set_up;
@@ -1099,7 +1099,7 @@ struct rx_test_case_config {
 struct rx_test_case {
     const char *suite_name;
     const char *name;
-    rx_test_case_run_fn run;
+    rx_run_fn run;
     struct rx_test_case_config config;
 };
 
@@ -2116,7 +2116,7 @@ struct rx__test_suite_desc {
 struct rx__test_case_desc {
     const char *suite_name;
     const char *name;
-    rx_test_case_run_fn run;
+    rx_run_fn run;
     const struct rx__test_case_config_desc *config_desc;
 };
 
