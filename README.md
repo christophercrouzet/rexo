@@ -3,41 +3,40 @@ Rexo
 
 Rexo is a neat unit testing framework for C and C++.
 
-It offers the same xUnit-like structure than most other unit testing frameworks
-but aims at providing a _truly_ polished API.
+It offers the same [xUnit][xunit]-like structure than most other unit testing
+frameworks but aims at providing a _truly_ polished API.
 
 
 ## Features
 
-* fits into a single header file.
-* automatic registration of tests.
-* dead simple implementation (KISS all the things!).
-* no specific test runner or DWARF debug information required.
-* brings a designated initializer-like syntax to all C++ versions.
-* test cases can override config attributes from their respective test suite.
-* diagonal (high level) API for ease of use.
-* orthogonal (low level) API for granular customization.
-* test fixtures with set up/tear down callbacks.
-* compatible with C99 and C++.
+* **sleek**: polished API with great attention to details.
+* **easy**: no learning curve, it's yet another framework based on xUnit
+  with test suites, test cases, and fixtures.
+* **convenient**: automatic registration of tests.
+* **granular**: high level or low level API? You choose.
+* **portable**: compatible with C89 (ANSI C) and C++.
+* **simple**: straightforward implementation—KISS all the things!
+* **cascading configuration**: configure a whole suite at once and/or tweak
+  specific options for each case.
+* **painless**: deployment couldn't be easier—it all fits into a single
+  header file and has no external dependencies.
 
 
-## Requirements
+But also...
 
-The automatic registration of tests relies on a compiler-specific feature to
-place data in a specific memory section. The compilers currently supported are
-the GNU compilers (clang, gcc, icc) and MSVC.
-
-Extending the automatic registration feature to other compilers should be
-possible.
+* fully standard compliant minus the optional automatic registration of tests
+  that relies on a widespread compiler-specific feature.
+* brings a designated initializer-like syntax to all C and C++ versions.
+* test cases can override configuration attributes from their parent test suite.
 
 
 ## Roadmap
 
-* implement a command-line option parser.
-* run each test in isolated environment (subprocess).
-* add an option to set up the output format of the summary (e.g.: jUnit XML).
-* more visual failure messages (e.g.: an arrow pointing where a string differs).
-* support for more assertion macros (e.g.: array comparison, signal handling).
+* run each test in isolated environment.
+* implement a command-line option parser (e.g.: for test filtering).
+* allow to choose the output format of the summary (e.g.: jUnit XML).
+* support more assertion macros (e.g.: array comparison, signal handling).
+* visual failure messages (e.g.: an arrow pointing where a string differs).
 
 
 ## Usage
@@ -45,21 +44,9 @@ possible.
 ```c
 #include <rexo.h>
 
-struct my_data {
-    const char *value;
-};
-
-RX_SET_UP(my_set_up, struct my_data)
+RX_TEST_CASE(numbers, magic)
 {
-    RX_DATA->value = "world!";
-    return RX_SUCCESS;
-}
-
-RX_FIXTURE(my_fixture, struct my_data, .set_up = my_set_up);
-
-RX_TEST_CASE_FIXTURE(my_test_suite, my_test_case, my_fixture)
-{
-    RX_REQUIRE_STR_EQUAL("Hello", RX_DATA->value);
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
 }
 
 int
@@ -69,9 +56,11 @@ main(int argc, const char **argv)
 }
 ```
 
-![usage](img/usage.png)
-
 
 ## License
 
-[MIT](https://choosealicense.com/licenses/mit)
+[MIT][mit].
+
+
+[mit]: https://choosealicense.com/licenses/mit
+[xunit]: https://en.wikipedia.org/wiki/XUnit
