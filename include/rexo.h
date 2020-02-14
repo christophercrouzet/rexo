@@ -1256,19 +1256,19 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
 
 #define RX__STRUCT_UPDATE_5(_0, _1, _2, _3, _4)                                \
     RX__STRUCT_SET_MEMBER(_0)                                                  \
-    RX__STRUCT_UPDATE_3(_1, _2, _3, _4)
+    RX__STRUCT_UPDATE_4(_1, _2, _3, _4)
 
 #define RX__STRUCT_UPDATE_6(_0, _1, _2, _3, _4, _5)                            \
     RX__STRUCT_SET_MEMBER(_0)                                                  \
-    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5)
+    RX__STRUCT_UPDATE_5(_1, _2, _3, _4, _5)
 
 #define RX__STRUCT_UPDATE_7(_0, _1, _2, _3, _4, _5, _6)                        \
     RX__STRUCT_SET_MEMBER(_0)                                                  \
-    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5, _6)
+    RX__STRUCT_UPDATE_6(_1, _2, _3, _4, _5, _6)
 
 #define RX__STRUCT_UPDATE_8(_0, _1, _2, _3, _4, _5, _6, _7)                    \
     RX__STRUCT_SET_MEMBER(_0)                                                  \
-    RX__STRUCT_UPDATE_3(_1, _2, _3, _4, _5, _6, _7)
+    RX__STRUCT_UPDATE_7(_1, _2, _3, _4, _5, _6, _7)
 
 #define RX__STRUCT_DEFINE_UPDATE_FN(id, type, arg_count, args)                 \
     static void                                                                \
