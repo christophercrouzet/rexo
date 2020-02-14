@@ -110,6 +110,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     struct rx_context *RX_CONTEXT RX__MAYBE_UNUSED,                            \
     type *RX_DATA RX__MAYBE_UNUSED
 
+/* Automatic Registration Framework                                O-(''Q)
+   -------------------------------------------------------------------------- */
+
 #define RX_SET_UP(id)                                                          \
     static enum rx_status                                                      \
     id(RX__DEFINE_PARAMS(void))
@@ -237,6 +240,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                         (__VA_ARGS__))
 #endif
 
+/* Generic Assertions                                              O-(''Q)
+   -------------------------------------------------------------------------- */
+
 #if RX__C89_COMPAT
     #define RX__DEFINE_TEST(severity, expected, condition, msg)                \
         rx__assess_value(RX_CONTEXT,                                           \
@@ -288,6 +294,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     #define RX_CHECK_MSG(condition, ...)                                       \
         RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
+
+/* Boolean Assertions                                              O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
     #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg)           \
@@ -360,6 +369,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     #define RX_BOOL_CHECK_FALSE_MSG(condition, ...)                            \
         RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, __VA_ARGS__)
 #endif
+
+/* Integer Assertions                                              O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
     #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg)                     \
@@ -521,6 +533,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
             RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
+/* Unsigned Integer Assertions                                     O-(''Q)
+   -------------------------------------------------------------------------- */
+
 #if RX__C89_COMPAT
     #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg)                    \
         rx__uint_assess_comparison(RX_CONTEXT,                                 \
@@ -680,6 +695,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
         RX__UINT_DEFINE_TEST(                                                  \
             RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
 #endif
+
+/* Floating-Point Assertions                                       O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
     #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg)                    \
@@ -927,6 +945,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
             RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, __VA_ARGS__)
 #endif
 
+/* String Assertions                                               O-(''Q)
+   -------------------------------------------------------------------------- */
+
 #if RX__C89_COMPAT
     #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg)           \
         rx__str_assess_comparison(RX_CONTEXT,                                  \
@@ -1085,6 +1106,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                             __VA_ARGS__)
 #endif
 
+/* Public Interface                                                O-(''Q)
+   -------------------------------------------------------------------------- */
+
 enum rx_status {
     RX_SUCCESS = 0,
     RX_ERROR = -1,
@@ -1191,7 +1215,7 @@ rx_run(int argc,
 }
 #endif
 
-/* Implementation                                                  O-(''Q)
+/* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if defined(RX_ENABLE_DEBUGGING)                                               \
@@ -1384,7 +1408,7 @@ struct rx_context {
     struct rx_summary *summary;
 };
 
-/* Logger                                                          O-(''Q)
+/* Implementation: Logger                                          O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if !defined(RX_DISABLE_LOG_STYLING)                                           \
@@ -1668,7 +1692,7 @@ rx__log(enum rx_log_level level,
     va_end(args);
 }
 
-/* Timer                                                           O-(''Q)
+/* Implementation: Timer                                           O-(''Q)
    -------------------------------------------------------------------------- */
 
 #define RX__TICKS_PER_SECOND 1000000000ul
@@ -1785,10 +1809,11 @@ rx__get_real_time(uint64_t *time)
 #endif
 }
 
-/* Test Failure Array                                              O-(''Q)
+/* Implementation: Test Failure Array                              O-(''Q)
    -------------------------------------------------------------------------- */
 
-/* Simple implementation for dynamic arrays that can grow and stretch at
+/*
+   Simple implementation for dynamic arrays that can grow and stretch at
    runtime. The object returned to the user is a standard pointer to a C array
    but the implementation also allocates a header to keep track of the size
    and the capacity.
@@ -1802,7 +1827,8 @@ rx__get_real_time(uint64_t *time)
    +--------+--------+
 
    The block points to the whole memory being allocated while the buffer
-   represents the actual array exposed to the user. */
+   represents the actual array exposed to the user.
+*/
 
 #define RX__DYN_ARRAY_GET_BLOCK(buf)                                           \
     ((void *)&((struct rx__dyn_array_header *)(buf))[-1])
@@ -1968,12 +1994,14 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     return RX_SUCCESS;
 }
 
-/* Automatic Test Registration                                     O-(''Q)
+/* Implementation: Memory Sections                                 O-(''Q)
    -------------------------------------------------------------------------- */
 
-/* Compiler-specific code that allows grouping test suite and test case
-  descriptions into specific data sections, thus enabling automatic discovery
-  by iterating over any data registered in these sections. */
+/*
+   Compiler-specific code that allows grouping objects into specific
+   data sections, thus enabling automatic discovery by iterating over
+   anything registered in these sections.
+*/
 
 #if defined(_MSC_VER)
     __pragma(section("rxsuite$a", read))
@@ -2053,7 +2081,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
 #endif
 
-/* Fixture                                                         O-(''Q)
+/* Implementation: Fixture                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
 typedef void (*rx__fixture_config_update_fn)(
@@ -2090,7 +2118,7 @@ struct rx__fixture_desc {
 #define RX__FIXTURE_VOID_1(id, arg_count, args)                                \
     RX__FIXTURE_1(id, 0, arg_count, args)
 
-/* Test Case Config                                                O-(''Q)
+/* Implementation: Test Case Config                                O-(''Q)
    -------------------------------------------------------------------------- */
 
 struct rx__test_case_config_blueprint {
@@ -2116,7 +2144,7 @@ struct rx__test_case_config_desc {
     RX__TEST_CASE_CONFIG_DESC_GET_ID(id)                                       \
         = {RX__TEST_CASE_CONFIG_BLUEPRINT_GET_UPDATE_FN_ID(id)};
 
-/* Test Suite                                                      O-(''Q)
+/* Implementation: Test Suite                                      O-(''Q)
    -------------------------------------------------------------------------- */
 
 struct rx__test_suite_desc {
@@ -2138,7 +2166,7 @@ struct rx__test_suite_desc {
     RX__TEST_CASE_CONFIG(id, arg_count, args)                                  \
     RX__TEST_SUITE_(id, &RX__TEST_CASE_CONFIG_DESC_GET_ID(id));
 
-/* Test Case                                                       O-(''Q)
+/* Implementation: Test Case                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
 struct rx__test_case_desc {
@@ -2175,7 +2203,7 @@ struct rx__test_case_desc {
                    id,                                                         \
                    &RX__TEST_CASE_CONFIG_DESC_GET_ID(suite_id##_##id))
 
-/* Operators                                                       O-(''Q)
+/* Implementation: Operators                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if defined(__GNUC__)
@@ -2262,7 +2290,7 @@ rx__op_get_name(const char **name, enum rx__op op)
     }
 }
 
-/* Strings                                                         O-(''Q)
+/* Implementation: String                                          O-(''Q)
    -------------------------------------------------------------------------- */
 
 #define RX__STR_LENGTH_ID rx__length
@@ -2433,7 +2461,7 @@ rx__str_copy(char **s, const char *original)
     return RX_SUCCESS;
 }
 
-/* Helpers                                                         O-(''Q)
+/* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
 static int
@@ -2588,7 +2616,7 @@ rx__test_cases_run_registered(void)
     return out;
 }
 
-/* Test assessments                                                O-(''Q)
+/* Implementation: Test Assessments                                O-(''Q)
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED static void
@@ -3251,7 +3279,7 @@ rx__str_assess_comparison(struct rx_context *context,
     }
 }
 
-/* Public API                                                      O-(''Q)
+/* Implementation: Public API                                      O-(''Q)
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED RX__STORAGE void
