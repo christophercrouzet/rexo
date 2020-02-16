@@ -67,12 +67,12 @@ FILES += $(wildcard include/*.h)
 define rx_create_test_rules =
 _rule := test-$$(subst /,-,$(1:tests/%.c=%))
 
-$$(_rule): $$(MAKE_FILES)
-	$$(call rx_forward_rule,$$(_rule))
+$(_rule): $$(MAKE_FILES)
+	$$(call rx_forward_rule,$(_rule))
 
 FILES += $(1)
 
-.PHONY: $$(_rule)
+.PHONY: $(_rule)
 endef
 
 # $(1): parent directory.
