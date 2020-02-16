@@ -244,7 +244,8 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__DEFINE_TEST(severity, expected, condition, msg)                \
+    #define RX__DEFINE_TEST(severity, expected, condition, msg,                \
+                            _0, _1, _2, _3, _4, _5, _6, _7)                    \
         rx__assess_value(RX_CONTEXT,                                           \
                          !!(condition),                                        \
                          expected,                                             \
@@ -252,12 +253,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                          __FILE__,                                             \
                          __LINE__,                                             \
                          severity,                                             \
-                         msg)
+                         msg,                                                  \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__DEFINE_TEST_0(severity, expected, condition)                   \
-        RX__DEFINE_TEST_1(severity, expected, condition, NULL)
-
-    #define RX__DEFINE_TEST_1(severity, expected, condition, ...)              \
+    #define RX__DEFINE_TEST(severity, expected, condition, ...)                \
         rx__assess_value(RX_CONTEXT,                                           \
                          !!(condition),                                        \
                          expected,                                             \
@@ -266,40 +265,121 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                          __LINE__,                                             \
                          severity,                                             \
                          __VA_ARGS__)
-
-    #define RX__DEFINE_TEST(...)                                               \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__DEFINE_TEST_,                                              \
-                RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_REQUIRE(condition)                                                  \
-    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL)
-
-#define RX_CHECK(condition)                                                    \
-    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL)
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL,                       \
+                    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REQUIRE_MSG(condition, msg)                                     \
-        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg)
-
-    #define RX_CHECK_MSG(condition, msg)                                       \
-        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg)
+        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                    \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REQUIRE_MSG(condition, ...)                                     \
         RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
+#endif
 
+#define RX_REQUIRE_MSG_1(condition, msg,                                       \
+                         _0)                                                   \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REQUIRE_MSG_2(condition, msg,                                       \
+                         _0, _1)                                               \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REQUIRE_MSG_3(condition, msg,                                       \
+                         _0, _1, _2)                                           \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REQUIRE_MSG_4(condition, msg,                                       \
+                         _0, _1, _2, _3)                                       \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REQUIRE_MSG_5(condition, msg,                                       \
+                         _0, _1, _2, _3, _4)                                   \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REQUIRE_MSG_6(condition, msg,                                       \
+                         _0, _1, _2, _3, _4, _5)                               \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REQUIRE_MSG_7(condition, msg,                                       \
+                         _0, _1, _2, _3, _4, _5, _6)                           \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REQUIRE_MSG_8(condition, msg,                                       \
+                         _0, _1, _2, _3, _4, _5, _6, _7)                       \
+    RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                        \
+                    _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_CHECK(condition)                                                    \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL,                    \
+                    NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_CHECK_MSG(condition, msg)                                       \
+        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                 \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_CHECK_MSG(condition, ...)                                       \
         RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
+
+#define RX_CHECK_MSG_1(condition, msg,                                         \
+                       _0)                                                     \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_CHECK_MSG_2(condition, msg,                                         \
+                       _0, _1)                                                 \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_CHECK_MSG_3(condition, msg,                                         \
+                       _0, _1, _2)                                             \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_CHECK_MSG_4(condition, msg,                                         \
+                       _0, _1, _2, _3)                                         \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_CHECK_MSG_5(condition, msg,                                         \
+                       _0, _1, _2, _3, _4)                                     \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_CHECK_MSG_6(condition, msg,                                         \
+                       _0, _1, _2, _3, _4, _5)                                 \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_CHECK_MSG_7(condition, msg,                                         \
+                       _0, _1, _2, _3, _4, _5, _6)                             \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_CHECK_MSG_8(condition, msg,                                         \
+                       _0, _1, _2, _3, _4, _5, _6, _7)                         \
+    RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                     \
+                    _0, _1, _2, _3, _4, _5, _6, _7)
+
 
 /* Boolean Assertions                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg)           \
+    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg,           \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__bool_assess_value(RX_CONTEXT,                                      \
                               !!(condition),                                   \
                               expected,                                        \
@@ -307,12 +387,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                               __FILE__,                                        \
                               __LINE__,                                        \
                               severity,                                        \
-                              msg)
+                              msg,                                             \
+                              _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__BOOL_DEFINE_TEST_0(severity, expected, condition)              \
-        RX__BOOL_DEFINE_TEST_1(severity, expected, condition, NULL)
-
-    #define RX__BOOL_DEFINE_TEST_1(severity, expected, condition, ...)         \
+    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, ...)           \
         rx__bool_assess_value(RX_CONTEXT,                                      \
                               !!(condition),                                   \
                               expected,                                        \
@@ -321,60 +399,226 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                               __LINE__,                                        \
                               severity,                                        \
                               __VA_ARGS__)
-
-    #define RX__BOOL_DEFINE_TEST(...)                                          \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__BOOL_DEFINE_TEST_,                                         \
-                RX__HAS_AT_LEAST_4_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_BOOL_REQUIRE_TRUE(condition)                                        \
-    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL)
-
-#define RX_BOOL_CHECK_TRUE(condition)                                          \
-    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL)
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, NULL,                  \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_BOOL_REQUIRE_TRUE_MSG(condition, msg)                           \
-        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg)
-
-    #define RX_BOOL_CHECK_TRUE_MSG(condition, msg)                             \
-        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,               \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_BOOL_REQUIRE_TRUE_MSG(condition, ...)                           \
         RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
+#endif
 
+#define RX_BOOL_REQUIRE_TRUE_MSG_1(condition, msg,                             \
+                                   _0)                                         \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_2(condition, msg,                             \
+                                   _0, _1)                                     \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_3(condition, msg,                             \
+                                   _0, _1, _2)                                 \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_4(condition, msg,                             \
+                                   _0, _1, _2, _3)                             \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_5(condition, msg,                             \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_6(condition, msg,                             \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_7(condition, msg,                             \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_BOOL_REQUIRE_TRUE_MSG_8(condition, msg,                             \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                   \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_BOOL_CHECK_TRUE(condition)                                          \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, NULL,               \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_BOOL_CHECK_TRUE_MSG(condition, msg)                             \
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,            \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_BOOL_CHECK_TRUE_MSG(condition, ...)                             \
         RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
 
-#define RX_BOOL_REQUIRE_FALSE(condition)                                       \
-    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, NULL)
+#define RX_BOOL_CHECK_TRUE_MSG_1(condition, msg,                               \
+                                 _0)                                           \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_BOOL_CHECK_FALSE(condition)                                         \
-    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, NULL)
+#define RX_BOOL_CHECK_TRUE_MSG_2(condition, msg,                               \
+                                 _0, _1)                                       \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_3(condition, msg,                               \
+                                 _0, _1, _2)                                   \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_4(condition, msg,                               \
+                                 _0, _1, _2, _3)                               \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_5(condition, msg,                               \
+                                 _0, _1, _2, _3, _4)                           \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_6(condition, msg,                               \
+                                 _0, _1, _2, _3, _4, _5)                       \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_7(condition, msg,                               \
+                                 _0, _1, _2, _3, _4, _5, _6)                   \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_BOOL_CHECK_TRUE_MSG_8(condition, msg,                               \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_BOOL_REQUIRE_FALSE(condition)                                       \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, NULL,                 \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_BOOL_REQUIRE_FALSE_MSG(condition, msg)                          \
-        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg)
-
-    #define RX_BOOL_CHECK_FALSE_MSG(condition, msg)                            \
-        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg)
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,              \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_BOOL_REQUIRE_FALSE_MSG(condition, ...)                          \
         RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, __VA_ARGS__)
+#endif
 
+#define RX_BOOL_REQUIRE_FALSE_MSG_1(condition, msg,                            \
+                                    _0)                                        \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_2(condition, msg,                            \
+                                    _0, _1)                                    \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_3(condition, msg,                            \
+                                    _0, _1, _2)                                \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_4(condition, msg,                            \
+                                    _0, _1, _2, _3)                            \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_5(condition, msg,                            \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_6(condition, msg,                            \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_7(condition, msg,                            \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_BOOL_REQUIRE_FALSE_MSG_8(condition, msg,                            \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_BOOL_CHECK_FALSE(condition)                                         \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, NULL,              \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_BOOL_CHECK_FALSE_MSG(condition, msg)                            \
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,           \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_BOOL_CHECK_FALSE_MSG(condition, ...)                            \
         RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, __VA_ARGS__)
 #endif
+
+#define RX_BOOL_CHECK_FALSE_MSG_1(condition, msg,                              \
+                                  _0)                                          \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_2(condition, msg,                              \
+                                  _0, _1)                                      \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_3(condition, msg,                              \
+                                  _0, _1, _2)                                  \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_4(condition, msg,                              \
+                                  _0, _1, _2, _3)                              \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_5(condition, msg,                              \
+                                  _0, _1, _2, _3, _4)                          \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_6(condition, msg,                              \
+                                  _0, _1, _2, _3, _4, _5)                      \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_7(condition, msg,                              \
+                                  _0, _1, _2, _3, _4, _5, _6)                  \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_BOOL_CHECK_FALSE_MSG_8(condition, msg,                              \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)              \
+    RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
 
 /* Integer Assertions                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg)                     \
+    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg,                     \
+                                _0, _1, _2, _3, _4, _5, _6, _7)                \
         rx__int_assess_comparison(RX_CONTEXT,                                  \
                                   (x1),                                        \
                                   (x2),                                        \
@@ -384,12 +628,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   __FILE__,                                    \
                                   __LINE__,                                    \
                                   severity,                                    \
-                                  msg)
+                                  msg,                                         \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__INT_DEFINE_TEST_0(severity, op, x1, x2)                        \
-        RX__INT_DEFINE_TEST_1(severity, op, x1, x2, NULL)
-
-    #define RX__INT_DEFINE_TEST_1(severity, op, x1, x2, ...)                   \
+    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, ...)                     \
         rx__int_assess_comparison(RX_CONTEXT,                                  \
                                   (x1),                                        \
                                   (x2),                                        \
@@ -400,144 +642,654 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   __LINE__,                                    \
                                   severity,                                    \
                                   __VA_ARGS__)
-
-    #define RX__INT_DEFINE_TEST(...)                                           \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__INT_DEFINE_TEST_,                                          \
-                RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_INT_REQUIRE_EQUAL(x1, x2)                                           \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
-
-#define RX_INT_CHECK_EQUAL(x1, x2)                                             \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL,                  \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, msg)                              \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
-
-    #define RX_INT_CHECK_EQUAL_MSG(x1, x2, msg)                                \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, ...)                              \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_INT_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                                \
+                                   _0)                                         \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_2(x1, x2, msg,                                \
+                                   _0, _1)                                     \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_3(x1, x2, msg,                                \
+                                   _0, _1, _2)                                 \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_4(x1, x2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_5(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_6(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_7(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_EQUAL_MSG_8(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_EQUAL(x1, x2)                                             \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL,               \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_EQUAL_MSG(x1, x2, msg)                                \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,            \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_INT_CHECK_EQUAL_MSG(x1, x2, ...)                                \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                       \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_INT_CHECK_EQUAL_MSG_1(x1, x2, msg,                                  \
+                                 _0)                                           \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                         \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_INT_CHECK_EQUAL_MSG_2(x1, x2, msg,                                  \
+                                 _0, _1)                                       \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_3(x1, x2, msg,                                  \
+                                 _0, _1, _2)                                   \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_4(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3)                               \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_5(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4)                           \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_6(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5)                       \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_7(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6)                   \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_EQUAL_MSG_8(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                       \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,              \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                          \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
-
-    #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                            \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                          \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                            \
+                                       _0)                                     \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_2(x1, x2, msg,                            \
+                                       _0, _1)                                 \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_3(x1, x2, msg,                            \
+                                       _0, _1, _2)                             \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_4(x1, x2, msg,                            \
+                                       _0, _1, _2, _3)                         \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_5(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4)                     \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_6(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5)                 \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_7(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5, _6)             \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG_8(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5, _6, _7)         \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                         \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,           \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                            \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,        \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                            \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_INT_REQUIRE_GREATER(x1, x2)                                         \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_INT_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                              \
+                                     _0)                                       \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_INT_CHECK_GREATER(x1, x2)                                           \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_INT_CHECK_NOT_EQUAL_MSG_2(x1, x2, msg,                              \
+                                     _0, _1)                                   \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_3(x1, x2, msg,                              \
+                                     _0, _1, _2)                               \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_4(x1, x2, msg,                              \
+                                     _0, _1, _2, _3)                           \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_5(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_6(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_7(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_NOT_EQUAL_MSG_8(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_REQUIRE_GREATER(x1, x2)                                         \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL,                \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, msg)                            \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
-
-    #define RX_INT_CHECK_GREATER_MSG(x1, x2, msg)                              \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,             \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, ...)                            \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_INT_REQUIRE_GREATER_MSG_1(x1, x2, msg,                              \
+                                     _0)                                       \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_2(x1, x2, msg,                              \
+                                     _0, _1)                                   \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_3(x1, x2, msg,                              \
+                                     _0, _1, _2)                               \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_4(x1, x2, msg,                              \
+                                     _0, _1, _2, _3)                           \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_5(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_6(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_7(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_GREATER_MSG_8(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                 \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_GREATER(x1, x2)                                           \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL,             \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_GREATER_MSG(x1, x2, msg)                              \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,          \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_INT_CHECK_GREATER_MSG(x1, x2, ...)                              \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_INT_REQUIRE_LESSER(x1, x2)                                          \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_INT_CHECK_GREATER_MSG_1(x1, x2, msg,                                \
+                                   _0)                                         \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_INT_CHECK_LESSER(x1, x2)                                            \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_INT_CHECK_GREATER_MSG_2(x1, x2, msg,                                \
+                                   _0, _1)                                     \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_3(x1, x2, msg,                                \
+                                   _0, _1, _2)                                 \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_4(x1, x2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_5(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_6(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_7(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_GREATER_MSG_8(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,              \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_REQUIRE_LESSER(x1, x2)                                          \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL,                 \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, msg)                             \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
-
-    #define RX_INT_CHECK_LESSER_MSG(x1, x2, msg)                               \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,              \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, ...)                             \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_INT_REQUIRE_LESSER_MSG_1(x1, x2, msg,                               \
+                                    _0)                                        \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_2(x1, x2, msg,                               \
+                                    _0, _1)                                    \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_3(x1, x2, msg,                               \
+                                    _0, _1, _2)                                \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_4(x1, x2, msg,                               \
+                                    _0, _1, _2, _3)                            \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_5(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_6(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_7(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_LESSER_MSG_8(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                  \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_LESSER(x1, x2)                                            \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL,              \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_LESSER_MSG(x1, x2, msg)                               \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,           \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_INT_CHECK_LESSER_MSG(x1, x2, ...)                               \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                                \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_INT_CHECK_LESSER_MSG_1(x1, x2, msg,                                 \
+                                  _0)                                          \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                                  \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_INT_CHECK_LESSER_MSG_2(x1, x2, msg,                                 \
+                                  _0, _1)                                      \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_3(x1, x2, msg,                                 \
+                                  _0, _1, _2)                                  \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_4(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3)                              \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_5(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4)                          \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_6(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5)                      \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_7(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6)                  \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_LESSER_MSG_8(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)              \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                                \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,       \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                   \
-        RX__INT_DEFINE_TEST(                                                   \
-            RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                     \
-        RX__INT_DEFINE_TEST(                                                   \
-            RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,         \
+                            __VA_ARGS__)
 #endif
 
-#define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                 \
-    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
+                                              _0)                              \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                                   \
-    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                     \
+                                              _0, _1)                          \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                     \
+                                              _0, _1, _2)                      \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                     \
+                                              _0, _1, _2, _3)                  \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4)              \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5)          \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6)      \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6, _7)  \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,        \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                                  \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,    \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg, \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                     \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,      \
+                            __VA_ARGS__)
+#endif
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
+                                            _0)                                \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                       \
+                                            _0, _1)                            \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                       \
+                                            _0, _1, _2)                        \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                       \
+                                            _0, _1, _2, _3)                    \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4)                \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5)            \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6)        \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6, _7)    \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,     \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                 \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,        \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                      \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                    \
-        RX__INT_DEFINE_TEST(                                                   \
-            RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                      \
-        RX__INT_DEFINE_TEST(                                                   \
-            RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,          \
+                            __VA_ARGS__)
 #endif
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
+                                             _0)                               \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                      \
+                                             _0, _1)                           \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                      \
+                                             _0, _1, _2)                       \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                      \
+                                             _0, _1, _2, _3)                   \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4)               \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5)           \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6)       \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6, _7)   \
+    RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,         \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                                   \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,     \
+                        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                      \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,  \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                      \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,       \
+                            __VA_ARGS__)
+#endif
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                        \
+                                           _0)                                 \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                        \
+                                           _0, _1)                             \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                        \
+                                           _0, _1, _2)                         \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                        \
+                                           _0, _1, _2, _3)                     \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                        \
+                                           _0, _1, _2, _3, _4)                 \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5)             \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5, _6)         \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5, _6, _7)     \
+    RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,      \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
 
 /* Unsigned Integer Assertions                                     O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg)                    \
+    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg,                    \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__uint_assess_comparison(RX_CONTEXT,                                 \
                                    (x1),                                       \
                                    (x2),                                       \
@@ -547,12 +1299,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    __FILE__,                                   \
                                    __LINE__,                                   \
                                    severity,                                   \
-                                   msg)
+                                   msg,                                        \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__UINT_DEFINE_TEST_0(severity, op, x1, x2)                       \
-        RX__UINT_DEFINE_TEST_1(severity, op, x1, x2, NULL)
-
-    #define RX__UINT_DEFINE_TEST_1(severity, op, x1, x2, ...)                  \
+    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, ...)                    \
         rx__uint_assess_comparison(RX_CONTEXT,                                 \
                                    (x1),                                       \
                                    (x2),                                       \
@@ -563,144 +1313,654 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    __LINE__,                                   \
                                    severity,                                   \
                                    __VA_ARGS__)
-
-    #define RX__UINT_DEFINE_TEST(...)                                          \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__UINT_DEFINE_TEST_,                                         \
-                RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_UINT_REQUIRE_EQUAL(x1, x2)                                          \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
-
-#define RX_UINT_CHECK_EQUAL(x1, x2)                                            \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL,                 \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
-
-    #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, msg)                               \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,              \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_UINT_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                               \
+                                    _0)                                        \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_2(x1, x2, msg,                               \
+                                    _0, _1)                                    \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_3(x1, x2, msg,                               \
+                                    _0, _1, _2)                                \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_4(x1, x2, msg,                               \
+                                    _0, _1, _2, _3)                            \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_5(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_6(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_7(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_EQUAL_MSG_8(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_EQUAL(x1, x2)                                            \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL,              \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, msg)                               \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,           \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, ...)                               \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                      \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_UINT_CHECK_EQUAL_MSG_1(x1, x2, msg,                                 \
+                                  _0)                                          \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                        \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_UINT_CHECK_EQUAL_MSG_2(x1, x2, msg,                                 \
+                                  _0, _1)                                      \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_3(x1, x2, msg,                                 \
+                                  _0, _1, _2)                                  \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_4(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3)                              \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_5(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4)                          \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                          _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_6(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5)                      \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_7(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6)                  \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_EQUAL_MSG_8(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)              \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                      \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,             \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
-
-    #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,          \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                           \
+                                        _0)                                    \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_2(x1, x2, msg,                           \
+                                        _0, _1)                                \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_3(x1, x2, msg,                           \
+                                        _0, _1, _2)                            \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_4(x1, x2, msg,                           \
+                                        _0, _1, _2, _3)                        \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_5(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4)                    \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_6(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5)                \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_7(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5, _6)            \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG_8(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5, _6, _7)        \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                        \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,          \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,       \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_UINT_REQUIRE_GREATER(x1, x2)                                        \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                             \
+                                      _0)                                      \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_UINT_CHECK_GREATER(x1, x2)                                          \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_2(x1, x2, msg,                             \
+                                      _0, _1)                                  \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_3(x1, x2, msg,                             \
+                                      _0, _1, _2)                              \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_4(x1, x2, msg,                             \
+                                      _0, _1, _2, _3)                          \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_5(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4)                      \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_6(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5)                  \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_7(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6)              \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_NOT_EQUAL_MSG_8(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6, _7)          \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_REQUIRE_GREATER(x1, x2)                                        \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL,               \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
-
-    #define RX_UINT_CHECK_GREATER_MSG(x1, x2, msg)                             \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,            \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_UINT_REQUIRE_GREATER_MSG_1(x1, x2, msg,                             \
+                                      _0)                                      \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_2(x1, x2, msg,                             \
+                                      _0, _1)                                  \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_3(x1, x2, msg,                             \
+                                      _0, _1, _2)                              \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_4(x1, x2, msg,                             \
+                                      _0, _1, _2, _3)                          \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_5(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4)                      \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_6(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5)                  \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_7(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6)              \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_MSG_8(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6, _7)          \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_GREATER(x1, x2)                                          \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL,            \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_GREATER_MSG(x1, x2, msg)                             \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,         \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_UINT_CHECK_GREATER_MSG(x1, x2, ...)                             \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_UINT_REQUIRE_LESSER(x1, x2)                                         \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_UINT_CHECK_GREATER_MSG_1(x1, x2, msg,                               \
+                                    _0)                                        \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_UINT_CHECK_LESSER(x1, x2)                                           \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_UINT_CHECK_GREATER_MSG_2(x1, x2, msg,                               \
+                                    _0, _1)                                    \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_3(x1, x2, msg,                               \
+                                    _0, _1, _2)                                \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_4(x1, x2, msg,                               \
+                                    _0, _1, _2, _3)                            \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_5(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_6(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_7(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_GREATER_MSG_8(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_REQUIRE_LESSER(x1, x2)                                         \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL,                \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
-
-    #define RX_UINT_CHECK_LESSER_MSG(x1, x2, msg)                              \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,             \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_UINT_REQUIRE_LESSER_MSG_1(x1, x2, msg,                              \
+                                     _0)                                       \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_2(x1, x2, msg,                              \
+                                     _0, _1)                                   \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_3(x1, x2, msg,                              \
+                                     _0, _1, _2)                               \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_4(x1, x2, msg,                              \
+                                     _0, _1, _2, _3)                           \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_5(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_6(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_7(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_MSG_8(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_LESSER(x1, x2)                                           \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL,             \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_LESSER_MSG(x1, x2, msg)                              \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,          \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_UINT_CHECK_LESSER_MSG(x1, x2, ...)                              \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_UINT_CHECK_LESSER_MSG_1(x1, x2, msg,                                \
+                                   _0)                                         \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_UINT_CHECK_LESSER_MSG_2(x1, x2, msg,                                \
+                                   _0, _1)                                     \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_3(x1, x2, msg,                                \
+                                   _0, _1, _2)                                 \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_4(x1, x2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_5(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_6(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_7(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_LESSER_MSG_8(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,      \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                  \
-        RX__UINT_DEFINE_TEST(                                                  \
-            RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
-        RX__UINT_DEFINE_TEST(                                                  \
-            RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,        \
+                             __VA_ARGS__)
 #endif
 
-#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                    \
+                                               _0)                             \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                    \
+                                               _0, _1)                         \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                    \
+                                               _0, _1, _2)                     \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                    \
+                                               _0, _1, _2, _3)                 \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4)             \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5)         \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6)     \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6, _7) \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,   \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,     \
+                             __VA_ARGS__)
+#endif
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
+                                             _0)                               \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                      \
+                                             _0, _1)                           \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                      \
+                                             _0, _1, _2)                       \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                      \
+                                             _0, _1, _2, _3)                   \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4)               \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5)           \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6)       \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6, _7)   \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,       \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                   \
-        RX__UINT_DEFINE_TEST(                                                  \
-            RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
-        RX__UINT_DEFINE_TEST(                                                  \
-            RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,         \
+                             __VA_ARGS__)
 #endif
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
+                                              _0)                              \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                     \
+                                              _0, _1)                          \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                     \
+                                              _0, _1, _2)                      \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                     \
+                                              _0, _1, _2, _3)                  \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4)              \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5)          \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6)      \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6, _7)  \
+    RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,    \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,      \
+                             __VA_ARGS__)
+#endif
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
+                                            _0)                                \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                       \
+                                            _0, _1)                            \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                       \
+                                            _0, _1, _2)                        \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                       \
+                                            _0, _1, _2, _3)                    \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4)                \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5)            \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6)        \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6, _7)    \
+    RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
 
 /* Floating-Point Assertions                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg)                    \
+    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg,                    \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__real_assess_comparison(RX_CONTEXT,                                 \
                                    (x1),                                       \
                                    (x2),                                       \
@@ -710,12 +1970,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    __FILE__,                                   \
                                    __LINE__,                                   \
                                    severity,                                   \
-                                   msg)
+                                   msg,                                        \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__REAL_DEFINE_TEST_0(severity, op, x1, x2)                       \
-        RX__REAL_DEFINE_TEST_1(severity, op, x1, x2, NULL)
-
-    #define RX__REAL_DEFINE_TEST_1(severity, op, x1, x2, ...)                  \
+    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, ...)                    \
         rx__real_assess_comparison(RX_CONTEXT,                                 \
                                    (x1),                                       \
                                    (x2),                                       \
@@ -726,141 +1984,651 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    __LINE__,                                   \
                                    severity,                                   \
                                    __VA_ARGS__)
-
-    #define RX__REAL_DEFINE_TEST(...)                                          \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__REAL_DEFINE_TEST_,                                         \
-                RX__HAS_AT_LEAST_5_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_REAL_REQUIRE_EQUAL(x1, x2)                                          \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL)
-
-#define RX_REAL_CHECK_EQUAL(x1, x2)                                            \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL)
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, NULL,                 \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg)
-
-    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, msg)                               \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,              \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
-    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, ...)                               \
+#define RX_REAL_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                               \
+                                    _0)                                        \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_2(x1, x2, msg,                               \
+                                    _0, _1)                                    \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_3(x1, x2, msg,                               \
+                                    _0, _1, _2)                                \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_4(x1, x2, msg,                               \
+                                    _0, _1, _2, _3)                            \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_5(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_6(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_7(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_MSG_8(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                  \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_EQUAL(x1, x2)                                            \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, NULL,              \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, msg)                               \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,           \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, ...)                              \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                      \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_REAL_CHECK_EQUAL_MSG_1(x1, x2, msg,                                 \
+                                  _0)                                          \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                        \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL)
+#define RX_REAL_CHECK_EQUAL_MSG_2(x1, x2, msg,                                 \
+                                  _0, _1)                                      \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_3(x1, x2, msg,                                 \
+                                  _0, _1, _2)                                  \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_4(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3)                              \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_5(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4)                          \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_6(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5)                      \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_7(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6)                  \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_EQUAL_MSG_8(x1, x2, msg,                                 \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)              \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                      \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,             \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
-
-    #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,          \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                           \
+                                        _0)                                    \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_2(x1, x2, msg,                           \
+                                        _0, _1)                                \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_3(x1, x2, msg,                           \
+                                        _0, _1, _2)                            \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_4(x1, x2, msg,                           \
+                                        _0, _1, _2, _3)                        \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_5(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4)                    \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_6(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5)                \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_7(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5, _6)            \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG_8(x1, x2, msg,                           \
+                                        _0, _1, _2, _3, _4, _5, _6, _7)        \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                        \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, NULL,          \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,       \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_GREATER(x1, x2)                                        \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                             \
+                                      _0)                                      \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_GREATER(x1, x2)                                          \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL)
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_2(x1, x2, msg,                             \
+                                      _0, _1)                                  \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_3(x1, x2, msg,                             \
+                                      _0, _1, _2)                              \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_4(x1, x2, msg,                             \
+                                      _0, _1, _2, _3)                          \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_5(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4)                      \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_6(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5)                  \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_7(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6)              \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_MSG_8(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6, _7)          \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_REQUIRE_GREATER(x1, x2)                                        \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, NULL,               \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg)
-
-    #define RX_REAL_CHECK_GREATER_MSG(x1, x2, msg)                             \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,            \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_REAL_REQUIRE_GREATER_MSG_1(x1, x2, msg,                             \
+                                      _0)                                      \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_2(x1, x2, msg,                             \
+                                      _0, _1)                                  \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_3(x1, x2, msg,                             \
+                                      _0, _1, _2)                              \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_4(x1, x2, msg,                             \
+                                      _0, _1, _2, _3)                          \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_5(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4)                      \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_6(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5)                  \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_7(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6)              \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_MSG_8(x1, x2, msg,                             \
+                                      _0, _1, _2, _3, _4, _5, _6, _7)          \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,                \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_GREATER(x1, x2)                                          \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, NULL,            \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_GREATER_MSG(x1, x2, msg)                             \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,         \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_REAL_CHECK_GREATER_MSG(x1, x2, ...)                             \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_LESSER(x1, x2)                                         \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_REAL_CHECK_GREATER_MSG_1(x1, x2, msg,                               \
+                                    _0)                                        \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_LESSER(x1, x2)                                           \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL)
+#define RX_REAL_CHECK_GREATER_MSG_2(x1, x2, msg,                               \
+                                    _0, _1)                                    \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_3(x1, x2, msg,                               \
+                                    _0, _1, _2)                                \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_4(x1, x2, msg,                               \
+                                    _0, _1, _2, _3)                            \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_5(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4)                        \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_6(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5)                    \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_7(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6)                \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_GREATER_MSG_8(x1, x2, msg,                               \
+                                    _0, _1, _2, _3, _4, _5, _6, _7)            \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,             \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_REQUIRE_LESSER(x1, x2)                                         \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, NULL,                \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg)
-
-    #define RX_REAL_CHECK_LESSER_MSG(x1, x2, msg)                              \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,             \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#endif
 
+#define RX_REAL_REQUIRE_LESSER_MSG_1(x1, x2, msg,                              \
+                                     _0)                                       \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_2(x1, x2, msg,                              \
+                                     _0, _1)                                   \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_3(x1, x2, msg,                              \
+                                     _0, _1, _2)                               \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_4(x1, x2, msg,                              \
+                                     _0, _1, _2, _3)                           \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_5(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_6(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_7(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_MSG_8(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,                 \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_LESSER(x1, x2)                                           \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, NULL,             \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_LESSER_MSG(x1, x2, msg)                              \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,          \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
     #define RX_REAL_CHECK_LESSER_MSG(x1, x2, ...)                              \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_REAL_CHECK_LESSER_MSG_1(x1, x2, msg,                                \
+                                   _0)                                         \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL)
+#define RX_REAL_CHECK_LESSER_MSG_2(x1, x2, msg,                                \
+                                   _0, _1)                                     \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_3(x1, x2, msg,                                \
+                                   _0, _1, _2)                                 \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_4(x1, x2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_5(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_6(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_7(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_LESSER_MSG_8(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,              \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,      \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                  \
-        RX__REAL_DEFINE_TEST(                                                  \
-            RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
-        RX__REAL_DEFINE_TEST(                                                  \
-            RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,        \
+                             __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
-    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                    \
+                                               _0)                             \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
-    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL)
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                    \
+                                               _0, _1)                         \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                    \
+                                               _0, _1, _2)                     \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                    \
+                                               _0, _1, _2, _3)                 \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4)             \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5)         \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6)     \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6, _7) \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,       \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, NULL,   \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,     \
+                             __VA_ARGS__)
+#endif
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
+                                             _0)                               \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_2(x1, x2, msg,                      \
+                                             _0, _1)                           \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_3(x1, x2, msg,                      \
+                                             _0, _1, _2)                       \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_4(x1, x2, msg,                      \
+                                             _0, _1, _2, _3)                   \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_5(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4)               \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_6(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5)           \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_7(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6)       \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_8(x1, x2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6, _7)   \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,       \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
-
-    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                   \
-        RX__REAL_DEFINE_TEST(                                                  \
-            RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
-
-    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
-        RX__REAL_DEFINE_TEST(                                                  \
-            RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, __VA_ARGS__)
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,         \
+                             __VA_ARGS__)
 #endif
 
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
+                                              _0)                              \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                     \
+                                              _0, _1)                          \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                     \
+                                              _0, _1, _2)                      \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                     \
+                                              _0, _1, _2, _3)                  \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4)              \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5)          \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6)      \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                     \
+                                              _0, _1, _2, _3, _4, _5, _6, _7)  \
+    RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,        \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, NULL,    \
+                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
 #if RX__C89_COMPAT
-    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, msg)         \
+    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,      \
+                             __VA_ARGS__)
+#endif
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
+                                            _0)                                \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_2(x1, x2, msg,                       \
+                                            _0, _1)                            \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_3(x1, x2, msg,                       \
+                                            _0, _1, _2)                        \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_4(x1, x2, msg,                       \
+                                            _0, _1, _2, _3)                    \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_5(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4)                \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_6(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5)            \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_7(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6)        \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_8(x1, x2, msg,                       \
+                                            _0, _1, _2, _3, _4, _5, _6, _7)    \
+    RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                         _0, _1, _2, _3, _4, _5, _6, _7)
+
+#if RX__C89_COMPAT
+    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, msg,         \
+                                       _0, _1, _2, _3, _4, _5, _6, _7)         \
         rx__real_assess_fuzzy_comparison(RX_CONTEXT,                           \
                                          (x1),                                 \
                                          (x2),                                 \
@@ -871,12 +2639,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                          __FILE__,                             \
                                          __LINE__,                             \
                                          severity,                             \
-                                         msg)
+                                         msg,                                  \
+                                         _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__REAL_DEFINE_FUZZY_TEST_0(severity, op, x1, x2, tol)            \
-        RX__REAL_DEFINE_FUZZY_TEST_1(severity, op, x1, x2, tol, NULL)
-
-    #define RX__REAL_DEFINE_FUZZY_TEST_1(severity, op, x1, x2, tol, ...)       \
+    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, ...)         \
         rx__real_assess_fuzzy_comparison(RX_CONTEXT,                           \
                                          (x1),                                 \
                                          (x2),                                 \
@@ -888,68 +2654,241 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                          __LINE__,                             \
                                          severity,                             \
                                          __VA_ARGS__)
-
-    #define RX__REAL_DEFINE_FUZZY_TEST(...)                                    \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__REAL_DEFINE_FUZZY_TEST_,                                   \
-                RX__HAS_AT_LEAST_6_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_REAL_REQUIRE_EQUAL_FUZZY(x1, x2, tol)                               \
-    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, NULL)
-
-#define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                                 \
-    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, NULL)
+    RX__REAL_DEFINE_FUZZY_TEST(                                                \
+        RX_FATAL, RX__OP_EQUAL, x1, x2, tol, NULL,                             \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                  \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg)
-
-    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                    \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg)
+            RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,                          \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                  \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_FATAL, RX__OP_EQUAL, x1, x2, tol, __VA_ARGS__)
-
-    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                    \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol,        \
+                                   __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                           \
-    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL)
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                    \
+                                          _0)                                  \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                             \
-    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL)
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                    \
+                                          _0, _1)                              \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                    \
+                                          _0, _1, _2)                          \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                    \
+                                          _0, _1, _2, _3)                      \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                    \
+                                          _0, _1, _2, _3, _4)                  \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                    \
+                                          _0, _1, _2, _3, _4, _5)              \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                    \
+                                          _0, _1, _2, _3, _4, _5, _6)          \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                    \
+                                          _0, _1, _2, _3, _4, _5, _6, _7)      \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
+                               _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                                 \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, NULL,   \
+                               NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                    \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
+            RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,                       \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                    \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol,     \
+                                   __VA_ARGS__)
+#endif
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                      \
+                                        _0)                                    \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                      \
+                                        _0, _1)                                \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                      \
+                                        _0, _1, _2)                            \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                      \
+                                        _0, _1, _2, _3)                        \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                      \
+                                        _0, _1, _2, _3, _4)                    \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                      \
+                                        _0, _1, _2, _3, _4, _5)                \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                      \
+                                        _0, _1, _2, _3, _4, _5, _6)            \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                      \
+                                        _0, _1, _2, _3, _4, _5, _6, _7)        \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
+                               _0, _1, _2, _3, _4, _5, _6, _7)
+
+
+
+
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                           \
+    RX__REAL_DEFINE_FUZZY_TEST(                                                \
+        RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL,                         \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)              \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg)
-
-    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg)
+            RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                      \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, ...)              \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, __VA_ARGS__)
-
-    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                \
-        RX__REAL_DEFINE_FUZZY_TEST(                                            \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, __VA_ARGS__)
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
+                                   __VA_ARGS__)
 #endif
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                \
+                                              _0)                              \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                \
+                                              _0, _1)                          \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                \
+                                              _0, _1, _2)                      \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                \
+                                              _0, _1, _2, _3)                  \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                \
+                                              _0, _1, _2, _3, _4)              \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                \
+                                              _0, _1, _2, _3, _4, _5)          \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                \
+                                              _0, _1, _2, _3, _4, _5, _6)      \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                \
+                                              _0, _1, _2, _3, _4, _5, _6, _7)  \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
+                               _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                             \
+    RX__REAL_DEFINE_FUZZY_TEST(                                                \
+        RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL,                      \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                \
+        RX__REAL_DEFINE_FUZZY_TEST(                                            \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                   \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
+                                   __VA_ARGS__)
+#endif
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                  \
+                                            _0)                                \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                  \
+                                            _0, _1)                            \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                  \
+                                            _0, _1, _2)                        \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                  \
+                                            _0, _1, _2, _3)                    \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                  \
+                                            _0, _1, _2, _3, _4)                \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                  \
+                                            _0, _1, _2, _3, _4, _5)            \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                  \
+                                            _0, _1, _2, _3, _4, _5, _6)        \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                  \
+                                            _0, _1, _2, _3, _4, _5, _6, _7)    \
+    RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
+                               _0, _1, _2, _3, _4, _5, _6, _7)
 
 /* String Assertions                                               O-(''Q)
    -------------------------------------------------------------------------- */
 
 #if RX__C89_COMPAT
-    #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg)           \
+    #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg,           \
+                                _0, _1, _2, _3, _4, _5, _6, _7)                \
         rx__str_assess_comparison(RX_CONTEXT,                                  \
                                   (s1),                                        \
                                   (s2),                                        \
@@ -960,12 +2899,10 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   __FILE__,                                    \
                                   __LINE__,                                    \
                                   severity,                                    \
-                                  msg)
+                                  msg,                                         \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)
 #else
-    #define RX__STR_TEST_DEFINE_0(severity, op, str_case, s1, s2)              \
-        RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, NULL)
-
-    #define RX__STR_TEST_DEFINE_1(severity, op, str_case, s1, s2, ...)         \
+    #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, ...)           \
         rx__str_assess_comparison(RX_CONTEXT,                                  \
                                   (s1),                                        \
                                   (s2),                                        \
@@ -977,134 +2914,515 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   __LINE__,                                    \
                                   severity,                                    \
                                   __VA_ARGS__)
-
-    #define RX__STR_TEST_DEFINE(...)                                           \
-        RX__EXPAND(                                                            \
-            RX__CONCAT(                                                        \
-                RX__STR_TEST_DEFINE_,                                          \
-                RX__HAS_AT_LEAST_6_ARGS(__VA_ARGS__)                           \
-            )(__VA_ARGS__))
 #endif
 
 #define RX_STR_REQUIRE_EQUAL(s1, s2)                                           \
     RX__STR_TEST_DEFINE(                                                       \
         RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
 
+#if RX__C89_COMPAT
+    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, msg)                              \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, ...)                              \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
+#endif
+
+#define RX_STR_REQUIRE_EQUAL_MSG_1(s1, s2, msg,                                \
+                                   _0)                                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_2(s1, s2, msg,                                \
+                                   _0, _1)                                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_3(s1, s2, msg,                                \
+                                   _0, _1, _2)                                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_4(s1, s2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_5(s1, s2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_6(s1, s2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_7(s1, s2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_MSG_8(s1, s2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
+            _0, _1, _2, _3, _4, _5, _6, _7)
+
 #define RX_STR_CHECK_EQUAL(s1, s2)                                             \
     RX__STR_TEST_DEFINE(                                                       \
         RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, msg)                              \
+    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                               \
         RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg)
-
-    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                                \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg)
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, ...)                              \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
-
     #define RX_STR_CHECK_EQUAL_MSG(s1, s2, ...)                                \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
 #endif
 
+#define RX_STR_CHECK_EQUAL_MSG_1(s1, s2, msg,                                  \
+                                 _0)                                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_2(s1, s2, msg,                                  \
+                                 _0, _1)                                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_3(s1, s2, msg,                                  \
+                                 _0, _1, _2)                                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_4(s1, s2, msg,                                  \
+                                 _0, _1, _2, _3)                               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_5(s1, s2, msg,                                  \
+                                 _0, _1, _2, _3, _4)                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_6(s1, s2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5)                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_7(s1, s2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6)                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_CHECK_EQUAL_MSG_8(s1, s2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
+            _0, _1, _2, _3, _4, _5, _6, _7)
+
 #define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)                                       \
     RX__STR_TEST_DEFINE(                                                       \
         RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg)                          \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, ...)                          \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2,             \
+            __VA_ARGS__)
+#endif
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_1(s1, s2, msg,                            \
+                                   _0)                                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_2(s1, s2, msg,                            \
+                                   _0, _1)                                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_3(s1, s2, msg,                            \
+                                   _0, _1, _2)                                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_4(s1, s2, msg,                            \
+                                   _0, _1, _2, _3)                             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_5(s1, s2, msg,                            \
+                                   _0, _1, _2, _3, _4)                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_6(s1, s2, msg,                            \
+                                   _0, _1, _2, _3, _4, _5)                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_7(s1, s2, msg,                            \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG_8(s1, s2, msg,                            \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 #define RX_STR_CHECK_NOT_EQUAL(s1, s2)                                         \
     RX__STR_TEST_DEFINE(                                                       \
         RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg)                          \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg)
-
     #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, msg)                            \
         RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg)
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, ...)                          \
-        RX__STR_TEST_DEFINE(RX_FATAL,                                          \
-                            RX__OP_NOT_EQUAL,                                  \
-                            RX__STR_CASE_OBEY,                                 \
-                            s1,                                                \
-                            s2,                                                \
-                            __VA_ARGS__)
-
     #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, ...)                            \
-        RX__STR_TEST_DEFINE(RX_NONFATAL,                                       \
-                            RX__OP_NOT_EQUAL,                                  \
-                            RX__STR_CASE_OBEY,                                 \
-                            s1,                                                \
-                            s2,                                                \
-                            __VA_ARGS__)
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2,          \
+            __VA_ARGS__)
 #endif
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_1(s1, s2, msg,                              \
+                                 _0)                                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_2(s1, s2, msg,                              \
+                                 _0, _1)                                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_3(s1, s2, msg,                              \
+                                 _0, _1, _2)                                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_4(s1, s2, msg,                              \
+                                 _0, _1, _2, _3)                               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_5(s1, s2, msg,                              \
+                                 _0, _1, _2, _3, _4)                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_6(s1, s2, msg,                              \
+                                 _0, _1, _2, _3, _4, _5)                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_7(s1, s2, msg,                              \
+                                 _0, _1, _2, _3, _4, _5, _6)                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_MSG_8(s1, s2, msg,                              \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 #define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)                                   \
     RX__STR_TEST_DEFINE(                                                       \
         RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, msg)                      \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, ...)                      \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
+#endif
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                        \
+                                           _0)                                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_2(s1, s2, msg,                        \
+                                           _0, _1)                             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_3(s1, s2, msg,                        \
+                                           _0, _1, _2)                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_4(s1, s2, msg,                        \
+                                           _0, _1, _2, _3)                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_5(s1, s2, msg,                        \
+                                           _0, _1, _2, _3, _4)                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_6(s1, s2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5)             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_7(s1, s2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5, _6)         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_8(s1, s2, msg,                        \
+                                           _0, _1, _2, _3, _4, _5, _6, _7)     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 #define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)                                     \
     RX__STR_TEST_DEFINE(                                                       \
         RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, msg)                      \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg)
-
     #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, msg)                        \
         RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg)
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, ...)                      \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s1, __VA_ARGS__)
-
     #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, ...)                        \
         RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s1, __VA_ARGS__)
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
 #endif
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                          \
+                                         _0)                                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_2(s1, s2, msg,                          \
+                                         _0, _1)                               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_3(s1, s2, msg,                          \
+                                         _0, _1, _2)                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_4(s1, s2, msg,                          \
+                                         _0, _1, _2, _3)                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_5(s1, s2, msg,                          \
+                                         _0, _1, _2, _3, _4)                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_6(s1, s2, msg,                          \
+                                         _0, _1, _2, _3, _4, _5)               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_7(s1, s2, msg,                          \
+                                         _0, _1, _2, _3, _4, _5, _6)           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG_8(s1, s2, msg,                          \
+                                         _0, _1, _2, _3, _4, _5, _6, _7)       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)                               \
     RX__STR_TEST_DEFINE(                                                       \
         RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+
+#if RX__C89_COMPAT
+    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                  \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#else
+    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, ...)                  \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2,           \
+            __VA_ARGS__)
+#endif
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                    \
+                                               _0)                             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_2(s1, s2, msg,                    \
+                                               _0, _1)                         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_3(s1, s2, msg,                    \
+                                               _0, _1, _2)                     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_4(s1, s2, msg,                    \
+                                               _0, _1, _2, _3)                 \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_5(s1, s2, msg,                    \
+                                               _0, _1, _2, _3, _4)             \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_6(s1, s2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5)         \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_7(s1, s2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6)     \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_8(s1, s2, msg,                    \
+                                               _0, _1, _2, _3, _4, _5, _6, _7) \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 #define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)                                 \
     RX__STR_TEST_DEFINE(                                                       \
         RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                  \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg)
-
     #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                    \
         RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg)
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, ...)                  \
-        RX__STR_TEST_DEFINE(RX_FATAL,                                          \
-                            RX__OP_NOT_EQUAL,                                  \
-                            RX__STR_CASE_IGNORE,                               \
-                            s1,                                                \
-                            s2,                                                \
-                            __VA_ARGS__)
-
     #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, ...)                    \
-        RX__STR_TEST_DEFINE(RX_NONFATAL,                                       \
-                            RX__OP_NOT_EQUAL,                                  \
-                            RX__STR_CASE_IGNORE,                               \
-                            s1,                                                \
-                            s2,                                                \
-                            __VA_ARGS__)
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2,        \
+            __VA_ARGS__)
 #endif
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                      \
+                                             _0)                               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_2(s1, s2, msg,                      \
+                                             _0, _1)                           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_3(s1, s2, msg,                      \
+                                             _0, _1, _2)                       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_4(s1, s2, msg,                      \
+                                             _0, _1, _2, _3)                   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_5(s1, s2, msg,                      \
+                                             _0, _1, _2, _3, _4)               \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_6(s1, s2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5)           \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_7(s1, s2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6)       \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_8(s1, s2, msg,                      \
+                                             _0, _1, _2, _3, _4, _5, _6, _7)   \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            _0, _1, _2, _3, _4, _5, _6, _7)
 
 /* Public Interface                                                O-(''Q)
    -------------------------------------------------------------------------- */
