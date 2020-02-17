@@ -7,7 +7,7 @@
 #define ASSERT(x)                                                              \
     (void)(                                                                    \
         (x)                                                                    \
-        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (printf(__FILE__ ":%d: assertion `" #x "` failed\n", __LINE__), 0)  \
         || (abort(), 0))
 
 static int step = 0;

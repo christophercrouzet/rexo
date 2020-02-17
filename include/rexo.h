@@ -4696,7 +4696,7 @@ rx__str_initialize_va_list(size_t *count,
 
             file = fopen("/dev/null", "w");
             if (file == NULL) {
-                RX__LOG_DEBUG("could not open ‘/dev/null’\n");
+                RX__LOG_DEBUG("could not open `/dev/null`\n");
                 return RX_ERROR;
             }
 
@@ -4945,7 +4945,7 @@ rx__assess_value(struct rx_context *context,
         if (failure_fmt == NULL) {
             RX__STR_CREATE_1(status,
                              failure_msg,
-                             "‘%s’ is expected to evaluate to true",
+                             "`%s` is expected to evaluate to true",
                              expr);
         } else {
             RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
@@ -5016,7 +5016,7 @@ rx__bool_assess_value(struct rx_context *context,
         if (failure_fmt == NULL) {
             RX__STR_CREATE_2(status,
                              failure_msg,
-                             "‘%s’ is expected to be %s",
+                             "`%s` is expected to be %s",
                              expr,
                              expected ? "true" : "false");
         } else {
@@ -5118,7 +5118,7 @@ rx__int_assess_comparison(struct rx_context *context,
             rx__op_get_name(&op_name, op);
             RX__STR_CREATE_3(status,
                              failure_msg,
-                             "‘%s’ is expected to be %s ‘%s’",
+                             "`%s` is expected to be %s `%s`",
                              expr1,
                              op_name,
                              expr2);
@@ -5223,7 +5223,7 @@ rx__uint_assess_comparison(struct rx_context *context,
             rx__op_get_name(&op_name, op);
             RX__STR_CREATE_3(status,
                              failure_msg,
-                             "‘%s’ is expected to be %s ‘%s’",
+                             "`%s` is expected to be %s `%s`",
                              expr1,
                              op_name,
                              expr2);
@@ -5330,7 +5330,7 @@ rx__real_assess_comparison(struct rx_context *context,
             rx__op_get_name(&op_name, op);
             RX__STR_CREATE_3(status,
                              failure_msg,
-                             "‘%s’ is expected to be %s ‘%s’",
+                             "`%s` is expected to be %s `%s`",
                              expr1,
                              op_name,
                              expr2);
@@ -5425,7 +5425,7 @@ rx__real_assess_fuzzy_comparison(struct rx_context *context,
             rx__op_get_name(&op_name, op);
             RX__STR_CREATE_4(status,
                              failure_msg,
-                             "‘%s’ is expected to be almost %s ‘%s’ "
+                             "`%s` is expected to be almost %s `%s` "
                              "(tolerance: %Lf)",
                              expr1,
                              op_name,
@@ -5530,7 +5530,7 @@ rx__str_assess_comparison(struct rx_context *context,
             rx__op_get_name(&op_name, op);
             RX__STR_CREATE_4(status,
                              failure_msg,
-                             "‘%s’ is expected to be %s ‘%s’ (case: %s)",
+                             "`%s` is expected to be %s `%s` (case: %s)",
                              expr1,
                              op_name,
                              expr2,

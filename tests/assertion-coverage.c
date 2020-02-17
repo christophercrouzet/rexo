@@ -6,7 +6,7 @@
 #define ASSERT(x)                                                              \
     (void)(                                                                    \
         (x)                                                                    \
-        || (printf(__FILE__ ":%d: assertion ‘" #x "’ failed\n", __LINE__), 0)  \
+        || (printf(__FILE__ ":%d: assertion `" #x "` failed\n", __LINE__), 0)  \
         || (abort(), 0))
 
 RX_TEST_CASE(my_test_suite, all_check_successes)
