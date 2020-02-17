@@ -153,30 +153,30 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #endif
 
 #if RX__C89_COMPAT
-    #define RX_FIXTURE_VOID(id)                                                \
+    #define RX_VOID_FIXTURE(id)                                                \
         RX__FIXTURE_0(id, 0)                                                   \
         RX__REQUIRE_SEMICOLON
 
-    #define RX_FIXTURE_VOID_1(id, _0)                                          \
+    #define RX_VOID_FIXTURE_1(id, _0)                                          \
         RX__FIXTURE_1(id, 0, 1, (_0))                                          \
         RX__REQUIRE_SEMICOLON
 
-    #define RX_FIXTURE_VOID_2(id, _0, _1)                                      \
+    #define RX_VOID_FIXTURE_2(id, _0, _1)                                      \
         RX__FIXTURE_1(id, 0, 2, (_0, _1))                                      \
         RX__REQUIRE_SEMICOLON
 #else
-    #define RX_FIXTURE_VOID(...)                                               \
+    #define RX_VOID_FIXTURE(...)                                               \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
-                RX__FIXTURE_VOID_DISPATCH_,                                    \
+                RX__VOID_FIXTURE_DISPATCH_,                                    \
                 RX__HAS_AT_LEAST_2_ARGS(__VA_ARGS__)                           \
             )(__VA_ARGS__))                                                    \
         RX__REQUIRE_SEMICOLON
 
-    #define RX__FIXTURE_VOID_DISPATCH_0(id)                                    \
+    #define RX__VOID_FIXTURE_DISPATCH_0(id)                                    \
         RX__FIXTURE_0(id, 0)
 
-    #define RX__FIXTURE_VOID_DISPATCH_1(id, ...)                               \
+    #define RX__VOID_FIXTURE_DISPATCH_1(id, ...)                               \
         RX__FIXTURE_1(id,                                                      \
                       0,                                                       \
                       RX__COUNT_ARGS(__VA_ARGS__),                             \
@@ -4430,10 +4430,10 @@ struct rx__fixture_desc {
                                                                                \
     RX__FIXTURE_(id, size, &RX__FIXTURE_GET_UPDATE_FN_ID(id))
 
-#define RX__FIXTURE_VOID_0(id)                                                 \
+#define RX__VOID_FIXTURE_0(id)                                                 \
     RX__FIXTURE_0(id, 0)
 
-#define RX__FIXTURE_VOID_1(id, arg_count, args)                                \
+#define RX__VOID_FIXTURE_1(id, arg_count, args)                                \
     RX__FIXTURE_1(id, 0, arg_count, args)
 
 /* Implementation: Test Case Config                                O-(''Q)

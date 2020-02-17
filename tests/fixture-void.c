@@ -24,7 +24,7 @@ RX_TEAR_DOWN(my_tear_down)
     ASSERT(step == 4);
 }
 
-RX_FIXTURE_VOID(my_fixture, .set_up = my_set_up, .tear_down = my_tear_down);
+RX_VOID_FIXTURE(my_fixture, .set_up = my_set_up, .tear_down = my_tear_down);
 
 RX_TEST_CASE(my_test_suite, my_test_case, .fixture = my_fixture)
 {
