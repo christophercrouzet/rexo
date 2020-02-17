@@ -3663,21 +3663,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
             __VA_ARGS__,                                                       \
             1, 1, 1, 1, 1, 1, 0, 0,))
 
-    #define RX__HAS_AT_LEAST_4_ARGS(...)                                       \
-        RX__EXPAND(RX__ARG(                                                    \
-            __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 1, 0, 0, 0,))
-
-    #define RX__HAS_AT_LEAST_5_ARGS(...)                                       \
-        RX__EXPAND(RX__ARG(                                                    \
-            __VA_ARGS__,                                                       \
-            1, 1, 1, 1, 0, 0, 0, 0,))
-
-    #define RX__HAS_AT_LEAST_6_ARGS(...)                                       \
-        RX__EXPAND(RX__ARG(                                                    \
-            __VA_ARGS__,                                                       \
-            1, 1, 1, 0, 0, 0, 0, 0,))
-
     #define RX__COUNT_ARGS(...)                                                \
         RX__EXPAND(RX__ARG(                                                    \
             __VA_ARGS__,                                                       \
@@ -4429,12 +4414,6 @@ struct rx__fixture_desc {
         args)                                                                  \
                                                                                \
     RX__FIXTURE_(id, size, &RX__FIXTURE_GET_UPDATE_FN_ID(id))
-
-#define RX__VOID_FIXTURE_0(id)                                                 \
-    RX__FIXTURE_0(id, 0)
-
-#define RX__VOID_FIXTURE_1(id, arg_count, args)                                \
-    RX__FIXTURE_1(id, 0, arg_count, args)
 
 /* Implementation: Test Case Config                                O-(''Q)
    -------------------------------------------------------------------------- */
