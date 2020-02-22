@@ -32,8 +32,8 @@ RX_TEST_CASE(my_test_suite, all_check_successes)
     RX_REAL_CHECK_LESSER(1.23, 4.56);
     RX_REAL_CHECK_GREATER_OR_EQUAL(4.56, 1.23);
     RX_REAL_CHECK_LESSER_OR_EQUAL(1.23, 4.56);
-    RX_REAL_CHECK_EQUAL_FUZZY(1.23, 1.23, 0.001);
-    RX_REAL_CHECK_NOT_EQUAL_FUZZY(1.23, 4.56, 0.001);
+    RX_REAL_CHECK_FUZZY_EQUAL(1.23, 1.23, 0.001);
+    RX_REAL_CHECK_FUZZY_NOT_EQUAL(1.23, 4.56, 0.001);
     RX_STR_CHECK_EQUAL("hello", "hello");
     RX_STR_CHECK_NOT_EQUAL("hello", "world!");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "hello");
@@ -63,8 +63,8 @@ RX_TEST_CASE(my_test_suite, all_require_successes)
     RX_REAL_REQUIRE_LESSER(1.23, 4.56);
     RX_REAL_REQUIRE_GREATER_OR_EQUAL(4.56, 1.23);
     RX_REAL_REQUIRE_LESSER_OR_EQUAL(1.23, 4.56);
-    RX_REAL_REQUIRE_EQUAL_FUZZY(1.23, 1.23, 0.001);
-    RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(1.23, 4.56, 0.001);
+    RX_REAL_REQUIRE_FUZZY_EQUAL(1.23, 1.23, 0.001);
+    RX_REAL_REQUIRE_FUZZY_NOT_EQUAL(1.23, 4.56, 0.001);
     RX_STR_REQUIRE_EQUAL("hello", "hello");
     RX_STR_REQUIRE_NOT_EQUAL("hello", "world!");
     RX_STR_REQUIRE_EQUAL_NO_CASE("hello", "hello");
@@ -94,8 +94,8 @@ RX_TEST_CASE(my_test_suite, all_check_failures)
     RX_REAL_CHECK_LESSER(4.56, 1.23);
     RX_REAL_CHECK_GREATER_OR_EQUAL(1.23, 4.56);
     RX_REAL_CHECK_LESSER_OR_EQUAL(4.56, 1.23);
-    RX_REAL_CHECK_EQUAL_FUZZY(1.23, 4.56, 0.001);
-    RX_REAL_CHECK_NOT_EQUAL_FUZZY(1.23, 1.23, 0.001);
+    RX_REAL_CHECK_FUZZY_EQUAL(1.23, 4.56, 0.001);
+    RX_REAL_CHECK_FUZZY_NOT_EQUAL(1.23, 1.23, 0.001);
     RX_STR_CHECK_EQUAL("hello", "world!");
     RX_STR_CHECK_NOT_EQUAL("hello", "hello");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "world!");
@@ -207,14 +207,14 @@ RX_TEST_CASE(my_test_suite, real_require_lesser_or_equal_failure)
     RX_REAL_REQUIRE_LESSER_OR_EQUAL(4.56, 1.23);
 }
 
-RX_TEST_CASE(my_test_suite, real_require_equal_fuzzy_failure)
+RX_TEST_CASE(my_test_suite, real_require_fuzzy_equal_failure)
 {
-    RX_REAL_REQUIRE_EQUAL_FUZZY(1.23, 4.56, 0.001);
+    RX_REAL_REQUIRE_FUZZY_EQUAL(1.23, 4.56, 0.001);
 }
 
-RX_TEST_CASE(my_test_suite, real_require_not_equal_fuzzy_failure)
+RX_TEST_CASE(my_test_suite, real_require_fuzzy_not_equal_failure)
 {
-    RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(1.23, 1.23, 0.001);
+    RX_REAL_REQUIRE_FUZZY_NOT_EQUAL(1.23, 1.23, 0.001);
 }
 
 RX_TEST_CASE(my_test_suite, str_require_equal_failure)

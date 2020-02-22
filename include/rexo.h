@@ -2656,229 +2656,225 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                          __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY(x1, x2, tol)                               \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL(x1, x2, tol)                               \
     RX__REAL_DEFINE_FUZZY_TEST(                                                \
         RX_FATAL, RX__OP_EQUAL, x1, x2, tol, NULL,                             \
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                  \
+    #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, msg)                  \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,                          \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                  \
+    #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                  \
         RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol,        \
                                    __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_1(x1, x2, tol, msg,                    \
                                           _0)                                  \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_2(x1, x2, tol, msg,                    \
                                           _0, _1)                              \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_3(x1, x2, tol, msg,                    \
                                           _0, _1, _2)                          \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_4(x1, x2, tol, msg,                    \
                                           _0, _1, _2, _3)                      \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, _3, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_5(x1, x2, tol, msg,                    \
                                           _0, _1, _2, _3, _4)                  \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, _3, _4, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_6(x1, x2, tol, msg,                    \
                                           _0, _1, _2, _3, _4, _5)              \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, _3, _4, _5, NULL, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_7(x1, x2, tol, msg,                    \
                                           _0, _1, _2, _3, _4, _5, _6)          \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, _3, _4, _5, _6, NULL)
 
-#define RX_REAL_REQUIRE_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                    \
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_8(x1, x2, tol, msg,                    \
                                           _0, _1, _2, _3, _4, _5, _6, _7)      \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,       \
                                _0, _1, _2, _3, _4, _5, _6, _7)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY(x1, x2, tol)                                 \
+#define RX_REAL_CHECK_FUZZY_EQUAL(x1, x2, tol)                                 \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, NULL,   \
                                NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                    \
+    #define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, msg)                    \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,                       \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_REAL_CHECK_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                    \
+    #define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                    \
         RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol,     \
                                    __VA_ARGS__)
 #endif
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_1(x1, x2, tol, msg,                      \
                                         _0)                                    \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_2(x1, x2, tol, msg,                      \
                                         _0, _1)                                \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_3(x1, x2, tol, msg,                      \
                                         _0, _1, _2)                            \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_4(x1, x2, tol, msg,                      \
                                         _0, _1, _2, _3)                        \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, _3, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_5(x1, x2, tol, msg,                      \
                                         _0, _1, _2, _3, _4)                    \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, _3, _4, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_6(x1, x2, tol, msg,                      \
                                         _0, _1, _2, _3, _4, _5)                \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, _3, _4, _5, NULL, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_7(x1, x2, tol, msg,                      \
                                         _0, _1, _2, _3, _4, _5, _6)            \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, _3, _4, _5, _6, NULL)
 
-#define RX_REAL_CHECK_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                      \
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG_8(x1, x2, tol, msg,                      \
                                         _0, _1, _2, _3, _4, _5, _6, _7)        \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,    \
                                _0, _1, _2, _3, _4, _5, _6, _7)
 
-
-
-
-
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY(x1, x2, tol)                           \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL(x1, x2, tol)                           \
     RX__REAL_DEFINE_FUZZY_TEST(                                                \
         RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL,                         \
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)              \
+    #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg)              \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                      \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, ...)              \
+    #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)              \
         RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
                                    __VA_ARGS__)
 #endif
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_1(x1, x2, tol, msg,                \
                                               _0)                              \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_2(x1, x2, tol, msg,                \
                                               _0, _1)                          \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_3(x1, x2, tol, msg,                \
                                               _0, _1, _2)                      \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_4(x1, x2, tol, msg,                \
                                               _0, _1, _2, _3)                  \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, _3, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_5(x1, x2, tol, msg,                \
                                               _0, _1, _2, _3, _4)              \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, _3, _4, NULL, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_6(x1, x2, tol, msg,                \
                                               _0, _1, _2, _3, _4, _5)          \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, _3, _4, _5, NULL, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_7(x1, x2, tol, msg,                \
                                               _0, _1, _2, _3, _4, _5, _6)      \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, _3, _4, _5, _6, NULL)
 
-#define RX_REAL_REQUIRE_NOT_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                \
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_8(x1, x2, tol, msg,                \
                                               _0, _1, _2, _3, _4, _5, _6, _7)  \
     RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,   \
                                _0, _1, _2, _3, _4, _5, _6, _7)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY(x1, x2, tol)                             \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL(x1, x2, tol)                             \
     RX__REAL_DEFINE_FUZZY_TEST(                                                \
         RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, NULL,                      \
         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
-    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, msg)                \
+    #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg)                \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                   \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
-    #define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG(x1, x2, tol, ...)                \
+    #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)                \
         RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
                                    __VA_ARGS__)
 #endif
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_1(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_1(x1, x2, tol, msg,                  \
                                             _0)                                \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_2(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_2(x1, x2, tol, msg,                  \
                                             _0, _1)                            \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_3(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_3(x1, x2, tol, msg,                  \
                                             _0, _1, _2)                        \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_4(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_4(x1, x2, tol, msg,                  \
                                             _0, _1, _2, _3)                    \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, _3, NULL, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_5(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_5(x1, x2, tol, msg,                  \
                                             _0, _1, _2, _3, _4)                \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, _3, _4, NULL, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_6(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_6(x1, x2, tol, msg,                  \
                                             _0, _1, _2, _3, _4, _5)            \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, _3, _4, _5, NULL, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_7(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_7(x1, x2, tol, msg,                  \
                                             _0, _1, _2, _3, _4, _5, _6)        \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, _3, _4, _5, _6, NULL)
 
-#define RX_REAL_CHECK_NOT_EQUAL_FUZZY_MSG_8(x1, x2, tol, msg,                  \
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_8(x1, x2, tol, msg,                  \
                                             _0, _1, _2, _3, _4, _5, _6, _7)    \
     RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,\
                                _0, _1, _2, _3, _4, _5, _6, _7)
