@@ -3492,7 +3492,7 @@ extern "C" {
 #endif
 
 RX__STORAGE void
-rx_abort_test(struct rx_context *context);
+rx_abort(struct rx_context *context);
 
 RX__STORAGE enum rx_status
 rx_handle_test_result(struct rx_context *context,
@@ -4980,7 +4980,7 @@ rx__assess_value(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5052,7 +5052,7 @@ rx__bool_assess_value(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5157,7 +5157,7 @@ rx__int_assess_comparison(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5264,7 +5264,7 @@ rx__uint_assess_comparison(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5369,7 +5369,7 @@ rx__real_assess_comparison(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5466,7 +5466,7 @@ rx__real_assess_fuzzy_comparison(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5570,7 +5570,7 @@ rx__str_assess_comparison(struct rx_context *context,
     RX_FREE(diagnostic_msg);
 
     if (!result && severity == RX_FATAL) {
-        rx_abort_test(context);
+        rx_abort(context);
     }
 }
 
@@ -5578,7 +5578,7 @@ rx__str_assess_comparison(struct rx_context *context,
    -------------------------------------------------------------------------- */
 
 RX__MAYBE_UNUSED RX__STORAGE void
-rx_abort_test(struct rx_context *context)
+rx_abort(struct rx_context *context)
 {
     longjmp(context->env, 1);
 }
