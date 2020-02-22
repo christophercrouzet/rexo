@@ -103,12 +103,14 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #define RX__FALSE ((int)0)
 #define RX__TRUE ((int)1)
 
-#define RX_CONTEXT rx__context
-#define RX_DATA rx__data
+#define RX_PARAM_CONTEXT rx__context
+#define RX_PARAM_DATA rx__data
+
+#define RX_DATA RX_PARAM_DATA
 
 #define RX__DEFINE_PARAMS(type)                                                \
-    struct rx_context *RX_CONTEXT RX__MAYBE_UNUSED,                            \
-    type *RX_DATA RX__MAYBE_UNUSED
+    struct rx_context *RX_PARAM_CONTEXT RX__MAYBE_UNUSED,                      \
+    type *RX_PARAM_DATA RX__MAYBE_UNUSED
 
 /* Automatic Registration Framework                                O-(''Q)
    -------------------------------------------------------------------------- */
@@ -246,7 +248,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__DEFINE_TEST(severity, expected, condition, msg,                \
                             _0, _1, _2, _3, _4, _5, _6, _7)                    \
-        rx__assess_value(RX_CONTEXT,                                           \
+        rx__assess_value(RX_PARAM_CONTEXT,                                     \
                          !!(condition),                                        \
                          expected,                                             \
                          #condition,                                           \
@@ -257,7 +259,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                          _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__DEFINE_TEST(severity, expected, condition, ...)                \
-        rx__assess_value(RX_CONTEXT,                                           \
+        rx__assess_value(RX_PARAM_CONTEXT,                                     \
                          !!(condition),                                        \
                          expected,                                             \
                          #condition,                                           \
@@ -380,7 +382,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg,           \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
-        rx__bool_assess_value(RX_CONTEXT,                                      \
+        rx__bool_assess_value(RX_PARAM_CONTEXT,                                \
                               !!(condition),                                   \
                               expected,                                        \
                               #condition,                                      \
@@ -391,7 +393,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                               _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__BOOL_DEFINE_TEST(severity, expected, condition, ...)           \
-        rx__bool_assess_value(RX_CONTEXT,                                      \
+        rx__bool_assess_value(RX_PARAM_CONTEXT,                                \
                               !!(condition),                                   \
                               expected,                                        \
                               #condition,                                      \
@@ -619,7 +621,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg,                     \
                                 _0, _1, _2, _3, _4, _5, _6, _7)                \
-        rx__int_assess_comparison(RX_CONTEXT,                                  \
+        rx__int_assess_comparison(RX_PARAM_CONTEXT,                            \
                                   (x1),                                        \
                                   (x2),                                        \
                                   op,                                          \
@@ -632,7 +634,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__INT_DEFINE_TEST(severity, op, x1, x2, ...)                     \
-        rx__int_assess_comparison(RX_CONTEXT,                                  \
+        rx__int_assess_comparison(RX_PARAM_CONTEXT,                            \
                                   (x1),                                        \
                                   (x2),                                        \
                                   op,                                          \
@@ -1290,7 +1292,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg,                    \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
-        rx__uint_assess_comparison(RX_CONTEXT,                                 \
+        rx__uint_assess_comparison(RX_PARAM_CONTEXT,                           \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -1303,7 +1305,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, ...)                    \
-        rx__uint_assess_comparison(RX_CONTEXT,                                 \
+        rx__uint_assess_comparison(RX_PARAM_CONTEXT,                           \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -1961,7 +1963,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg,                    \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
-        rx__real_assess_comparison(RX_CONTEXT,                                 \
+        rx__real_assess_comparison(RX_PARAM_CONTEXT,                           \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -1974,7 +1976,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                    _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, ...)                    \
-        rx__real_assess_comparison(RX_CONTEXT,                                 \
+        rx__real_assess_comparison(RX_PARAM_CONTEXT,                           \
                                    (x1),                                       \
                                    (x2),                                       \
                                    op,                                         \
@@ -2629,7 +2631,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, msg,         \
                                        _0, _1, _2, _3, _4, _5, _6, _7)         \
-        rx__real_assess_fuzzy_comparison(RX_CONTEXT,                           \
+        rx__real_assess_fuzzy_comparison(RX_PARAM_CONTEXT,                     \
                                          (x1),                                 \
                                          (x2),                                 \
                                          (tol),                                \
@@ -2643,7 +2645,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                          _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, ...)         \
-        rx__real_assess_fuzzy_comparison(RX_CONTEXT,                           \
+        rx__real_assess_fuzzy_comparison(RX_PARAM_CONTEXT,                     \
                                          (x1),                                 \
                                          (x2),                                 \
                                          (tol),                                \
@@ -2885,7 +2887,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 #if RX__C89_COMPAT
     #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg,           \
                                 _0, _1, _2, _3, _4, _5, _6, _7)                \
-        rx__str_assess_comparison(RX_CONTEXT,                                  \
+        rx__str_assess_comparison(RX_PARAM_CONTEXT,                            \
                                   (s1),                                        \
                                   (s2),                                        \
                                   str_case,                                    \
@@ -2899,7 +2901,7 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
                                   _0, _1, _2, _3, _4, _5, _6, _7)
 #else
     #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, ...)           \
-        rx__str_assess_comparison(RX_CONTEXT,                                  \
+        rx__str_assess_comparison(RX_PARAM_CONTEXT,                            \
                                   (s1),                                        \
                                   (s2),                                        \
                                   str_case,                                    \

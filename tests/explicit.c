@@ -15,11 +15,11 @@ struct my_data {
 };
 
 enum rx_status
-my_set_up(struct rx_context *RX_CONTEXT, void *RX_DATA)
+my_set_up(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
 {
     struct my_data *data;
 
-    (void)RX_CONTEXT;
+    (void)RX_PARAM_CONTEXT;
 
     data = (struct my_data *)RX_DATA;
 
@@ -31,11 +31,11 @@ my_set_up(struct rx_context *RX_CONTEXT, void *RX_DATA)
 }
 
 void
-my_tear_down(struct rx_context *RX_CONTEXT, void *RX_DATA)
+my_tear_down(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
 {
     struct my_data *data;
 
-    (void)RX_CONTEXT;
+    (void)RX_PARAM_CONTEXT;
 
     data = (struct my_data *)RX_DATA;
 
@@ -46,11 +46,12 @@ my_tear_down(struct rx_context *RX_CONTEXT, void *RX_DATA)
 }
 
 void
-my_test_suite_my_test_case(struct rx_context *RX_CONTEXT, void *RX_DATA)
+my_test_suite_my_test_case(struct rx_context *RX_PARAM_CONTEXT,
+                           void *RX_PARAM_DATA)
 {
     struct my_data *data;
 
-    (void)RX_CONTEXT;
+    (void)RX_PARAM_CONTEXT;
 
     data = (struct my_data *)RX_DATA;
 
