@@ -16,8 +16,8 @@ frameworks but aims at providing a _truly_ polished API.
 * **granular**: high level or low level API? You choose.
 * **portable**: compatible with C89 (ANSI C) and C++.
 * **simple**: straightforward implementation—KISS all the things!
-* **cascading configuration**: configure a whole suite at once and/or tweak
-  specific options for each case.
+* **cascading configuration**: configure a whole test suite at once and/or tweak
+  specific options for each test case.
 * **painless**: deployment couldn't be easier—it all fits into a single
   header file and has no external dependencies.
 
@@ -26,27 +26,65 @@ But also...
 
 * fully standard compliant minus the optional automatic registration of tests
   that relies on a widespread compiler-specific feature.
-* brings a designated initializer-like syntax to all C and C++ versions.
-* test cases can override configuration attributes from their parent test suite.
+* designated initializer-like syntax to all C and C++ versions.
 
 
 ## Roadmap
 
-* run each test in isolated environment.
-* implement a command-line option parser (e.g.: for test filtering).
-* allow to choose the output format of the summary (e.g.: jUnit XML).
+* run each test in an isolated environment.
+* implement a command-line option parser (e.g.: for filtering test cases).
+* allow choosing the output format of the summary (e.g.: jUnit XML).
 * support more assertion macros (e.g.: array comparison, signal handling).
-* visual failure messages (e.g.: an arrow pointing where a string differs).
+* improve failure messages to be more visual (e.g.: an arrow pointing
+  where strings differ).
 
 
 ## Usage
 
+### Minimal
+
 ```c
 #include <rexo.h>
 
-RX_TEST_CASE(numbers, magic)
+RX_TEST_CASE(foo, bar)
 {
     RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
+}
+```
+
+
+### Fixture
+
+```c
+#include <rexo.h>
+
+struct foo_data {
+    const char *value;
+};
+
+RX_SET_UP(foo_set_up)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    data->value = "world!";
+    return RX_SUCCESS;
+}
+
+RX_FIXTURE(foo_fixture, struct foo_data, .set_up = foo_set_up);
+
+RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    RX_STR_REQUIRE_EQUAL("Hello", data->value);
 }
 
 int
