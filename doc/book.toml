@@ -1,0 +1,12 @@
+[book]
+title = "Rexo"
+authors = ["Christopher Crouzet"]
+description = "Rexo is a neat unit testing framework for C and C++."
+language = "en"
+multilingual = false
+src = "src"
+
+[output.html]
+additional-css = ["css/custom.css"]
+additional-js = ["js/custom.js"]
+git-repository-url = "https://github.com/christophercrouzet/rexo"
