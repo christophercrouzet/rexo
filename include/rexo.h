@@ -26,7 +26,7 @@
 #define REXO_REXO_H
 
 #define RX_MAJOR_VERSION 0
-#define RX_MINOR_VERSION 1
+#define RX_MINOR_VERSION 2
 #define RX_PATCH_VERSION 0
 
 #define RX_VERSION                                                             \
