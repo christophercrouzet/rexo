@@ -95,6 +95,16 @@ main(int argc, const char **argv)
 ```
 
 
+## Documentation
+
+<https://christophercrouzet.github.io/rexo>
+
+
+## Repository
+
+<https://github.com/christophercrouzet/rexo>
+
+
 ## License
 
 [MIT][mit].
