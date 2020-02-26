@@ -32,27 +32,6 @@
 #define RX_VERSION                                                             \
     ((RX_MAJOR_VERSION << 20) | (RX_MINOR_VERSION << 10) | (RX_PATCH_VERSION))
 
-#if defined(RX_ENABLE_C89_COMPAT)                                              \
-    || (!defined(RX_DISABLE_C89_COMPAT)                                        \
-        && (defined(__STDC__)                                                  \
-            && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)))
-    #define RX__C89_COMPAT 1
-#else
-    #define RX__C89_COMPAT 0
-#endif
-
-#if defined(RX_ENABLE_EXTERNAL_LINKING)
-    #define RX__STORAGE extern
-#else
-    #define RX__STORAGE static
-#endif
-
-#if defined(__GNUC__)
-    #define RX__MAYBE_UNUSED __attribute__((unused))
-#else
-    #define RX__MAYBE_UNUSED
-#endif
-
 /*
    The environment macro represents whether the code is to be generated for a
    32-bit or 64-bit target platform. Some CPUs, such as the x86-64 processors,
@@ -100,17 +79,150 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     typedef rx_uint64 rx_size;
 #endif
 
-#define RX__FALSE ((int)0)
-#define RX__TRUE ((int)1)
+#if defined(RX_ENABLE_EXTERNAL_LINKING)
+    #define RX__STORAGE extern
+#else
+    #define RX__STORAGE static
+#endif
+
+#if defined(__GNUC__)
+    #define RX__MAYBE_UNUSED __attribute__((unused))
+#else
+    #define RX__MAYBE_UNUSED
+#endif
+
+#define RX__DEFINE_PARAMS(type)                                                \
+    struct rx_context *RX_PARAM_CONTEXT RX__MAYBE_UNUSED,                      \
+    type *RX_PARAM_DATA RX__MAYBE_UNUSED
+
+/* Public Interface                                                O-(''Q)
+   -------------------------------------------------------------------------- */
 
 #define RX_PARAM_CONTEXT rx__context
 #define RX_PARAM_DATA rx__data
 
 #define RX_DATA RX_PARAM_DATA
 
-#define RX__DEFINE_PARAMS(type)                                                \
-    struct rx_context *RX_PARAM_CONTEXT RX__MAYBE_UNUSED,                      \
-    type *RX_PARAM_DATA RX__MAYBE_UNUSED
+enum rx_status {
+    RX_SUCCESS = 0,
+    RX_ERROR = -1,
+    RX_ERROR_ALLOCATION = -2,
+    RX_ERROR_MAX_SIZE_EXCEEDED = -3
+};
+
+enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
+
+enum rx_log_level {
+    RX_LOG_LEVEL_FATAL = 0,
+    RX_LOG_LEVEL_ERROR = 1,
+    RX_LOG_LEVEL_WARNING = 2,
+    RX_LOG_LEVEL_INFO = 3,
+    RX_LOG_LEVEL_DEBUG = 4,
+    RX_LOG_LEVEL_TRACE = 5
+};
+
+struct rx_context;
+
+typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
+typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
+typedef void (*rx_run_fn)(RX__DEFINE_PARAMS(void));
+
+struct rx_fixture_config {
+    rx_set_up_fn set_up;
+    rx_tear_down_fn tear_down;
+};
+
+struct rx_fixture {
+    rx_size size;
+    struct rx_fixture_config config;
+};
+
+struct rx_test_case_config {
+    int skip;
+    struct rx_fixture fixture;
+};
+
+struct rx_test_case {
+    const char *suite_name;
+    const char *name;
+    rx_run_fn run;
+    struct rx_test_case_config config;
+};
+
+struct rx_failure {
+    const char *file;
+    int line;
+    enum rx_severity severity;
+    const char *msg;
+    const char *diagnostic_msg;
+};
+
+struct rx_summary {
+    const struct rx_test_case *test_case;
+    rx_size test_count;
+    rx_size failure_count;
+    struct rx_failure *failures;
+    rx_uint64 elapsed;
+};
+
+#if defined(__cplusplus)
+extern "C" {
+#endif
+
+RX__STORAGE void
+rx_abort(struct rx_context *context);
+
+RX__STORAGE enum rx_status
+rx_handle_test_result(struct rx_context *context,
+                      int result,
+                      const char *file,
+                      int line,
+                      enum rx_severity severity,
+                      const char *failure_msg,
+                      const char *diagnostic_msg);
+
+RX__STORAGE enum rx_status
+rx_summary_initialize(struct rx_summary *summary,
+                      const struct rx_test_case *test_case);
+
+RX__STORAGE void
+rx_summary_terminate(struct rx_summary *summary);
+
+RX__STORAGE void
+rx_summary_print(const struct rx_summary *summary);
+
+RX__STORAGE enum rx_status
+rx_test_case_run(struct rx_summary *summary,
+                 const struct rx_test_case *test_case);
+
+RX__STORAGE void
+rx_test_cases_enumerate(rx_size *test_case_count,
+                        struct rx_test_case *test_cases);
+
+RX__STORAGE enum rx_status
+rx_run(int argc,
+       const char **argv,
+       rx_size test_case_count,
+       const struct rx_test_case *test_cases);
+
+#if defined(__cplusplus)
+}
+#endif
+
+/* Helpers                                                         O-(''Q)
+   -------------------------------------------------------------------------- */
+
+#if defined(RX_ENABLE_C89_COMPAT)                                              \
+    || (!defined(RX_DISABLE_C89_COMPAT)                                        \
+        && (defined(__STDC__)                                                  \
+            && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)))
+    #define RX__C89_COMPAT 1
+#else
+    #define RX__C89_COMPAT 0
+#endif
+
+#define RX__FALSE ((int)0)
+#define RX__TRUE ((int)1)
 
 /* Automatic Registration Framework                                O-(''Q)
    -------------------------------------------------------------------------- */
@@ -3421,115 +3533,6 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
             _0, _1, _2, _3, _4, _5, _6, _7)
-
-/* Public Interface                                                O-(''Q)
-   -------------------------------------------------------------------------- */
-
-enum rx_status {
-    RX_SUCCESS = 0,
-    RX_ERROR = -1,
-    RX_ERROR_ALLOCATION = -2,
-    RX_ERROR_MAX_SIZE_EXCEEDED = -3
-};
-
-enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
-
-enum rx_log_level {
-    RX_LOG_LEVEL_FATAL = 0,
-    RX_LOG_LEVEL_ERROR = 1,
-    RX_LOG_LEVEL_WARNING = 2,
-    RX_LOG_LEVEL_INFO = 3,
-    RX_LOG_LEVEL_DEBUG = 4,
-    RX_LOG_LEVEL_TRACE = 5
-};
-
-struct rx_context;
-
-typedef enum rx_status (*rx_set_up_fn)(RX__DEFINE_PARAMS(void));
-typedef void (*rx_tear_down_fn)(RX__DEFINE_PARAMS(void));
-typedef void (*rx_run_fn)(RX__DEFINE_PARAMS(void));
-
-struct rx_fixture_config {
-    rx_set_up_fn set_up;
-    rx_tear_down_fn tear_down;
-};
-
-struct rx_fixture {
-    rx_size size;
-    struct rx_fixture_config config;
-};
-
-struct rx_test_case_config {
-    int skip;
-    struct rx_fixture fixture;
-};
-
-struct rx_test_case {
-    const char *suite_name;
-    const char *name;
-    rx_run_fn run;
-    struct rx_test_case_config config;
-};
-
-struct rx_failure {
-    const char *file;
-    int line;
-    enum rx_severity severity;
-    const char *msg;
-    const char *diagnostic_msg;
-};
-
-struct rx_summary {
-    const struct rx_test_case *test_case;
-    rx_size test_count;
-    rx_size failure_count;
-    struct rx_failure *failures;
-    rx_uint64 elapsed;
-};
-
-#if defined(__cplusplus)
-extern "C" {
-#endif
-
-RX__STORAGE void
-rx_abort(struct rx_context *context);
-
-RX__STORAGE enum rx_status
-rx_handle_test_result(struct rx_context *context,
-                      int result,
-                      const char *file,
-                      int line,
-                      enum rx_severity severity,
-                      const char *failure_msg,
-                      const char *diagnostic_msg);
-
-RX__STORAGE enum rx_status
-rx_summary_initialize(struct rx_summary *summary,
-                      const struct rx_test_case *test_case);
-
-RX__STORAGE void
-rx_summary_terminate(struct rx_summary *summary);
-
-RX__STORAGE void
-rx_summary_print(const struct rx_summary *summary);
-
-RX__STORAGE enum rx_status
-rx_test_case_run(struct rx_summary *summary,
-                 const struct rx_test_case *test_case);
-
-RX__STORAGE void
-rx_test_cases_enumerate(rx_size *test_case_count,
-                        struct rx_test_case *test_cases);
-
-RX__STORAGE enum rx_status
-rx_run(int argc,
-       const char **argv,
-       rx_size test_case_count,
-       const struct rx_test_case *test_cases);
-
-#if defined(__cplusplus)
-}
-#endif
 
 /* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
