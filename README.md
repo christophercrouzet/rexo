@@ -107,8 +107,8 @@ main(int argc, const char **argv)
 
 ## License
 
-[MIT][mit].
+[Unlicense][unlicense].
 
 
-[mit]: https://choosealicense.com/licenses/mit
+[unlicense]: https://unlicense.org
 [xunit]: https://en.wikipedia.org/wiki/XUnit
