@@ -31,7 +31,6 @@ But also...
 
 ## Roadmap
 
-* run each test in an isolated environment.
 * implement a command-line option parser (e.g.: for filtering test cases).
 * allow choosing the output format of the summary (e.g.: jUnit XML).
 * support more assertion macros (e.g.: array comparison, signal handling).
