@@ -1,5 +1,3 @@
-#define RX_ENABLE_C89_COMPAT
-
 #include <stdlib.h>
 
 #include <rexo.h>

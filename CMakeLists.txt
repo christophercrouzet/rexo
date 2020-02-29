@@ -54,7 +54,7 @@ set(RX_TEST_TARGETS)
 macro(rx_add_test)
     set(RX_ADD_TEST_OPTIONS)
     set(RX_ADD_TEST_SINGLE_VALUE_ARGS NAME)
-    set(RX_ADD_TEST_MULTI_VALUE_ARGS FILES DEPENDS)
+    set(RX_ADD_TEST_MULTI_VALUE_ARGS FILES DEPENDS PROPERTIES)
     cmake_parse_arguments(
         RX_ADD_TEST
         "${RX_ADD_TEST_OPTIONS}"
@@ -66,7 +66,8 @@ macro(rx_add_test)
     set_target_properties(test-${RX_ADD_TEST_NAME}
         PROPERTIES
             RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/tests
-            OUTPUT_NAME ${RX_ADD_TEST_NAME})
+            OUTPUT_NAME ${RX_ADD_TEST_NAME}
+            ${RX_ADD_TEST_PROPERTIES})
     target_link_libraries(test-${RX_ADD_TEST_NAME}
         PRIVATE ${RX_ADD_TEST_DEPENDS})
     add_test(
@@ -80,22 +81,30 @@ enable_testing()
 rx_add_test(
     NAME c89-assertion-failure-messages
     FILES tests/c89/assertion-failure-messages.c
-    DEPENDS rexo)
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
 
 rx_add_test(
     NAME c89-config-inherit
     FILES tests/c89/config-inherit.c
-    DEPENDS rexo)
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
 
 rx_add_test(
     NAME c89-fixture
     FILES tests/c89/fixture.c
-    DEPENDS rexo)
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
 
 rx_add_test(
     NAME c89-minimal
     FILES tests/c89/minimal.c
-    DEPENDS rexo)
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
 
 rx_add_test(
     NAME assertion-coverage
