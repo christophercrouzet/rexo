@@ -52,7 +52,7 @@
 
 /*
    The common data models, that is ILP32 (most recent 32-bit systems),
-   LP64 (Unix-like systems), and LLP64 (Windows), all the `int` type set to
+   LP64 (Unix-like systems), and LLP64 (Windows), all have the `int` type set to
    32 bits, and the `long long` type to 64 bits.
 */
 #if defined(RX_UINT32_TYPE)
