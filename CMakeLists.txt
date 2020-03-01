@@ -79,6 +79,13 @@ endmacro()
 enable_testing()
 
 rx_add_test(
+    NAME c89-assertion-coverage
+    FILES tests/c89/assertion-coverage.c
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
+
+rx_add_test(
     NAME c89-assertion-failure-messages
     FILES tests/c89/assertion-failure-messages.c
     DEPENDS rexo
@@ -95,6 +102,13 @@ rx_add_test(
 rx_add_test(
     NAME c89-fixture
     FILES tests/c89/fixture.c
+    DEPENDS rexo
+    PROPERTIES
+        C_STANDARD 90)
+
+rx_add_test(
+    NAME c89-fixture-void
+    FILES tests/c89/fixture-void.c
     DEPENDS rexo
     PROPERTIES
         C_STANDARD 90)
