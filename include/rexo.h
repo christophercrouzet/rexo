@@ -3031,7 +3031,8 @@ rx_run(int argc,
 
 #define RX_STR_REQUIRE_EQUAL(s1, s2)                                           \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
+        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL,               \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, msg)                              \
@@ -3094,7 +3095,8 @@ rx_run(int argc,
 
 #define RX_STR_CHECK_EQUAL(s1, s2)                                             \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
+        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL,            \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                               \
@@ -3157,7 +3159,8 @@ rx_run(int argc,
 
 #define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)                                       \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
+        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL,           \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg)                          \
@@ -3221,7 +3224,8 @@ rx_run(int argc,
 
 #define RX_STR_CHECK_NOT_EQUAL(s1, s2)                                         \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL)
+        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, NULL,        \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, msg)                            \
@@ -3285,7 +3289,8 @@ rx_run(int argc,
 
 #define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)                                   \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+        RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL,             \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, msg)                      \
@@ -3348,7 +3353,8 @@ rx_run(int argc,
 
 #define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)                                     \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+        RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL,          \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, msg)                        \
@@ -3411,7 +3417,8 @@ rx_run(int argc,
 
 #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)                               \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+        RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL,         \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                  \
@@ -3475,7 +3482,8 @@ rx_run(int argc,
 
 #define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)                                 \
     RX__STR_TEST_DEFINE(                                                       \
-        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL)
+        RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, NULL,      \
+        NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 
 #if RX__C89_COMPAT
     #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                    \
