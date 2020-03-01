@@ -2896,7 +2896,7 @@ rx_run(int argc,
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #else
     #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)              \
-        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol,    \
                                    __VA_ARGS__)
 #endif
 
