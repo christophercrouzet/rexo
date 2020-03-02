@@ -65,7 +65,9 @@ FILES += $(wildcard include/*.h)
 # Create the rule to build a test.
 # $(1): path.
 define rx_create_test_rules =
-_rule := test-$$(subst /,-,$(1:tests/%.c=%))
+_rule := test-$$(subst /,-,$(patsubst \
+	tests/%.c,%,$(patsubst tests/%.cpp,%,$(1))))
+
 
 $(_rule): $$(MAKE_FILES)
 	$$(call rx_forward_rule,$(_rule))
@@ -78,7 +80,7 @@ endef
 # $(1): parent directory.
 define rx_find_tests_impl =
 $(foreach _x,$(wildcard $(1:=/*)),$(call \
-	rx_find_tests_impl,$(_x)) $(filter %.c,$(_x)))
+	rx_find_tests_impl,$(_x)) $(filter %.c %.cpp,$(_x)))
 endef
 
 # Recursively find all the tests.
