@@ -3076,7 +3076,7 @@ rx_run(int argc,
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
 #else
-    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                               \
+    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                                \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
