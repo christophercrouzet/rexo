@@ -4275,8 +4275,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
     #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
 #else
-    const struct rx__test_suite_desc * const __start_rxsuite = NULL;
-    const struct rx__test_suite_desc * const __stop_rxsuite = NULL;
+    extern const struct rx__test_suite_desc * const __start_rxsuite;
+    extern const struct rx__test_suite_desc * const __stop_rxsuite;
 
     RX__FORCE_LINKING(rx__dummy_suite)
     __attribute__((section("rxsuite")))
@@ -4314,8 +4314,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
     #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
 #else
-    const struct rx__test_case_desc * const __start_rxcase = NULL;
-    const struct rx__test_case_desc * const __stop_rxcase = NULL;
+    extern const struct rx__test_case_desc * const __start_rxcase;
+    extern const struct rx__test_case_desc * const __stop_rxcase;
 
     RX__FORCE_LINKING(rx__dummy_case)
     __attribute__((section("rxcase")))
