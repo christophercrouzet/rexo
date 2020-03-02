@@ -65,10 +65,10 @@ RX_TEST_CASE(my_test_suite, my_test_case, .bar = "def", .baz = 1.23)
 ```
 
 
-## C89 Compatibility
+## Variadic Macros Fallback
 
-Since C89 doesn't support variadic macros, an alternative set of macros is
-provided, each suffixed with a digit representing the number of options
+Since C89 and C++98 don't support variadic macros, an alternative set of macros
+is provided, each suffixed with a digit representing the number of options
 to pass.
 
 For example, the equivalent of the previous examples become:

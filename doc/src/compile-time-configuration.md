@@ -24,39 +24,66 @@ If not set, the public functions are defined with the `static` qualifier
 instead.
 
 
-### `RX_ENABLE_C89_COMPAT`
+### `RX_ENABLE_NPRINTF`
 
-Enables the compatibility with the C89 (ANSI C) specification.
+Enables the usage of the standard `*nprintf` functions.
 
 ```c
-#define RX_ENABLE_C89_COMPAT
+#define RX_ENABLE_NPRINTF
 ```
 
-If neither the `RX_ENABLE_C89_COMPAT` nor the `RX_DISABLE_C89_COMPAT` macros are
-explicitly defined, the C89 compatibility mode is enabled depending on
-the values of the `__STDC_VERSION__` and `__STDC__` macros.
+If neither the `RX_ENABLE_NPRINTF` nor the `RX_DISABLE_NPRINTF`
+macros are explicitly defined, the standard `*nprintf` functions are used
+depending on the language (C or C++) and its version.
+
+
+### `RX_DISABLE_NPRINTF`
+
+Disables the usage of the standard `*nprintf` functions.
+
+```c
+#define RX_DISABLE_NPRINTF
+```
+
+If neither the `RX_ENABLE_NPRINTF` nor the `RX_DISABLE_NPRINTF`
+macros are explicitly defined, the standard `*nprintf` functions are used
+depending on the language (C or C++) and its version.
 
 This macro takes precedence over
-the [`RX_DISABLE_C89_COMPAT`][macro-rx_disable_c89_compat] macro.
-
-See the gotcha
-[variadic macros in C89 compatibility mode][gotcha-variadic-macros-c89].
+the [`RX_ENABLE_NPRINTF`][macro-rx_enable-nprintf] macro.
 
 
-### `RX_DISABLE_C89_COMPAT`
+### `RX_ENABLE_VARIADIC_MACROS`
 
-Disables the compatibility with C89 (ANSI C) specification.
+Enables the usage of variadic macros.
 
 ```c
-#define RX_DISABLE_C89_COMPAT
+#define RX_ENABLE_VARIADIC_MACROS
 ```
 
-If neither the `RX_ENABLE_C89_COMPAT` nor the `RX_DISABLE_C89_COMPAT` macros are
-explicitly defined, the C89 compatibility mode is enabled depending on
-the values of the `__STDC_VERSION__` and `__STDC__` macros.
+If neither the `RX_ENABLE_VARIADIC_MACROS` nor the `RX_DISABLE_VARIADIC_MACROS`
+macros are explicitly defined, variadic macros are used depending on
+the language (C or C++) and its version.
 
-See the gotcha
-[variadic macros in C89 compatibility mode][gotcha-variadic-macros-c89].
+See the [variadic macros][gotcha-variadic-macros] gotcha.
+
+
+### `RX_DISABLE_VARIADIC_MACROS`
+
+Disables the usage of variadic macros.
+
+```c
+#define RX_DISABLE_VARIADIC_MACROS
+```
+
+If neither the `RX_ENABLE_VARIADIC_MACROS` nor the `RX_DISABLE_VARIADIC_MACROS`
+macros are explicitly defined, variadic macros are used depending on
+the language (C or C++) and its version.
+
+This macro takes precedence over
+the [`RX_ENABLE_VARIADIC_MACROS`][macro-rx_enable-variadic-macros] macro.
+
+See the [variadic macros][gotcha-variadic-macros] gotcha.
 
 
 ### `RX_ENABLE_DEBUGGING`
@@ -256,13 +283,14 @@ argument and the variadic arguments, in a similar fashion to the standard
 `printf()` function.
 
 
-[gotcha-variadic-macros-c89]: ./gotchas.md#variadic-macros-in-c89-compatibility-mode
+[gotcha-variadic-macros]: ./gotchas.md#variadic-macros
 [guide-compile-time-config]: ./guides.md#compile-time-configuration
 
 [enum-rx_log_level]: ./reference/building-blocks.md#rx_log_level
-[macro-rx_disable_c89_compat]: #rx_disable_c89_compat
 [macro-rx_disable_debugging]: #rx_disable_debugging
 [macro-rx_enable_debugging]: #rx_enable_debugging
+[macro-rx_enable_nprintf]: #rx_enable_nprintf
+[macro-rx_enable_variadic_macros]: #rx_enable_variadic_macros
 [macro-rx_log]: #rx_log
 [macro-rx_malloc]: #rx_malloc
 [macro-rx_realloc]: #rx_realloc

@@ -215,13 +215,39 @@ rx_run(int argc,
 /* Helpers                                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if defined(RX_ENABLE_C89_COMPAT)                                              \
-    || (!defined(RX_DISABLE_C89_COMPAT)                                        \
-        && (defined(__STDC__)                                                  \
-            && (!defined(__STDC_VERSION__) || __STDC_VERSION__ < 199901L)))
-    #define RX__C89_COMPAT 1
+#define RX__LANG_C 0
+#define RX__LANG_CPP 1
+
+#if defined(__cplusplus)
+    #define RX__LANG RX__LANG_CPP
+    #define RX__LANG_VERSION __cplusplus
+#elif defined(__STDC__)
+    #define RX__LANG RX__LANG_C
+    #if defined(__STDC_VERSION__)
+        #define RX__LANG_VERSION __STDC_VERSION__
+    #else
+        #define RX__LANG_VERSION 0L
+    #endif
 #else
-    #define RX__C89_COMPAT 0
+    #error Unrecognized language.
+#endif
+
+#if defined(RX_DISABLE_NPRINTF)                                                \
+    || (!defined(RX_ENABLE_NPRINTF)                                            \
+        && ((RX__LANG == RX__LANG_C && RX__LANG_VERSION < 199901L)             \
+            || (RX__LANG == RX__LANG_CPP && RX__LANG_VERSION < 201103L)))
+    #define RX__HAS_NPRINTF 0
+#else
+    #define RX__HAS_NPRINTF 1
+#endif
+
+#if defined(RX_DISABLE_VARIADIC_MACROS)                                        \
+    || (!defined(RX_ENABLE_VARIADIC_MACROS)                                    \
+        && ((RX__LANG == RX__LANG_C && RX__LANG_VERSION < 199901L)             \
+            || (RX__LANG == RX__LANG_CPP && RX__LANG_VERSION < 201103L)))
+    #define RX__HAS_VARIADIC_MACROS 0
+#else
+    #define RX__HAS_VARIADIC_MACROS 1
 #endif
 
 #define RX__FALSE ((int)0)
@@ -238,19 +264,7 @@ rx_run(int argc,
     static void                                                                \
     id(RX__DEFINE_PARAMS(void))
 
-#if RX__C89_COMPAT
-    #define RX_FIXTURE(id, type)                                               \
-        RX__FIXTURE_0(id, sizeof(type))                                        \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_FIXTURE_1(id, type, _0)                                         \
-        RX__FIXTURE_1(id, sizeof(type), 1, (_0))                               \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_FIXTURE_2(id, type, _0, _1)                                     \
-        RX__FIXTURE_1(id, sizeof(type), 2, (_0, _1))                           \
-        RX__REQUIRE_SEMICOLON
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_FIXTURE(...)                                                    \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
@@ -267,21 +281,21 @@ rx_run(int argc,
                       sizeof(type),                                            \
                       RX__COUNT_ARGS(__VA_ARGS__),                             \
                       (__VA_ARGS__))
+#else
+    #define RX_FIXTURE(id, type)                                               \
+        RX__FIXTURE_0(id, sizeof(type))                                        \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_1(id, type, _0)                                         \
+        RX__FIXTURE_1(id, sizeof(type), 1, (_0))                               \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_FIXTURE_2(id, type, _0, _1)                                     \
+        RX__FIXTURE_1(id, sizeof(type), 2, (_0, _1))                           \
+        RX__REQUIRE_SEMICOLON
 #endif
 
-#if RX__C89_COMPAT
-    #define RX_VOID_FIXTURE(id)                                                \
-        RX__FIXTURE_0(id, 0)                                                   \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_VOID_FIXTURE_1(id, _0)                                          \
-        RX__FIXTURE_1(id, 0, 1, (_0))                                          \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_VOID_FIXTURE_2(id, _0, _1)                                      \
-        RX__FIXTURE_1(id, 0, 2, (_0, _1))                                      \
-        RX__REQUIRE_SEMICOLON
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_VOID_FIXTURE(...)                                               \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
@@ -298,21 +312,21 @@ rx_run(int argc,
                       0,                                                       \
                       RX__COUNT_ARGS(__VA_ARGS__),                             \
                       (__VA_ARGS__))
+#else
+    #define RX_VOID_FIXTURE(id)                                                \
+        RX__FIXTURE_0(id, 0)                                                   \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_VOID_FIXTURE_1(id, _0)                                          \
+        RX__FIXTURE_1(id, 0, 1, (_0))                                          \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_VOID_FIXTURE_2(id, _0, _1)                                      \
+        RX__FIXTURE_1(id, 0, 2, (_0, _1))                                      \
+        RX__REQUIRE_SEMICOLON
 #endif
 
-#if RX__C89_COMPAT
-    #define RX_TEST_SUITE(id)                                                  \
-        RX__TEST_SUITE_0(id)                                                   \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_TEST_SUITE_1(id, _0)                                            \
-        RX__TEST_SUITE_1(id, 1, (_0))                                          \
-        RX__REQUIRE_SEMICOLON
-
-    #define RX_TEST_SUITE_2(id, _0, _1)                                        \
-        RX__TEST_SUITE_1(id, 2, (_0, _1))                                      \
-        RX__REQUIRE_SEMICOLON
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_TEST_SUITE(...)                                                 \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
@@ -328,18 +342,21 @@ rx_run(int argc,
         RX__TEST_SUITE_1(id,                                                   \
                          RX__COUNT_ARGS(__VA_ARGS__),                          \
                          (__VA_ARGS__))
+#else
+    #define RX_TEST_SUITE(id)                                                  \
+        RX__TEST_SUITE_0(id)                                                   \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_TEST_SUITE_1(id, _0)                                            \
+        RX__TEST_SUITE_1(id, 1, (_0))                                          \
+        RX__REQUIRE_SEMICOLON
+
+    #define RX_TEST_SUITE_2(id, _0, _1)                                        \
+        RX__TEST_SUITE_1(id, 2, (_0, _1))                                      \
+        RX__REQUIRE_SEMICOLON
 #endif
 
-#if RX__C89_COMPAT
-    #define RX_TEST_CASE(suite_id, id)                                         \
-        RX__TEST_CASE_0(suite_id, id)
-
-    #define RX_TEST_CASE_1(suite_id, id, _0)                                   \
-        RX__TEST_CASE_1(suite_id, id, 1, (_0))
-
-    #define RX_TEST_CASE_2(suite_id, id, _0, _1)                               \
-        RX__TEST_CASE_1(suite_id, id, 2, (_0, _1))
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_TEST_CASE(...)                                                  \
         RX__EXPAND(                                                            \
             RX__CONCAT(                                                        \
@@ -355,12 +372,31 @@ rx_run(int argc,
                         id,                                                    \
                         RX__COUNT_ARGS(__VA_ARGS__),                           \
                         (__VA_ARGS__))
+#else
+    #define RX_TEST_CASE(suite_id, id)                                         \
+        RX__TEST_CASE_0(suite_id, id)
+
+    #define RX_TEST_CASE_1(suite_id, id, _0)                                   \
+        RX__TEST_CASE_1(suite_id, id, 1, (_0))
+
+    #define RX_TEST_CASE_2(suite_id, id, _0, _1)                               \
+        RX__TEST_CASE_1(suite_id, id, 2, (_0, _1))
 #endif
 
 /* Generic Assertions                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__DEFINE_TEST(severity, expected, condition, ...)                \
+        rx__assess_value(RX_PARAM_CONTEXT,                                     \
+                         !!(condition),                                        \
+                         expected,                                             \
+                         #condition,                                           \
+                         __FILE__,                                             \
+                         __LINE__,                                             \
+                         severity,                                             \
+                         __VA_ARGS__)
+#else
     #define RX__DEFINE_TEST(severity, expected, condition, msg,                \
                             _0, _1, _2, _3, _4, _5, _6, _7)                    \
         rx__assess_value(RX_PARAM_CONTEXT,                                     \
@@ -372,28 +408,18 @@ rx_run(int argc,
                          severity,                                             \
                          msg,                                                  \
                          _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__DEFINE_TEST(severity, expected, condition, ...)                \
-        rx__assess_value(RX_PARAM_CONTEXT,                                     \
-                         !!(condition),                                        \
-                         expected,                                             \
-                         #condition,                                           \
-                         __FILE__,                                             \
-                         __LINE__,                                             \
-                         severity,                                             \
-                         __VA_ARGS__)
 #endif
 
 #define RX_REQUIRE(condition)                                                  \
     RX_REQUIRE_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REQUIRE_MSG(condition, ...)                                     \
+        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
+#else
     #define RX_REQUIRE_MSG(condition, msg)                                     \
         RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,                    \
                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REQUIRE_MSG(condition, ...)                                     \
-        RX__DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
 
 #define RX_REQUIRE_MSG_1(condition, msg,                                       \
@@ -439,13 +465,13 @@ rx_run(int argc,
 #define RX_CHECK(condition)                                                    \
     RX_CHECK_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_CHECK_MSG(condition, ...)                                       \
+        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
+#else
     #define RX_CHECK_MSG(condition, msg)                                       \
         RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,                 \
                         NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_CHECK_MSG(condition, ...)                                       \
-        RX__DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
 
 #define RX_CHECK_MSG_1(condition, msg,                                         \
@@ -492,7 +518,17 @@ rx_run(int argc,
 /* Boolean Assertions                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, ...)           \
+        rx__bool_assess_value(RX_PARAM_CONTEXT,                                \
+                              !!(condition),                                   \
+                              expected,                                        \
+                              #condition,                                      \
+                              __FILE__,                                        \
+                              __LINE__,                                        \
+                              severity,                                        \
+                              __VA_ARGS__)
+#else
     #define RX__BOOL_DEFINE_TEST(severity, expected, condition, msg,           \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__bool_assess_value(RX_PARAM_CONTEXT,                                \
@@ -504,28 +540,18 @@ rx_run(int argc,
                               severity,                                        \
                               msg,                                             \
                               _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__BOOL_DEFINE_TEST(severity, expected, condition, ...)           \
-        rx__bool_assess_value(RX_PARAM_CONTEXT,                                \
-                              !!(condition),                                   \
-                              expected,                                        \
-                              #condition,                                      \
-                              __FILE__,                                        \
-                              __LINE__,                                        \
-                              severity,                                        \
-                              __VA_ARGS__)
 #endif
 
 #define RX_BOOL_REQUIRE_TRUE(condition)                                        \
     RX_BOOL_REQUIRE_TRUE_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_BOOL_REQUIRE_TRUE_MSG(condition, ...)                           \
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
+#else
     #define RX_BOOL_REQUIRE_TRUE_MSG(condition, msg)                           \
         RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, msg,               \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_BOOL_REQUIRE_TRUE_MSG(condition, ...)                           \
-        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
 
 #define RX_BOOL_REQUIRE_TRUE_MSG_1(condition, msg,                             \
@@ -571,13 +597,13 @@ rx_run(int argc,
 #define RX_BOOL_CHECK_TRUE(condition)                                          \
     RX_BOOL_CHECK_TRUE_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_BOOL_CHECK_TRUE_MSG(condition, ...)                             \
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
+#else
     #define RX_BOOL_CHECK_TRUE_MSG(condition, msg)                             \
         RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, msg,            \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_BOOL_CHECK_TRUE_MSG(condition, ...)                             \
-        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__TRUE, condition, __VA_ARGS__)
 #endif
 
 #define RX_BOOL_CHECK_TRUE_MSG_1(condition, msg,                               \
@@ -623,13 +649,13 @@ rx_run(int argc,
 #define RX_BOOL_REQUIRE_FALSE(condition)                                       \
     RX_BOOL_REQUIRE_FALSE_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_BOOL_REQUIRE_FALSE_MSG(condition, ...)                          \
+        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, __VA_ARGS__)
+#else
     #define RX_BOOL_REQUIRE_FALSE_MSG(condition, msg)                          \
         RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, msg,              \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_BOOL_REQUIRE_FALSE_MSG(condition, ...)                          \
-        RX__BOOL_DEFINE_TEST(RX_FATAL, RX__FALSE, condition, __VA_ARGS__)
 #endif
 
 #define RX_BOOL_REQUIRE_FALSE_MSG_1(condition, msg,                            \
@@ -675,13 +701,13 @@ rx_run(int argc,
 #define RX_BOOL_CHECK_FALSE(condition)                                         \
     RX_BOOL_CHECK_FALSE_MSG(condition, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_BOOL_CHECK_FALSE_MSG(condition, ...)                            \
+        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, __VA_ARGS__)
+#else
     #define RX_BOOL_CHECK_FALSE_MSG(condition, msg)                            \
         RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, msg,           \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_BOOL_CHECK_FALSE_MSG(condition, ...)                            \
-        RX__BOOL_DEFINE_TEST(RX_NONFATAL, RX__FALSE, condition, __VA_ARGS__)
 #endif
 
 #define RX_BOOL_CHECK_FALSE_MSG_1(condition, msg,                              \
@@ -727,7 +753,19 @@ rx_run(int argc,
 /* Integer Assertions                                              O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, ...)                     \
+        rx__int_assess_comparison(RX_PARAM_CONTEXT,                            \
+                                  (x1),                                        \
+                                  (x2),                                        \
+                                  op,                                          \
+                                  #x1,                                         \
+                                  #x2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  __VA_ARGS__)
+#else
     #define RX__INT_DEFINE_TEST(severity, op, x1, x2, msg,                     \
                                 _0, _1, _2, _3, _4, _5, _6, _7)                \
         rx__int_assess_comparison(RX_PARAM_CONTEXT,                            \
@@ -741,30 +779,18 @@ rx_run(int argc,
                                   severity,                                    \
                                   msg,                                         \
                                   _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__INT_DEFINE_TEST(severity, op, x1, x2, ...)                     \
-        rx__int_assess_comparison(RX_PARAM_CONTEXT,                            \
-                                  (x1),                                        \
-                                  (x2),                                        \
-                                  op,                                          \
-                                  #x1,                                         \
-                                  #x2,                                         \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  severity,                                    \
-                                  __VA_ARGS__)
 #endif
 
 #define RX_INT_REQUIRE_EQUAL(x1, x2)                                           \
     RX_INT_REQUIRE_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, ...)                              \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, msg)                              \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,               \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, ...)                              \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                                \
@@ -810,13 +836,13 @@ rx_run(int argc,
 #define RX_INT_CHECK_EQUAL(x1, x2)                                             \
     RX_INT_CHECK_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_CHECK_EQUAL_MSG(x1, x2, ...)                                \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_CHECK_EQUAL_MSG(x1, x2, msg)                                \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,            \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_CHECK_EQUAL_MSG(x1, x2, ...)                                \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_CHECK_EQUAL_MSG_1(x1, x2, msg,                                  \
@@ -862,13 +888,13 @@ rx_run(int argc,
 #define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)                                       \
     RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                          \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                          \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                          \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                            \
@@ -914,13 +940,13 @@ rx_run(int argc,
 #define RX_INT_CHECK_NOT_EQUAL(x1, x2)                                         \
     RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                            \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                            \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,        \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                            \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                              \
@@ -966,13 +992,13 @@ rx_run(int argc,
 #define RX_INT_REQUIRE_GREATER(x1, x2)                                         \
     RX_INT_REQUIRE_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, ...)                            \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, msg)                            \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,             \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_REQUIRE_GREATER_MSG(x1, x2, ...)                            \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_REQUIRE_GREATER_MSG_1(x1, x2, msg,                              \
@@ -1018,13 +1044,13 @@ rx_run(int argc,
 #define RX_INT_CHECK_GREATER(x1, x2)                                           \
     RX_INT_CHECK_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_CHECK_GREATER_MSG(x1, x2, ...)                              \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_CHECK_GREATER_MSG(x1, x2, msg)                              \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,          \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_CHECK_GREATER_MSG(x1, x2, ...)                              \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_CHECK_GREATER_MSG_1(x1, x2, msg,                                \
@@ -1070,13 +1096,13 @@ rx_run(int argc,
 #define RX_INT_REQUIRE_LESSER(x1, x2)                                          \
     RX_INT_REQUIRE_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, ...)                             \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, msg)                             \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,              \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_REQUIRE_LESSER_MSG(x1, x2, ...)                             \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_REQUIRE_LESSER_MSG_1(x1, x2, msg,                               \
@@ -1122,13 +1148,13 @@ rx_run(int argc,
 #define RX_INT_CHECK_LESSER(x1, x2)                                            \
     RX_INT_CHECK_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_INT_CHECK_LESSER_MSG(x1, x2, ...)                               \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_INT_CHECK_LESSER_MSG(x1, x2, msg)                               \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,           \
                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_INT_CHECK_LESSER_MSG(x1, x2, ...)                               \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_INT_CHECK_LESSER_MSG_1(x1, x2, msg,                                 \
@@ -1174,14 +1200,14 @@ rx_run(int argc,
 #define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                                \
     RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
-                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                   \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,         \
                             __VA_ARGS__)
+#else
+    #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                   \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,    \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
@@ -1227,14 +1253,14 @@ rx_run(int argc,
 #define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)                                  \
     RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg, \
-                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                     \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,      \
                             __VA_ARGS__)
+#else
+    #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg, \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_INT_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
@@ -1280,14 +1306,14 @@ rx_run(int argc,
 #define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                 \
     RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
-                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                    \
         RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,          \
                             __VA_ARGS__)
+#else
+    #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                    \
+        RX__INT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
@@ -1333,14 +1359,14 @@ rx_run(int argc,
 #define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)                                   \
     RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                      \
-        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,  \
-                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                      \
         RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,       \
                             __VA_ARGS__)
+#else
+    #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                      \
+        RX__INT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,  \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_INT_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                        \
@@ -1386,7 +1412,19 @@ rx_run(int argc,
 /* Unsigned Integer Assertions                                     O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, ...)                    \
+        rx__uint_assess_comparison(RX_PARAM_CONTEXT,                           \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   __VA_ARGS__)
+#else
     #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, msg,                    \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__uint_assess_comparison(RX_PARAM_CONTEXT,                           \
@@ -1400,30 +1438,18 @@ rx_run(int argc,
                                    severity,                                   \
                                    msg,                                        \
                                    _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__UINT_DEFINE_TEST(severity, op, x1, x2, ...)                    \
-        rx__uint_assess_comparison(RX_PARAM_CONTEXT,                           \
-                                   (x1),                                       \
-                                   (x2),                                       \
-                                   op,                                         \
-                                   #x1,                                        \
-                                   #x2,                                        \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   severity,                                   \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_UINT_REQUIRE_EQUAL(x1, x2)                                          \
     RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,              \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                               \
@@ -1469,13 +1495,13 @@ rx_run(int argc,
 #define RX_UINT_CHECK_EQUAL(x1, x2)                                            \
     RX_UINT_CHECK_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, ...)                               \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, msg)                               \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,           \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_CHECK_EQUAL_MSG(x1, x2, ...)                               \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_CHECK_EQUAL_MSG_1(x1, x2, msg,                                 \
@@ -1521,13 +1547,13 @@ rx_run(int argc,
 #define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)                                      \
     RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,          \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                           \
@@ -1573,13 +1599,13 @@ rx_run(int argc,
 #define RX_UINT_CHECK_NOT_EQUAL(x1, x2)                                        \
     RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,       \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                             \
@@ -1625,13 +1651,13 @@ rx_run(int argc,
 #define RX_UINT_REQUIRE_GREATER(x1, x2)                                        \
     RX_UINT_REQUIRE_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,            \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_REQUIRE_GREATER_MSG_1(x1, x2, msg,                             \
@@ -1677,13 +1703,13 @@ rx_run(int argc,
 #define RX_UINT_CHECK_GREATER(x1, x2)                                          \
     RX_UINT_CHECK_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_CHECK_GREATER_MSG(x1, x2, ...)                             \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_CHECK_GREATER_MSG(x1, x2, msg)                             \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,         \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_CHECK_GREATER_MSG(x1, x2, ...)                             \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_CHECK_GREATER_MSG_1(x1, x2, msg,                               \
@@ -1729,13 +1755,13 @@ rx_run(int argc,
 #define RX_UINT_REQUIRE_LESSER(x1, x2)                                         \
     RX_UINT_REQUIRE_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,             \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_REQUIRE_LESSER_MSG_1(x1, x2, msg,                              \
@@ -1781,13 +1807,13 @@ rx_run(int argc,
 #define RX_UINT_CHECK_LESSER(x1, x2)                                           \
     RX_UINT_CHECK_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_UINT_CHECK_LESSER_MSG(x1, x2, ...)                              \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_UINT_CHECK_LESSER_MSG(x1, x2, msg)                              \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,          \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_UINT_CHECK_LESSER_MSG(x1, x2, ...)                              \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_UINT_CHECK_LESSER_MSG_1(x1, x2, msg,                                \
@@ -1833,14 +1859,14 @@ rx_run(int argc,
 #define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
     RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                  \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,        \
                              __VA_ARGS__)
+#else
+    #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                    \
@@ -1886,14 +1912,14 @@ rx_run(int argc,
 #define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
     RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,     \
                              __VA_ARGS__)
+#else
+    #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
@@ -1939,14 +1965,14 @@ rx_run(int argc,
 #define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
     RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                   \
         RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,         \
                              __VA_ARGS__)
+#else
+    #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
+        RX__UINT_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
@@ -1992,14 +2018,14 @@ rx_run(int argc,
 #define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
     RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
         RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,      \
                              __VA_ARGS__)
+#else
+    #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__UINT_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
@@ -2045,7 +2071,19 @@ rx_run(int argc,
 /* Floating-Point Assertions                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, ...)                    \
+        rx__real_assess_comparison(RX_PARAM_CONTEXT,                           \
+                                   (x1),                                       \
+                                   (x2),                                       \
+                                   op,                                         \
+                                   #x1,                                        \
+                                   #x2,                                        \
+                                   __FILE__,                                   \
+                                   __LINE__,                                   \
+                                   severity,                                   \
+                                   __VA_ARGS__)
+#else
     #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, msg,                    \
                                  _0, _1, _2, _3, _4, _5, _6, _7)               \
         rx__real_assess_comparison(RX_PARAM_CONTEXT,                           \
@@ -2059,30 +2097,18 @@ rx_run(int argc,
                                    severity,                                   \
                                    msg,                                        \
                                    _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__REAL_DEFINE_TEST(severity, op, x1, x2, ...)                    \
-        rx__real_assess_comparison(RX_PARAM_CONTEXT,                           \
-                                   (x1),                                       \
-                                   (x2),                                       \
-                                   op,                                         \
-                                   #x1,                                        \
-                                   #x2,                                        \
-                                   __FILE__,                                   \
-                                   __LINE__,                                   \
-                                   severity,                                   \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_EQUAL(x1, x2)                                          \
     RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, msg)                             \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,              \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, ...)                             \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                               \
@@ -2128,13 +2154,13 @@ rx_run(int argc,
 #define RX_REAL_CHECK_EQUAL(x1, x2)                                            \
     RX_REAL_CHECK_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, ...)                               \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, msg)                               \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,           \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_EQUAL_MSG(x1, x2, ...)                              \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_EQUAL_MSG_1(x1, x2, msg,                                 \
@@ -2180,13 +2206,13 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)                                      \
     RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                         \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,          \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                         \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                           \
@@ -2232,13 +2258,13 @@ rx_run(int argc,
 #define RX_REAL_CHECK_NOT_EQUAL(x1, x2)                                        \
     RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                           \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,       \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                           \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                             \
@@ -2284,13 +2310,13 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_GREATER(x1, x2)                                        \
     RX_REAL_REQUIRE_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, msg)                           \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, msg,            \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, ...)                           \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_GREATER_MSG_1(x1, x2, msg,                             \
@@ -2336,13 +2362,13 @@ rx_run(int argc,
 #define RX_REAL_CHECK_GREATER(x1, x2)                                          \
     RX_REAL_CHECK_GREATER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_GREATER_MSG(x1, x2, ...)                             \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_GREATER_MSG(x1, x2, msg)                             \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, msg,         \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_GREATER_MSG(x1, x2, ...)                             \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_GREATER_MSG_1(x1, x2, msg,                               \
@@ -2388,13 +2414,13 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_LESSER(x1, x2)                                         \
     RX_REAL_REQUIRE_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, msg)                            \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, msg,             \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, ...)                            \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_LESSER_MSG_1(x1, x2, msg,                              \
@@ -2440,13 +2466,13 @@ rx_run(int argc,
 #define RX_REAL_CHECK_LESSER(x1, x2)                                           \
     RX_REAL_CHECK_LESSER_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_LESSER_MSG(x1, x2, ...)                              \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_LESSER_MSG(x1, x2, msg)                              \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, msg,          \
                              NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_LESSER_MSG(x1, x2, ...)                              \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER, x1, x2, __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_LESSER_MSG_1(x1, x2, msg,                                \
@@ -2492,14 +2518,14 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)                               \
     RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, ...)                  \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,        \
                              __VA_ARGS__)
+#else
+    #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg)                  \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,   \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                    \
@@ -2545,14 +2571,14 @@ rx_run(int argc,
 #define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)                                 \
     RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, ...)                    \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2,     \
                              __VA_ARGS__)
+#else
+    #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg)                    \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_GREATER_OR_EQUAL, x1, x2, msg,\
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG_1(x1, x2, msg,                      \
@@ -2598,14 +2624,14 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)                                \
     RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
-        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, ...)                   \
         RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,         \
                              __VA_ARGS__)
+#else
+    #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg)                   \
+        RX__REAL_DEFINE_TEST(RX_FATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,    \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                     \
@@ -2651,14 +2677,14 @@ rx_run(int argc,
 #define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)                                  \
     RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
-        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
-                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, ...)                     \
         RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2,      \
                              __VA_ARGS__)
+#else
+    #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg)                     \
+        RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg, \
+                             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG_1(x1, x2, msg,                       \
@@ -2701,7 +2727,20 @@ rx_run(int argc,
     RX__REAL_DEFINE_TEST(RX_NONFATAL, RX__OP_LESSER_OR_EQUAL, x1, x2, msg,     \
                          _0, _1, _2, _3, _4, _5, _6, _7)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, ...)         \
+        rx__real_assess_fuzzy_comparison(RX_PARAM_CONTEXT,                     \
+                                         (x1),                                 \
+                                         (x2),                                 \
+                                         (tol),                                \
+                                         op,                                   \
+                                         #x1,                                  \
+                                         #x2,                                  \
+                                         __FILE__,                             \
+                                         __LINE__,                             \
+                                         severity,                             \
+                                         __VA_ARGS__)
+#else
     #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, msg,         \
                                        _0, _1, _2, _3, _4, _5, _6, _7)         \
         rx__real_assess_fuzzy_comparison(RX_PARAM_CONTEXT,                     \
@@ -2716,33 +2755,20 @@ rx_run(int argc,
                                          severity,                             \
                                          msg,                                  \
                                          _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__REAL_DEFINE_FUZZY_TEST(severity, op, x1, x2, tol, ...)         \
-        rx__real_assess_fuzzy_comparison(RX_PARAM_CONTEXT,                     \
-                                         (x1),                                 \
-                                         (x2),                                 \
-                                         (tol),                                \
-                                         op,                                   \
-                                         #x1,                                  \
-                                         #x2,                                  \
-                                         __FILE__,                             \
-                                         __LINE__,                             \
-                                         severity,                             \
-                                         __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_FUZZY_EQUAL(x1, x2, tol)                               \
     RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                  \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol,        \
+                                   __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, msg)                  \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_EQUAL, x1, x2, tol, msg,                          \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                  \
-        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, tol,        \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG_1(x1, x2, tol, msg,                    \
@@ -2788,15 +2814,15 @@ rx_run(int argc,
 #define RX_REAL_CHECK_FUZZY_EQUAL(x1, x2, tol)                                 \
     RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                    \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol,     \
+                                   __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, msg)                    \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol, msg,                       \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, ...)                    \
-        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, tol,     \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_FUZZY_EQUAL_MSG_1(x1, x2, tol, msg,                      \
@@ -2842,15 +2868,15 @@ rx_run(int argc,
 #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL(x1, x2, tol)                           \
     RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)              \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol,    \
+                                   __VA_ARGS__)
+#else
     #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg)              \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                      \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)              \
-        RX__REAL_DEFINE_FUZZY_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, tol,    \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG_1(x1, x2, tol, msg,                \
@@ -2896,15 +2922,15 @@ rx_run(int argc,
 #define RX_REAL_CHECK_FUZZY_NOT_EQUAL(x1, x2, tol)                             \
     RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)                \
+        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
+                                   __VA_ARGS__)
+#else
     #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg)                \
         RX__REAL_DEFINE_FUZZY_TEST(                                            \
             RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, msg,                   \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, ...)                \
-        RX__REAL_DEFINE_FUZZY_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, tol, \
-                                   __VA_ARGS__)
 #endif
 
 #define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG_1(x1, x2, tol, msg,                  \
@@ -2950,7 +2976,20 @@ rx_run(int argc,
 /* String Assertions                                               O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, ...)           \
+        rx__str_assess_comparison(RX_PARAM_CONTEXT,                            \
+                                  (s1),                                        \
+                                  (s2),                                        \
+                                  str_case,                                    \
+                                  op,                                          \
+                                  #s1,                                         \
+                                  #s2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  __VA_ARGS__)
+#else
     #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, msg,           \
                                 _0, _1, _2, _3, _4, _5, _6, _7)                \
         rx__str_assess_comparison(RX_PARAM_CONTEXT,                            \
@@ -2965,33 +3004,20 @@ rx_run(int argc,
                                   severity,                                    \
                                   msg,                                         \
                                   _0, _1, _2, _3, _4, _5, _6, _7)
-#else
-    #define RX__STR_TEST_DEFINE(severity, op, str_case, s1, s2, ...)           \
-        rx__str_assess_comparison(RX_PARAM_CONTEXT,                            \
-                                  (s1),                                        \
-                                  (s2),                                        \
-                                  str_case,                                    \
-                                  op,                                          \
-                                  #s1,                                         \
-                                  #s2,                                         \
-                                  __FILE__,                                    \
-                                  __LINE__,                                    \
-                                  severity,                                    \
-                                  __VA_ARGS__)
 #endif
 
 #define RX_STR_REQUIRE_EQUAL(s1, s2)                                           \
     RX_STR_REQUIRE_EQUAL_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, ...)                              \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
+#else
     #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, msg)                              \
         RX__STR_TEST_DEFINE(                                                   \
             RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,            \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, ...)                              \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
 #endif
 
 #define RX_STR_REQUIRE_EQUAL_MSG_1(s1, s2, msg,                                \
@@ -3045,15 +3071,15 @@ rx_run(int argc,
 #define RX_STR_CHECK_EQUAL(s1, s2)                                             \
     RX_STR_CHECK_EQUAL_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, ...)                                \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
+#else
     #define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg)                               \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,         \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_STR_CHECK_EQUAL_MSG(s1, s2, ...)                                \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_OBEY, s1, s2, __VA_ARGS__)
 #endif
 
 #define RX_STR_CHECK_EQUAL_MSG_1(s1, s2, msg,                                  \
@@ -3107,16 +3133,16 @@ rx_run(int argc,
 #define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)                                       \
     RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg)                          \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
-            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, ...)                          \
         RX__STR_TEST_DEFINE(                                                   \
             RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2,             \
             __VA_ARGS__)
+#else
+    #define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg)                          \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,        \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_STR_REQUIRE_NOT_EQUAL_MSG_1(s1, s2, msg,                            \
@@ -3170,16 +3196,16 @@ rx_run(int argc,
 #define RX_STR_CHECK_NOT_EQUAL(s1, s2)                                         \
     RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, msg)                            \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
-            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, ...)                            \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2,          \
             __VA_ARGS__)
+#else
+    #define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, msg)                            \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_OBEY, s1, s2, msg,     \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_STR_CHECK_NOT_EQUAL_MSG_1(s1, s2, msg,                              \
@@ -3233,15 +3259,15 @@ rx_run(int argc,
 #define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)                                   \
     RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, ...)                      \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
+#else
     #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, msg)                      \
         RX__STR_TEST_DEFINE(                                                   \
             RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,          \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, ...)                      \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
 #endif
 
 #define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                        \
@@ -3295,15 +3321,15 @@ rx_run(int argc,
 #define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)                                     \
     RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, ...)                        \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
+#else
     #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, msg)                        \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,       \
             NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
-    #define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, ...)                        \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_EQUAL, RX__STR_CASE_IGNORE, s1, s2, __VA_ARGS__)
 #endif
 
 #define RX_STR_CHECK_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                          \
@@ -3357,16 +3383,16 @@ rx_run(int argc,
 #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)                               \
     RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                  \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
-            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, ...)                  \
         RX__STR_TEST_DEFINE(                                                   \
             RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2,           \
             __VA_ARGS__)
+#else
+    #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                  \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_FATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,      \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                    \
@@ -3420,16 +3446,16 @@ rx_run(int argc,
 #define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)                                 \
     RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, NULL)
 
-#if RX__C89_COMPAT
-    #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                    \
-        RX__STR_TEST_DEFINE(                                                   \
-            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
-            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
-#else
+#if RX__HAS_VARIADIC_MACROS
     #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, ...)                    \
         RX__STR_TEST_DEFINE(                                                   \
             RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2,        \
             __VA_ARGS__)
+#else
+    #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg)                    \
+        RX__STR_TEST_DEFINE(                                                   \
+            RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
 #endif
 
 #define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG_1(s1, s2, msg,                      \
@@ -3595,7 +3621,7 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
         RX__EXPAND(RX__CONCAT(RX__STRUCT_UPDATE_, arg_count) args)             \
     }
 
-#if !RX__C89_COMPAT
+#if RX__HAS_VARIADIC_MACROS
     #define RX__ARG(                                                           \
         _0, _1, _2, _3, _4, _5, _6, _7,                                        \
         _8, ...) _8
@@ -4637,7 +4663,9 @@ rx__str_initialize_va_list(size_t *count,
     if (s == NULL) {
 #if defined(RX__PLATFORM_WINDOWS)
         size = _vscprintf(fmt, args);
-#elif RX__C89_COMPAT
+#elif RX__HAS_NPRINTF
+        size = vsnprintf(NULL, 0, fmt, args);
+#else
         {
             FILE *file;
 
@@ -4649,8 +4677,6 @@ rx__str_initialize_va_list(size_t *count,
 
             size = vfprintf(file, fmt, args);
         }
-#else
-        size = vsnprintf(NULL, 0, fmt, args);
 #endif
 
         if (size < 0) {
