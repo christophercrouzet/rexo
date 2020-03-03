@@ -4476,23 +4476,6 @@ struct rx__test_case_desc {
 /* Implementation: Operators                                       O-(''Q)
    -------------------------------------------------------------------------- */
 
-#if defined(__GNUC__)
-    #define RX__REAL_OP_EQUAL(out, a, b)                                       \
-        _Pragma("GCC diagnostic push")                                         \
-        _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
-        (out) = (a) == (b);                                                    \
-        _Pragma("GCC diagnostic pop")
-
-    #define RX__REAL_OP_NOT_EQUAL(out, a, b)                                   \
-        _Pragma("GCC diagnostic push")                                         \
-        _Pragma("GCC diagnostic ignored \"-Wfloat-equal\"")                    \
-        (out) = (a) != (b);                                                    \
-        _Pragma("GCC diagnostic pop")
-#else
-    #define RX__REAL_OP_EQUAL(out, a, b) (out) = (a) == (b);
-    #define RX__REAL_OP_NOT_EQUAL(out, a, b) (out) = (a) != (b);
-#endif
-
 enum rx__op {
     RX__OP_EQUAL = 0,
     RX__OP_NOT_EQUAL = 1,
@@ -5266,12 +5249,19 @@ rx__real_assess_comparison(struct rx_context *context,
     RX_ASSERT(file != NULL);
 
     switch (op) {
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wfloat-equal"
+#endif
         case RX__OP_EQUAL:
-            RX__REAL_OP_EQUAL(result, x1, x2);
+            result = x1 == x2;
             break;
         case RX__OP_NOT_EQUAL:
-            RX__REAL_OP_NOT_EQUAL(result, x1, x2);
+            result = x1 != x2;
             break;
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
         case RX__OP_GREATER:
             result = x1 > x2;
             break;
