@@ -4036,9 +4036,9 @@ rx__get_real_time(uint64_t *time)
        the `timespec` format.
     */
     {
-        static double time_to_nano;
+        static uint64_t time_to_nano;
 
-        if (time_to_nano == 0.0) {
+        if (time_to_nano == 0) {
             mach_timebase_info_data_t info;
 
             if (mach_timebase_info(&info) != KERN_SUCCESS) {
@@ -4046,7 +4046,7 @@ rx__get_real_time(uint64_t *time)
                 return RX_ERROR;
             }
 
-            time_to_nano = (double)info.numer / info.denom;
+            time_to_nano = info.numer / info.denom;
         }
 
         *time = mach_absolute_time() * time_to_nano;
