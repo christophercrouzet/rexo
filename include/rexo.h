@@ -4301,15 +4301,27 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
     #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
 #else
-    extern const struct rx__test_suite_desc * const __start_rxsuite;
-    extern const struct rx__test_suite_desc * const __stop_rxsuite;
+    #if defined(RX__PLATFORM_DARWIN)
+        extern const struct rx__test_suite_desc * const __start_rxsuite        \
+            __asm("section$start$__DATA$rxsuite");
+        extern const struct rx__test_suite_desc * const __stop_rxsuite         \
+            __asm("section$end$__DATA$rxsuite");
 
-    RX__FORCE_LINKING(rx__dummy_suite)
-    __attribute__((section("rxsuite")))
+        #define RX__TEST_SUITE_SECTION                                         \
+            __attribute__((used,section("__DATA,rxsuite")))
+    #else
+        extern const struct rx__test_suite_desc * const __start_rxsuite;
+        extern const struct rx__test_suite_desc * const __stop_rxsuite;
+
+        #define RX__TEST_SUITE_SECTION                                         \
+            __attribute__((used,section("rxsuite")))
+    #endif
+
+    RX__TEST_SUITE_SECTION
     static const struct rx__test_suite_desc * const rx__dummy_suite = NULL;
 
     #define RX__TEST_SUITE_REGISTER(name)                                      \
-        __attribute__((section("rxsuite")))                                    \
+        RX__TEST_SUITE_SECTION                                                 \
         const struct rx__test_suite_desc * const                               \
         RX__TEST_SUITE_DESC_PTR_GET_ID(name)                                   \
             = &RX__TEST_SUITE_DESC_GET_ID(name)
@@ -4340,15 +4352,27 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
     #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
     #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
 #else
-    extern const struct rx__test_case_desc * const __start_rxcase;
-    extern const struct rx__test_case_desc * const __stop_rxcase;
+    #if defined(RX__PLATFORM_DARWIN)
+        extern const struct rx__test_case_desc * const __start_rxcase          \
+            __asm("section$start$__DATA$rxcase");
+        extern const struct rx__test_case_desc * const __stop_rxcase           \
+            __asm("section$end$__DATA$rxcase");
 
-    RX__FORCE_LINKING(rx__dummy_case)
-    __attribute__((section("rxcase")))
+        #define RX__TEST_CASE_SECTION                                          \
+            __attribute__((used,section("__DATA,rxcase")))
+    #else
+        extern const struct rx__test_case_desc * const __start_rxcase;
+        extern const struct rx__test_case_desc * const __stop_rxcase;
+
+        #define RX__TEST_CASE_SECTION                                          \
+            __attribute__((used,section("rxcase")))
+    #endif
+
+    RX__TEST_CASE_SECTION
     static const struct rx__test_case_desc * const rx__dummy_case = NULL;
 
     #define RX__TEST_CASE_REGISTER(suite_name, name)                           \
-        __attribute__((section("rxcase")))                                     \
+        RX__TEST_CASE_SECTION                                                  \
         const struct rx__test_case_desc * const                                \
         RX__TEST_CASE_DESC_PTR_GET_ID(suite_name, name)                        \
             = &RX__TEST_CASE_DESC_GET_ID(suite_name, name)
