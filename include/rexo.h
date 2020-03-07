@@ -232,6 +232,7 @@ rx_run(int argc,
 
 #if defined(RX_DISABLE_NPRINTF)                                                \
     || (!defined(RX_ENABLE_NPRINTF)                                            \
+        && !defined(_MSC_VER)                                                  \
         && ((RX__LANG == RX__LANG_C && RX__LANG_VERSION < 199901L)             \
             || (RX__LANG == RX__LANG_CPP && RX__LANG_VERSION < 201103L)))
     #define RX__HAS_NPRINTF 0
@@ -241,6 +242,7 @@ rx_run(int argc,
 
 #if defined(RX_DISABLE_VARIADIC_MACROS)                                        \
     || (!defined(RX_ENABLE_VARIADIC_MACROS)                                    \
+        && !defined(_MSC_VER)                                                  \
         && ((RX__LANG == RX__LANG_C && RX__LANG_VERSION < 199901L)             \
             || (RX__LANG == RX__LANG_CPP && RX__LANG_VERSION < 201103L)))
     #define RX__HAS_VARIADIC_MACROS 0
