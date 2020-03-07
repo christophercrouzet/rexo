@@ -221,15 +221,13 @@ rx_run(int argc,
 #if defined(__cplusplus)
     #define RX__LANG RX__LANG_CPP
     #define RX__LANG_VERSION __cplusplus
-#elif defined(__STDC__)
+#else
     #define RX__LANG RX__LANG_C
     #if defined(__STDC_VERSION__)
         #define RX__LANG_VERSION __STDC_VERSION__
     #else
         #define RX__LANG_VERSION 0L
     #endif
-#else
-    #error Unrecognized language.
 #endif
 
 #if defined(RX_DISABLE_NPRINTF)                                                \
