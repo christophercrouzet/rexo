@@ -1,3 +1,5 @@
+![Run Tests][badge-tests]
+
 Rexo
 ====
 
@@ -109,5 +111,6 @@ main(int argc, const char **argv)
 [Unlicense][unlicense].
 
 
+[badge-tests]: https://github.com/christophercrouzet/rexo/workflows/Run%20Tests/badge.svg
 [unlicense]: https://unlicense.org
 [xunit]: https://en.wikipedia.org/wiki/XUnit
