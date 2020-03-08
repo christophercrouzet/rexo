@@ -78,89 +78,93 @@ endmacro()
 
 enable_testing()
 
-rx_add_test(
-    NAME c89-assertion-coverage
-    FILES tests/c89/assertion-coverage.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+if(!MSVC)
+    rx_add_test(
+        NAME c89-assertion-coverage
+        FILES tests/c89/assertion-coverage.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
 
-rx_add_test(
-    NAME c89-assertion-failure-messages
-    FILES tests/c89/assertion-failure-messages.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+    rx_add_test(
+        NAME c89-assertion-failure-messages
+        FILES tests/c89/assertion-failure-messages.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
 
-rx_add_test(
-    NAME c89-config-inherit
-    FILES tests/c89/config-inherit.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+    rx_add_test(
+        NAME c89-config-inherit
+        FILES tests/c89/config-inherit.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
 
-rx_add_test(
-    NAME c89-fixture
-    FILES tests/c89/fixture.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+    rx_add_test(
+        NAME c89-fixture
+        FILES tests/c89/fixture.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
 
-rx_add_test(
-    NAME c89-fixture-void
-    FILES tests/c89/fixture-void.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+    rx_add_test(
+        NAME c89-fixture-void
+        FILES tests/c89/fixture-void.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
 
-rx_add_test(
-    NAME c89-minimal
-    FILES tests/c89/minimal.c
-    DEPENDS rexo
-    PROPERTIES
-        C_STANDARD 90)
+    rx_add_test(
+        NAME c89-minimal
+        FILES tests/c89/minimal.c
+        DEPENDS rexo
+        PROPERTIES
+            C_STANDARD 90)
+endif()
 
-rx_add_test(
-    NAME cpp98-assertion-coverage
-    FILES tests/cpp98/assertion-coverage.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+if(!MSVC)
+    rx_add_test(
+        NAME cpp98-assertion-coverage
+        FILES tests/cpp98/assertion-coverage.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-rx_add_test(
-    NAME cpp98-assertion-failure-messages
-    FILES tests/cpp98/assertion-failure-messages.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-assertion-failure-messages
+        FILES tests/cpp98/assertion-failure-messages.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-rx_add_test(
-    NAME cpp98-config-inherit
-    FILES tests/cpp98/config-inherit.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-config-inherit
+        FILES tests/cpp98/config-inherit.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-rx_add_test(
-    NAME cpp98-fixture
-    FILES tests/cpp98/fixture.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-fixture
+        FILES tests/cpp98/fixture.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-rx_add_test(
-    NAME cpp98-fixture-void
-    FILES tests/cpp98/fixture-void.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-fixture-void
+        FILES tests/cpp98/fixture-void.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-rx_add_test(
-    NAME cpp98-minimal
-    FILES tests/cpp98/minimal.cpp
-    DEPENDS rexo
-    PROPERTIES
-        CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-minimal
+        FILES tests/cpp98/minimal.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
+endif()
 
 rx_add_test(
     NAME assertion-coverage
