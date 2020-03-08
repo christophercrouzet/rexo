@@ -11,12 +11,15 @@ jobs:
     steps:
       - name: Check out
         uses: actions/checkout@v2
+
       - name: Set up
         uses: peaceiris/actions-mdbook@v1
         with:
           mdbook-version: 'latest'
+
       - name: Build
         run: mdbook build ./doc
+
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v3
         with:
