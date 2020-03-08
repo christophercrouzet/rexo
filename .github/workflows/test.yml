@@ -6,29 +6,88 @@ jobs:
   main:
     strategy:
       matrix:
-        platform: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.platform }}
+        name: [
+          Ubuntu 18.04 | Clang 9,
+          Ubuntu 18.04 | Clang 8,
+          Ubuntu 18.04 | GCC 9,
+          Ubuntu 18.04 | GCC 8,
+          Ubuntu 18.04 | GCC 7,
+          macOS Catalina 10.15 | Clang,
+          macOS Catalina 10.15 | GCC,
+          Windows Server 2019,
+        ]
+        include:
+          - name: Ubuntu 18.04 | Clang 9
+            os: ubuntu-18.04
+            cc: clang-9
+            cxx: clang++-9
+
+          - name: Ubuntu 18.04 | Clang 8
+            os: ubuntu-18.04
+            cc: clang-8
+            cxx: clang++-8
+
+          - name: Ubuntu 18.04 | GCC 9
+            os: ubuntu-18.04
+            cc: gcc-9
+            cxx: g++-9
+
+          - name: Ubuntu 18.04 | GCC 8
+            os: ubuntu-18.04
+            cc: gcc-8
+            cxx: g++-8
+
+          - name: Ubuntu 18.04 | GCC 7
+            os: ubuntu-18.04
+            cc: gcc-7
+            cxx: g++-7
+
+          - name: macOS Catalina 10.15 | Clang
+            os: macos-10.15
+            cc: clang
+            cxx: clang++
+
+          - name: macOS Catalina 10.15 | GCC
+            os: macos-10.15
+            cc: gcc
+            cxx: g++
+
+          - name: Windows Server 2019
+            os: windows-2019
+            cc: cl
+            cxx: cl
+    runs-on: ${{ matrix.os }}
     steps:
       - name: Check out
         uses: actions/checkout@v2
+
       - name: Create build directory
         run: cmake -E make_directory ${{ runner.workspace }}/build
+
       - name: Configure CMake
         shell: bash
         working-directory: ${{ runner.workspace }}/build
-        run: cmake $GITHUB_WORKSPACE
+        run: |
+          cmake                                                                \
+            -D CMAKE_C_COMPILER=${{ matrix.cc }}                               \
+            -D CMAKE_CXX_COMPILER=${{ matrix.cxx }}                            \
+            $GITHUB_WORKSPACE
+
       - name: Build (debug)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
         run: cmake --build . --config Debug
+
       - name: Test (debug)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
         run: ctest -C Debug
+
       - name: Build (release)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
         run: cmake --build . --config Release
+
       - name: Test (release)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
