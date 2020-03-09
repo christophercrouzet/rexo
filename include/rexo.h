@@ -3643,18 +3643,6 @@ typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
              0,))
 #endif
 
-#if defined(_MSC_VER)
-    #if defined(_WIN64)
-        #define RX__FORCE_LINKING(id)                                          \
-            __pragma(comment(linker, "/include:" RX__STRINGIFY(id)))
-    #else
-        #define RX__FORCE_LINKING(id)                                          \
-            __pragma(comment(linker, "/include:_" RX__STRINGIFY(id)))
-    #endif
-#else
-    #define RX__FORCE_LINKING(id) __attribute__((used))
-#endif
-
 #define RX__FIXTURE_DESC_GET_ID(id)                                            \
     rx__fixture_desc_##id
 #define RX__FIXTURE_GET_UPDATE_FN_ID(id)                                       \
