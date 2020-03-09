@@ -4817,6 +4817,8 @@ rx__test_cases_run(size_t test_case_count,
 
     RX_ASSERT(test_cases != NULL);
 
+    status = RX_SUCCESS;
+
     for (i = 0; i < test_case_count; ++i) {
         const struct rx_test_case *test_case;
 
