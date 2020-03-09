@@ -1,7 +1,7 @@
 Rexo
 ====
 
-Rexo is a neat unit testing framework for C and C++.
+Rexo is a neat single-file cross-platform unit testing framework for C/C++.
 
 It offers the same [xUnit][xunit]-like structure than most other unit testing
 frameworks but aims at providing a _truly_ polished API.
@@ -15,6 +15,7 @@ frameworks but aims at providing a _truly_ polished API.
 * **convenient**: automatic registration of tests.
 * **granular**: high level or low level API? You choose.
 * **portable**: compatible with C89 (ANSI C) and C++.
+* **cross-platform**: tested on Linux, macOS, and Windows.
 * **simple**: straightforward implementation—KISS all the things!
 * **cascading configuration**: configure a whole test suite at once and/or tweak
   specific options for each test case.
