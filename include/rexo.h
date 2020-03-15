@@ -163,6 +163,7 @@ struct rx_failure {
 struct rx_summary {
     const struct rx_test_case *test_case;
     int skipped;
+    const char *error;
     rx_size assessed_count;
     rx_size failure_count;
     struct rx_failure *failures;
@@ -5602,6 +5603,7 @@ rx_handle_test_result(struct rx_context *context,
     status
         = rx__test_failure_array_extend_back(&failure, &summary->failures, 1);
     if (status != RX_SUCCESS) {
+        summary->error = "failed to extend the test failure array\0";
         RX__LOG_ERROR_2("failed to extend the test failure array for the test "
                         "located at %s:%d\n",
                         file,
@@ -5803,6 +5805,7 @@ rx_test_case_run(struct rx_summary *summary,
     if (test_case->config.fixture.size > 0) {
         data = RX_MALLOC(test_case->config.fixture.size);
         if (data == NULL) {
+            summary->error = "failed to allocate the data\0";
             RX__LOG_DEBUG_2("failed to allocate the data"
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
@@ -5816,6 +5819,7 @@ rx_test_case_run(struct rx_summary *summary,
     if (test_case->config.fixture.config.set_up != NULL) {
         status = test_case->config.fixture.config.set_up(&context, data);
         if (status != RX_SUCCESS) {
+            summary->error = "failed to set-up the fixture\0";
             RX__LOG_ERROR_2("failed to set-up the fixture "
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
