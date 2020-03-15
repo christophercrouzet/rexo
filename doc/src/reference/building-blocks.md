@@ -330,10 +330,12 @@ Report from running a test case.
 ```c
 struct rx_summary {
     const struct rx_test_case *test_case;
-    size_t test_count;
-    size_t failure_count;
+    int skipped;
+    const char *error;
+    rx_size assessed_count;
+    rx_size failure_count;
     struct rx_failure *failures;
-    uint64_t elapsed;
+    rx_uint64 elapsed;
 }
 ```
 
