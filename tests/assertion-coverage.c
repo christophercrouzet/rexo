@@ -254,7 +254,7 @@ main(int argc, const char **argv)
     nonfatal_failure_count = 0;
     fatal_failure_count = 0;
 
-    rx_test_cases_enumerate(&test_case_count, NULL);
+    rx_enumerate_test_cases(&test_case_count, NULL);
     test_cases
         = (struct rx_test_case *)malloc(sizeof *test_cases * test_case_count);
     if (test_cases == NULL) {
@@ -262,7 +262,7 @@ main(int argc, const char **argv)
         return 1;
     }
 
-    rx_test_cases_enumerate(&test_case_count, test_cases);
+    rx_enumerate_test_cases(&test_case_count, test_cases);
     for (i = 0; i < test_case_count; ++i) {
         size_t j;
         const struct rx_test_case *test_case;

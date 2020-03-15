@@ -201,7 +201,7 @@ rx_test_case_run(struct rx_summary *summary,
                  const struct rx_test_case *test_case);
 
 RX__STORAGE void
-rx_test_cases_enumerate(rx_size *test_case_count,
+rx_enumerate_test_cases(rx_size *test_case_count,
                         struct rx_test_case *test_cases);
 
 RX__STORAGE enum rx_status
@@ -4876,7 +4876,7 @@ rx__test_cases_run_registered(void)
     rx_size test_case_count;
     struct rx_test_case *test_cases;
 
-    rx_test_cases_enumerate(&test_case_count, NULL);
+    rx_enumerate_test_cases(&test_case_count, NULL);
     if (test_case_count == 0) {
         return rx__test_cases_run(0, NULL);
     }
@@ -4888,7 +4888,7 @@ rx__test_cases_run_registered(void)
         return RX_ERROR_ALLOCATION;
     }
 
-    rx_test_cases_enumerate(&test_case_count, test_cases);
+    rx_enumerate_test_cases(&test_case_count, test_cases);
     out = rx__test_cases_run(test_case_count, test_cases);
     RX_FREE(test_cases);
     return out;
@@ -5858,7 +5858,7 @@ data_cleanup:
 }
 
 RX__MAYBE_UNUSED RX__STORAGE void
-rx_test_cases_enumerate(rx_size *test_case_count,
+rx_enumerate_test_cases(rx_size *test_case_count,
                         struct rx_test_case *test_cases)
 {
     size_t i;
