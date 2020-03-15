@@ -163,7 +163,7 @@ struct rx_failure {
 struct rx_summary {
     const struct rx_test_case *test_case;
     int skipped;
-    rx_size test_count;
+    rx_size assessed_count;
     rx_size failure_count;
     struct rx_failure *failures;
     rx_uint64 elapsed;
@@ -5584,7 +5584,7 @@ rx_handle_test_result(struct rx_context *context,
 
     summary = context->summary;
 
-    ++summary->test_count;
+    ++summary->assessed_count;
 
     if (result) {
         return RX_SUCCESS;
