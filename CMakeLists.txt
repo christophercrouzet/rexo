@@ -78,7 +78,7 @@ endmacro()
 
 enable_testing()
 
-if(!MSVC)
+if(NOT MSVC)
     rx_add_test(
         NAME c89-assertion-coverage
         FILES tests/c89/assertion-coverage.c
@@ -122,7 +122,7 @@ if(!MSVC)
             C_STANDARD 90)
 endif()
 
-if(!MSVC)
+if(NOT MSVC)
     rx_add_test(
         NAME cpp98-assertion-coverage
         FILES tests/cpp98/assertion-coverage.cpp
