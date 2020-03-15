@@ -162,6 +162,7 @@ struct rx_failure {
 
 struct rx_summary {
     const struct rx_test_case *test_case;
+    int skipped;
     rx_size test_count;
     rx_size failure_count;
     struct rx_failure *failures;
@@ -5783,6 +5784,7 @@ rx_test_case_run(struct rx_summary *summary,
     RX_ASSERT(test_case->run != NULL);
 
     if (test_case->config.skip) {
+        summary->skipped = 1;
         return RX_SUCCESS;
     }
 
