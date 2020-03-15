@@ -5864,16 +5864,14 @@ rx_enumerate_test_cases(rx_size *test_case_count,
     size_t i;
     const struct rx__test_case_desc * const *c_it;
 
-    if (test_cases == NULL) {
-        RX_ASSERT(test_case_count != NULL);
+    RX_ASSERT(test_case_count != NULL);
 
+    if (test_cases == NULL) {
         *test_case_count = 0;
         for (c_it = RX__TEST_CASE_SECTION_BEGIN;
              c_it != RX__TEST_CASE_SECTION_END;
              ++c_it) {
-            if (*c_it != NULL) {
-                ++(*test_case_count);
-            }
+            *test_case_count += (rx_size)(*c_it != NULL);
         }
 
         return;
@@ -5939,10 +5937,15 @@ rx_enumerate_test_cases(rx_size *test_case_count,
         ++i;
     }
 
+    RX_ASSERT(i == *test_case_count);
+
     /* Objects that are defined in a custom memory section can only be retrieved
        in an undefined order, so these need to be manually sorted afterwards
        in a sensible way. */
-    qsort(test_cases, i, sizeof *test_cases, rx__compare_test_cases);
+    qsort(test_cases,
+          *test_case_count,
+          sizeof *test_cases,
+          rx__compare_test_cases);
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
