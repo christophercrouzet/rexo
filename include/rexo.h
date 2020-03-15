@@ -5611,9 +5611,10 @@ rx_handle_test_result(struct rx_context *context,
                             "located at %s:%d\n",
                             file,
                             line);
+            failure->file = NULL;
+        } else {
+            failure->file = buf;
         }
-
-        failure->file = buf;
     }
 
     failure->line = line;
