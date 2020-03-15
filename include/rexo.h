@@ -5666,9 +5666,7 @@ rx_summary_initialize(struct rx_summary *summary,
     RX_ASSERT(summary != NULL);
     RX_ASSERT(test_case != NULL);
 
-    summary->test_case = test_case;
-    summary->test_count = 0;
-    summary->elapsed = 0;
+    memset(summary, 0, sizeof *summary);
 
     status = rx__test_failure_array_create(&summary->failures, 0);
     if (status != RX_SUCCESS) {
@@ -5679,7 +5677,7 @@ rx_summary_initialize(struct rx_summary *summary,
         return status;
     }
 
-    summary->failure_count = 0;
+    summary->test_case = test_case;
     return RX_SUCCESS;
 }
 
