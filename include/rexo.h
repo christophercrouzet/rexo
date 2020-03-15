@@ -4809,7 +4809,7 @@ rx__test_cases_run(size_t test_case_count,
 {
     size_t i;
     enum rx_status status;
-    struct rx_summary summary;
+    struct rx_summary *summaries;
 
     if (test_case_count == 0) {
         RX__LOG_INFO("nothing to run\n");
@@ -4818,44 +4818,53 @@ rx__test_cases_run(size_t test_case_count,
 
     RX_ASSERT(test_cases != NULL);
 
+    summaries = (struct rx_summary *)RX_MALLOC(sizeof *summaries
+                                               * test_case_count);
+    if (summaries == NULL) {
+        RX__LOG_DEBUG("failed to allocate the summaries\n");
+        return RX_ERROR_ALLOCATION;
+    }
+
     status = RX_SUCCESS;
 
-    for (i = 0; i < test_case_count; ++i) {
+    for (i = 0; i < test_case_count;) {
         const struct rx_test_case *test_case;
+        struct rx_summary *summary;
 
         test_case = &test_cases[i];
+        summary = &summaries[i];
 
         RX_ASSERT(test_case->suite_name != NULL);
         RX_ASSERT(test_case->name != NULL);
 
-        status = rx_summary_initialize(&summary, test_case);
+        status = rx_summary_initialize(summary, test_case);
         if (status != RX_SUCCESS) {
             RX__LOG_ERROR_2("failed to initialize the summary "
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
                             test_case->name);
-            return status;
+            goto summaries_cleanup;
         }
 
-        status = rx_test_case_run(&summary, test_case);
+        ++i;
+
+        status = rx_test_case_run(summary, test_case);
         if (status != RX_SUCCESS) {
             RX__LOG_ERROR_2("failed to run a test case "
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
                             test_case->name);
-            goto summary_undo;
+            goto summaries_cleanup;
         }
 
-        rx_summary_print(&summary);
-        rx_summary_terminate(&summary);
+        rx_summary_print(summary);
     }
 
-    goto exit;
+summaries_cleanup:
+    while (i-- > 0) {
+        rx_summary_terminate(&summaries[i]);
+    }
 
-summary_undo:
-    rx_summary_terminate(&summary);
-
-exit:
     return status;
 }
 
