@@ -243,14 +243,14 @@ main(int argc, const char **argv)
     size_t i;
     rx_size test_case_count;
     struct rx_test_case *test_cases;
-    size_t test_count;
+    size_t assessed_count;
     size_t nonfatal_failure_count;
     size_t fatal_failure_count;
 
     (void)(argc);
     (void)(argv);
 
-    test_count = 0;
+    assessed_count = 0;
     nonfatal_failure_count = 0;
     fatal_failure_count = 0;
 
@@ -281,7 +281,7 @@ main(int argc, const char **argv)
             return 1;
         }
 
-        test_count += summary.test_count;
+        assessed_count += summary.assessed_count;
         for (j = 0; j < summary.failure_count; ++j) {
             switch (summary.failures[j].severity) {
                 case RX_NONFATAL:
@@ -300,7 +300,7 @@ main(int argc, const char **argv)
 
     free(test_cases);
 
-    ASSERT(test_count == 108);
+    ASSERT(assessed_count == 108);
     ASSERT(nonfatal_failure_count == 27);
     ASSERT(fatal_failure_count == 27);
     return 0;
