@@ -4003,7 +4003,7 @@ rx__get_real_time(uint64_t *time)
             LARGE_INTEGER frequency;
 
             if (!QueryPerformanceFrequency(&frequency)) {
-                RX__LOG_ERROR("failed to retrieve the timer's frequency\n");
+                RX__LOG_DEBUG("failed to retrieve the timer's frequency\n");
                 return RX_ERROR;
             }
 
@@ -4011,7 +4011,7 @@ rx__get_real_time(uint64_t *time)
         }
 
         if (!QueryPerformanceCounter(&counter)) {
-            RX__LOG_ERROR("failed to retrieve the current time\n");
+            RX__LOG_DEBUG("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
@@ -4032,7 +4032,7 @@ rx__get_real_time(uint64_t *time)
             mach_timebase_info_data_t info;
 
             if (mach_timebase_info(&info) != KERN_SUCCESS) {
-                RX__LOG_ERROR("failed to retrieve the current time\n");
+                RX__LOG_DEBUG("failed to retrieve the current time\n");
                 return RX_ERROR;
             }
 
@@ -4048,7 +4048,7 @@ rx__get_real_time(uint64_t *time)
         struct timespec t;
 
         if (clock_gettime(RX__CLOCK_ID, &t) != 0) {
-            RX__LOG_ERROR("failed to retrieve the current time\n");
+            RX__LOG_DEBUG("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
@@ -4060,7 +4060,7 @@ rx__get_real_time(uint64_t *time)
         struct timeval t;
 
         if (gettimeofday(&t, NULL) != 0) {
-            RX__LOG_ERROR("failed to retrieve the current time\n");
+            RX__LOG_DEBUG("failed to retrieve the current time\n");
             return RX_ERROR;
         }
 
@@ -4070,7 +4070,7 @@ rx__get_real_time(uint64_t *time)
     }
     #endif
 #else
-    RX__LOG_ERROR("platform not supported\n");
+    RX__LOG_DEBUG("platform not supported\n");
     return RX_ERROR;
 #endif
 }
@@ -4884,7 +4884,7 @@ rx__test_cases_run_registered(void)
     test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
                                                   * test_case_count);
     if (test_cases == NULL) {
-        RX__LOG_DEBUG("failed to allocate the test cases\n");
+        RX__LOG_ERROR("failed to allocate the test cases\n");
         return RX_ERROR_ALLOCATION;
     }
 
@@ -5806,7 +5806,7 @@ rx_test_case_run(struct rx_summary *summary,
         data = RX_MALLOC(test_case->config.fixture.size);
         if (data == NULL) {
             summary->error = "failed to allocate the data\0";
-            RX__LOG_DEBUG_2("failed to allocate the data"
+            RX__LOG_ERROR_2("failed to allocate the data"
                             "(suite: \"%s\", case: \"%s\")\n",
                             test_case->suite_name,
                             test_case->name);
