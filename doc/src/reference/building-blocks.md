@@ -434,13 +434,13 @@ The `run` function set for the given test case is being executed with
 the results are being stored in the `summary` argument.
 
 
-### `rx_test_cases_enumerate`
+### `rx_enumerate_test_cases`
 
 Enumerates the test cases automatically registered.
 
 ```c
 void
-rx_test_cases_enumerate(size_t *test_case_count,
+rx_enumerate_test_cases(size_t *test_case_count,
                         struct rx_test_case *test_cases)
 ```
 
