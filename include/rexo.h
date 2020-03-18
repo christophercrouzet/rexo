@@ -205,10 +205,10 @@ rx_enumerate_test_cases(rx_size *test_case_count,
                         struct rx_test_case *test_cases);
 
 RX__STORAGE enum rx_status
-rx_run(int argc,
-       const char **argv,
-       rx_size test_case_count,
-       const struct rx_test_case *test_cases);
+rx_run(rx_size test_case_count,
+       const struct rx_test_case *test_cases,
+       int argc,
+       const char **argv);
 
 #if defined(__cplusplus)
 }
@@ -5949,10 +5949,10 @@ rx_enumerate_test_cases(rx_size *test_case_count,
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
-rx_run(int argc,
-       const char **argv,
-       rx_size test_case_count,
-       const struct rx_test_case *test_cases)
+rx_run(rx_size test_case_count,
+       const struct rx_test_case *test_cases,
+       int argc,
+       const char **argv)
 {
     RX__UNUSED(argc);
     RX__UNUSED(argv);

@@ -10,10 +10,10 @@ Runs the given tests.
 
 ```c
 enum rx_status
-rx_run(int argc,
-       const char **argv,
-       size_t test_case_count,
-       const struct rx_test_case *test_cases)
+rx_run(size_t test_case_count,
+       const struct rx_test_case *test_cases,
+       int argc,
+       const char **argv)
 ```
 
 The `rx_run` function can be seen as composing all the orthogonal calls into

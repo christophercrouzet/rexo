@@ -32,7 +32,7 @@ int
 main(int argc, const char **argv)
 {
     /* Execute the main function that runs the test cases found. */
-    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
+    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -75,7 +75,7 @@ RX_TEST_CASE(foo, baz, .skip = 0)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
+    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -148,7 +148,7 @@ RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
+    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -203,7 +203,7 @@ RX_TEST_CASE(foo, bar)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(argc, argv, 0, NULL) == RX_SUCCESS ? 0 : 1;
+    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -284,7 +284,7 @@ int
 main(int argc, const char **argv)
 {
     /* Explicitly pass the test cases to be run. */
-    return rx_run(argc, argv, test_case_count, test_cases) == RX_SUCCESS
+    return rx_run(test_case_count, test_cases, argc, argv) == RX_SUCCESS
         ? 0 : 1;
 }
 ```

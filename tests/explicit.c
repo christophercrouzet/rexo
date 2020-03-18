@@ -78,7 +78,7 @@ main(int argc, const char **argv)
     ++step;
     ASSERT(step == 1);
 
-    ASSERT(rx_run(argc, argv, 1, my_test_cases) == RX_SUCCESS);
+    ASSERT(rx_run(1, my_test_cases, argc, argv) == RX_SUCCESS);
 
     ++step;
     ASSERT(step == 5);
