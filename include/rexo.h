@@ -4808,7 +4808,7 @@ rx__str_are_equal_no_case(int *result, const char *a, const char *b)
 }
 
 RX__MAYBE_UNUSED static enum rx_status
-rx__test_cases_run(size_t test_case_count,
+rx__run_test_cases(size_t test_case_count,
                    const struct rx_test_case *test_cases)
 {
     size_t i;
@@ -4873,7 +4873,7 @@ summaries_cleanup:
 }
 
 RX__MAYBE_UNUSED static enum rx_status
-rx__test_cases_run_registered(void)
+rx__run_registered_test_cases(void)
 {
     enum rx_status out;
     rx_size test_case_count;
@@ -4881,7 +4881,7 @@ rx__test_cases_run_registered(void)
 
     rx_enumerate_test_cases(&test_case_count, NULL);
     if (test_case_count == 0) {
-        return rx__test_cases_run(0, NULL);
+        return rx__run_test_cases(0, NULL);
     }
 
     test_cases = (struct rx_test_case *)RX_MALLOC(sizeof *test_cases
@@ -4892,7 +4892,7 @@ rx__test_cases_run_registered(void)
     }
 
     rx_enumerate_test_cases(&test_case_count, test_cases);
-    out = rx__test_cases_run(test_case_count, test_cases);
+    out = rx__run_test_cases(test_case_count, test_cases);
     RX_FREE(test_cases);
     return out;
 }
@@ -5955,12 +5955,12 @@ RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_run(rx_size test_case_count, const struct rx_test_case *test_cases)
 {
     if (test_cases != NULL) {
-        return rx__test_cases_run(test_case_count, test_cases);
+        return rx__run_test_cases(test_case_count, test_cases);
     }
 
     /* If no test cases are explicitly passed, fallback to discovering the
        ones defined through the automatic registration framework. */
-    return rx__test_cases_run_registered();
+    return rx__run_registered_test_cases();
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
