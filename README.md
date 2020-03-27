@@ -56,7 +56,7 @@ RX_TEST_CASE(foo, bar)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -92,7 +92,7 @@ RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 

@@ -205,10 +205,13 @@ rx_enumerate_test_cases(rx_size *test_case_count,
                         struct rx_test_case *test_cases);
 
 RX__STORAGE enum rx_status
-rx_run(rx_size test_case_count,
-       const struct rx_test_case *test_cases,
-       int argc,
-       const char **argv);
+rx_run(rx_size test_case_count, const struct rx_test_case *test_cases);
+
+RX__STORAGE enum rx_status
+rx_main(rx_size test_case_count,
+        const struct rx_test_case *test_cases,
+        int argc,
+        const char **argv);
 
 #if defined(__cplusplus)
 }
@@ -5949,14 +5952,8 @@ rx_enumerate_test_cases(rx_size *test_case_count,
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
-rx_run(rx_size test_case_count,
-       const struct rx_test_case *test_cases,
-       int argc,
-       const char **argv)
+rx_run(rx_size test_case_count, const struct rx_test_case *test_cases)
 {
-    RX__UNUSED(argc);
-    RX__UNUSED(argv);
-
     if (test_cases != NULL) {
         return rx__test_cases_run(test_case_count, test_cases);
     }
@@ -5964,6 +5961,18 @@ rx_run(rx_size test_case_count,
     /* If no test cases are explicitly passed, fallback to discovering the
        ones defined through the automatic registration framework. */
     return rx__test_cases_run_registered();
+}
+
+RX__MAYBE_UNUSED RX__STORAGE enum rx_status
+rx_main(rx_size test_case_count,
+        const struct rx_test_case *test_cases,
+        int argc,
+        const char **argv)
+{
+    RX__UNUSED(argc);
+    RX__UNUSED(argv);
+
+    return rx_run(test_case_count, test_cases);
 }
 
 #endif /* REXO_REXO_H */

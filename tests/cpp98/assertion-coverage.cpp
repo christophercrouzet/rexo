@@ -247,9 +247,6 @@ main(int argc, const char **argv)
     size_t nonfatal_failure_count;
     size_t fatal_failure_count;
 
-    (void)(argc);
-    (void)(argv);
-
     assessed_count = 0;
     nonfatal_failure_count = 0;
     fatal_failure_count = 0;

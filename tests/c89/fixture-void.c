@@ -40,7 +40,7 @@ main(int argc, const char **argv)
     ++step;
     ASSERT(step == 1);
 
-    ASSERT(rx_run(0, NULL, argc, argv) == RX_SUCCESS);
+    ASSERT(rx_main(0, NULL, argc, argv) == RX_SUCCESS);
 
     ++step;
     ASSERT(step == 5);
