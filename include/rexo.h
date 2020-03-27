@@ -170,6 +170,11 @@ struct rx_summary {
     rx_uint64 elapsed;
 };
 
+struct rx_summary_group {
+    rx_size count;
+    const struct rx_summary *array;
+};
+
 #if defined(__cplusplus)
 extern "C" {
 #endif
@@ -195,6 +200,16 @@ rx_summary_terminate(struct rx_summary *summary);
 
 RX__STORAGE void
 rx_summary_print(const struct rx_summary *summary);
+
+RX__STORAGE void
+rx_sort_summaries_by_test_suite(struct rx_summary *summaries,
+                                rx_size summary_count);
+
+RX__STORAGE void
+rx_group_summaries_by_test_suite(rx_size *summary_group_count,
+                                 struct rx_summary_group *summary_groups,
+                                 rx_size summary_count,
+                                 const struct rx_summary *summaries);
 
 RX__STORAGE enum rx_status
 rx_test_case_run(struct rx_summary *summary,
@@ -4757,6 +4772,17 @@ rx__compare_test_cases(const void *a, const void *b)
     return out;
 }
 
+static int
+rx__compare_summaries_by_test_suite(const void *a, const void *b)
+{
+    const struct rx_summary *aa;
+    const struct rx_summary *bb;
+
+    aa = (const struct rx_summary *)a;
+    bb = (const struct rx_summary *)b;
+    return strcmp(aa->test_case->suite_name, bb->test_case->suite_name);
+}
+
 static void
 rx__real_are_equal_fuzzy(int *result, rx__real a, rx__real b, rx__real tol)
 {
@@ -5779,6 +5805,64 @@ rx_summary_print(const struct rx_summary *summary)
                     failure_msg);
         }
     }
+}
+
+RX__MAYBE_UNUSED RX__STORAGE void
+rx_sort_summaries_by_test_suite(struct rx_summary *summaries,
+                                rx_size summary_count)
+{
+    qsort(summaries,
+          summary_count,
+          sizeof *summaries,
+          rx__compare_summaries_by_test_suite);
+}
+
+RX__MAYBE_UNUSED RX__STORAGE void
+rx_group_summaries_by_test_suite(rx_size *summary_group_count,
+                                 struct rx_summary_group *summary_groups,
+                                 rx_size summary_count,
+                                 const struct rx_summary *summaries)
+{
+    size_t i;
+    struct rx_summary_group *it;
+
+    RX_ASSERT(summary_group_count != NULL);
+
+    if (summary_count == 0) {
+        *summary_group_count = 0;
+        return;
+    }
+
+    RX_ASSERT(summaries != NULL);
+
+    if (summary_groups == NULL) {
+        *summary_group_count = 1;
+        for (i = 0; i < summary_count - 1; ++i) {
+            *summary_group_count += (rx_size)(
+                rx__compare_summaries_by_test_suite(&summaries[i],
+                                                    &summaries[i + 1])
+                != 0);
+        }
+
+        return;
+    }
+
+    it = summary_groups;
+    it->count = 0;
+    it->array = summaries;
+    for (i = 0; i < summary_count - 1; ++i) {
+        ++it->count;
+
+        if (rx__compare_summaries_by_test_suite(&summaries[i],
+                                                &summaries[i + 1])
+            != 0) {
+            ++it;
+            it->count = 0;
+            it->array = &summaries[i + 1];
+        }
+    }
+
+    ++it->count;
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
