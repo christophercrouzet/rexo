@@ -4764,12 +4764,7 @@ rx__compare_test_cases(const void *a, const void *b)
         return out;
     }
 
-    out = strcmp(aa->name, bb->name);
-    if (out != 0) {
-        return out;
-    }
-
-    return out;
+    return strcmp(aa->name, bb->name);
 }
 
 static int
