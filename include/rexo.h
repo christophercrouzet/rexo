@@ -3563,6 +3563,10 @@ rx_run(int argc,
     #include <unistd.h>
     #define RX__ISATTY isatty
     #define RX__FILENO fileno
+
+    #if RX__HAS_NPRINTF && defined(__STDC__) && (!defined(__STDC_VERSION__) || __STDC_VERSION__ <= 199901L)
+    int vsnprintf(char * __restrict, size_t, const char * __restrict, va_list) __printflike(3, 0);
+    #endif
 #endif
 
 typedef char rx__invalid_size_type[sizeof(rx_size) == sizeof(size_t) ? 1 : -1];
