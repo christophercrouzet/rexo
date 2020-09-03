@@ -4890,6 +4890,8 @@ summaries_cleanup:
         rx_summary_terminate(&summaries[i]);
     }
 
+    RX_FREE(summaries);
+
     return status;
 }
 
