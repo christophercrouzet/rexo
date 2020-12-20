@@ -49,179 +49,183 @@ endif()
 
 # ------------------------------------------------------------------------------
 
-set(RX_TEST_TARGETS)
+option(REXO_BUILD_TESTS "Build the test targets for Rexo" ON)
 
-macro(rx_add_test)
-    set(RX_ADD_TEST_OPTIONS)
-    set(RX_ADD_TEST_SINGLE_VALUE_ARGS NAME)
-    set(RX_ADD_TEST_MULTI_VALUE_ARGS FILES DEPENDS PROPERTIES)
-    cmake_parse_arguments(
-        RX_ADD_TEST
-        "${RX_ADD_TEST_OPTIONS}"
-        "${RX_ADD_TEST_SINGLE_VALUE_ARGS}"
-        "${RX_ADD_TEST_MULTI_VALUE_ARGS}"
-        ${ARGN})
+if(REXO_BUILD_TESTS)
+    set(RX_TEST_TARGETS)
 
-    add_executable(test-${RX_ADD_TEST_NAME} ${RX_ADD_TEST_FILES})
-    set_target_properties(test-${RX_ADD_TEST_NAME}
-        PROPERTIES
-            RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/tests
-            OUTPUT_NAME ${RX_ADD_TEST_NAME}
-            ${RX_ADD_TEST_PROPERTIES})
-    target_link_libraries(test-${RX_ADD_TEST_NAME}
-        PRIVATE ${RX_ADD_TEST_DEPENDS})
-    add_test(
-        NAME ${RX_ADD_TEST_NAME}
-        COMMAND test-${RX_ADD_TEST_NAME})
-    list(APPEND RX_TEST_TARGETS test-${RX_ADD_TEST_NAME})
-endmacro()
+    macro(rx_add_test)
+        set(RX_ADD_TEST_OPTIONS)
+        set(RX_ADD_TEST_SINGLE_VALUE_ARGS NAME)
+        set(RX_ADD_TEST_MULTI_VALUE_ARGS FILES DEPENDS PROPERTIES)
+        cmake_parse_arguments(
+            RX_ADD_TEST
+            "${RX_ADD_TEST_OPTIONS}"
+            "${RX_ADD_TEST_SINGLE_VALUE_ARGS}"
+            "${RX_ADD_TEST_MULTI_VALUE_ARGS}"
+            ${ARGN})
 
-enable_testing()
+        add_executable(test-${RX_ADD_TEST_NAME} ${RX_ADD_TEST_FILES})
+        set_target_properties(test-${RX_ADD_TEST_NAME}
+            PROPERTIES
+                RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin/tests
+                OUTPUT_NAME ${RX_ADD_TEST_NAME}
+                ${RX_ADD_TEST_PROPERTIES})
+        target_link_libraries(test-${RX_ADD_TEST_NAME}
+            PRIVATE ${RX_ADD_TEST_DEPENDS})
+        add_test(
+            NAME ${RX_ADD_TEST_NAME}
+            COMMAND test-${RX_ADD_TEST_NAME})
+        list(APPEND RX_TEST_TARGETS test-${RX_ADD_TEST_NAME})
+    endmacro()
 
-if(NOT MSVC)
+    enable_testing()
+
+    if(NOT MSVC)
+        rx_add_test(
+            NAME c89-assertion-coverage
+            FILES tests/c89/assertion-coverage.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+
+        rx_add_test(
+            NAME c89-assertion-failure-messages
+            FILES tests/c89/assertion-failure-messages.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+
+        rx_add_test(
+            NAME c89-config-inherit
+            FILES tests/c89/config-inherit.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+
+        rx_add_test(
+            NAME c89-fixture
+            FILES tests/c89/fixture.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+
+        rx_add_test(
+            NAME c89-fixture-void
+            FILES tests/c89/fixture-void.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+
+        rx_add_test(
+            NAME c89-minimal
+            FILES tests/c89/minimal.c
+            DEPENDS rexo
+            PROPERTIES
+                C_STANDARD 90)
+    endif()
+
+    if(NOT MSVC)
+        rx_add_test(
+            NAME cpp98-assertion-coverage
+            FILES tests/cpp98/assertion-coverage.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+
+        rx_add_test(
+            NAME cpp98-assertion-failure-messages
+            FILES tests/cpp98/assertion-failure-messages.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+
+        rx_add_test(
+            NAME cpp98-config-inherit
+            FILES tests/cpp98/config-inherit.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+
+        rx_add_test(
+            NAME cpp98-fixture
+            FILES tests/cpp98/fixture.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+
+        rx_add_test(
+            NAME cpp98-fixture-void
+            FILES tests/cpp98/fixture-void.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+
+        rx_add_test(
+            NAME cpp98-minimal
+            FILES tests/cpp98/minimal.cpp
+            DEPENDS rexo
+            PROPERTIES
+                CXX_STANDARD 98)
+    endif()
+
     rx_add_test(
-        NAME c89-assertion-coverage
-        FILES tests/c89/assertion-coverage.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME assertion-coverage
+        FILES tests/assertion-coverage.c
+        DEPENDS rexo)
 
     rx_add_test(
-        NAME c89-assertion-failure-messages
-        FILES tests/c89/assertion-failure-messages.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME assertion-failure-messages
+        FILES tests/assertion-failure-messages.c
+        DEPENDS rexo)
 
     rx_add_test(
-        NAME c89-config-inherit
-        FILES tests/c89/config-inherit.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME config-inherit
+        FILES tests/config-inherit.c
+        DEPENDS rexo)
 
     rx_add_test(
-        NAME c89-fixture
-        FILES tests/c89/fixture.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME config-skip
+        FILES tests/config-skip.c
+        DEPENDS rexo)
 
     rx_add_test(
-        NAME c89-fixture-void
-        FILES tests/c89/fixture-void.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME empty
+        FILES tests/empty.c
+        DEPENDS rexo)
 
     rx_add_test(
-        NAME c89-minimal
-        FILES tests/c89/minimal.c
-        DEPENDS rexo
-        PROPERTIES
-            C_STANDARD 90)
+        NAME explicit
+        FILES tests/explicit.c
+        DEPENDS rexo)
+
+    rx_add_test(
+        NAME fixture
+        FILES tests/fixture.c
+        DEPENDS rexo)
+
+    rx_add_test(
+        NAME fixture-data-only
+        FILES tests/fixture-data-only.c
+        DEPENDS rexo)
+
+    rx_add_test(
+        NAME fixture-void
+        FILES tests/fixture-void.c
+        DEPENDS rexo)
+
+    rx_add_test(
+        NAME minimal
+        FILES tests/minimal.c
+        DEPENDS rexo)
+
+    rx_add_test(
+        NAME semi-explicit
+        FILES tests/semi-explicit.c
+        DEPENDS rexo)
+
+    add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
 endif()
-
-if(NOT MSVC)
-    rx_add_test(
-        NAME cpp98-assertion-coverage
-        FILES tests/cpp98/assertion-coverage.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-
-    rx_add_test(
-        NAME cpp98-assertion-failure-messages
-        FILES tests/cpp98/assertion-failure-messages.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-
-    rx_add_test(
-        NAME cpp98-config-inherit
-        FILES tests/cpp98/config-inherit.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-
-    rx_add_test(
-        NAME cpp98-fixture
-        FILES tests/cpp98/fixture.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-
-    rx_add_test(
-        NAME cpp98-fixture-void
-        FILES tests/cpp98/fixture-void.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-
-    rx_add_test(
-        NAME cpp98-minimal
-        FILES tests/cpp98/minimal.cpp
-        DEPENDS rexo
-        PROPERTIES
-            CXX_STANDARD 98)
-endif()
-
-rx_add_test(
-    NAME assertion-coverage
-    FILES tests/assertion-coverage.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME assertion-failure-messages
-    FILES tests/assertion-failure-messages.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME config-inherit
-    FILES tests/config-inherit.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME config-skip
-    FILES tests/config-skip.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME empty
-    FILES tests/empty.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME explicit
-    FILES tests/explicit.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME fixture
-    FILES tests/fixture.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME fixture-data-only
-    FILES tests/fixture-data-only.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME fixture-void
-    FILES tests/fixture-void.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME minimal
-    FILES tests/minimal.c
-    DEPENDS rexo)
-
-rx_add_test(
-    NAME semi-explicit
-    FILES tests/semi-explicit.c
-    DEPENDS rexo)
-
-add_custom_target(tests DEPENDS ${RX_TEST_TARGETS})
 
 # ------------------------------------------------------------------------------
 
