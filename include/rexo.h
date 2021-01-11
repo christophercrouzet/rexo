@@ -109,8 +109,9 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 enum rx_status {
     RX_SUCCESS = 0,
     RX_ERROR = -1,
-    RX_ERROR_ALLOCATION = -2,
-    RX_ERROR_MAX_SIZE_EXCEEDED = -3
+    RX_ERROR_ABORTED = -2,
+    RX_ERROR_ALLOCATION = -3,
+    RX_ERROR_MAX_SIZE_EXCEEDED = -4
 };
 
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
@@ -4883,6 +4884,27 @@ rx__run_test_cases(size_t test_case_count,
         }
 
         rx_summary_print(summary);
+    }
+
+    if (status == RX_SUCCESS) {
+        size_t j;
+
+        for (j = 0; j < test_case_count; ++j) {
+            size_t k;
+            struct rx_summary *summary;
+
+            summary = &summaries[j];
+
+            for (k = 0; k < summary->failure_count; ++k) {
+                const struct rx_failure *failure;
+
+                failure = &summary->failures[k];
+                if (failure->severity == RX_FATAL) {
+                    status = RX_ERROR_ABORTED;
+                    goto summaries_cleanup;
+                }
+            }
+        }
     }
 
 summaries_cleanup:
