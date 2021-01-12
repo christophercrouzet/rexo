@@ -31,6 +31,10 @@ if(UNIX)
     add_definitions(-D_POSIX_C_SOURCE=199309L)
 endif()
 
+if(APPLE)
+    add_compile_options(-Wno-implicit-function-declaration)
+endif()
+
 # ------------------------------------------------------------------------------
 
 add_library(rexo INTERFACE)
