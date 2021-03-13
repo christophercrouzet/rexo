@@ -31,10 +31,6 @@ if(UNIX)
     add_definitions(-D_POSIX_C_SOURCE=199309L)
 endif()
 
-if(APPLE)
-    add_compile_options(-Wno-implicit-function-declaration)
-endif()
-
 # ------------------------------------------------------------------------------
 
 add_library(rexo INTERFACE)
@@ -46,6 +42,10 @@ install(
     TARGETS rexo
     EXPORT ${PROJECT_NAME}Targets)
 add_library(${PROJECT_NAME}::rexo ALIAS rexo)
+
+if(APPLE)
+    target_compile_options(rexo INTERFACE -Wno-implicit-function-declaration)
+endif()
 
 if(UNIX)
     target_link_libraries(rexo INTERFACE m)
