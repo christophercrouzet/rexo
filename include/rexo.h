@@ -3733,9 +3733,12 @@ struct rx_context {
 
 #define RX__LOG(level, args)                                                   \
     do {                                                                       \
+        _Pragma("GCC diagnostic push")                                         \
+        _Pragma("GCC diagnostic ignored \"-Wtautological-compare\"")           \
         if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                     \
             RX_LOG args;                                                       \
         }                                                                      \
+        _Pragma("GCC diagnostic pop")                                          \
     } while (0)
 
 #define RX__LOG_TRACE(msg)                                                     \
