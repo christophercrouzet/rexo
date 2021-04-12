@@ -3731,15 +3731,24 @@ struct rx_context {
     #define RX_LOG rx__log
 #endif
 
-#define RX__LOG(level, args)                                                   \
-    do {                                                                       \
-        _Pragma("GCC diagnostic push")                                         \
-        _Pragma("GCC diagnostic ignored \"-Wtautological-compare\"")           \
-        if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                     \
-            RX_LOG args;                                                       \
-        }                                                                      \
-        _Pragma("GCC diagnostic pop")                                          \
-    } while (0)
+#if defined(__GNUC__)
+    #define RX__LOG(level, args)                                               \
+        do {                                                                   \
+            _Pragma("GCC diagnostic push")                                     \
+            _Pragma("GCC diagnostic ignored \"-Wtautological-compare\"")       \
+            if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                 \
+                RX_LOG args;                                                   \
+            }                                                                  \
+            _Pragma("GCC diagnostic pop")                                      \
+        } while (0)
+#else
+    #define RX__LOG(level, args)                                               \
+        do {                                                                   \
+            if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                 \
+                RX_LOG args;                                                   \
+            }                                                                  \
+        } while (0)
+#endif
 
 #define RX__LOG_TRACE(msg)                                                     \
         RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
