@@ -46,13 +46,14 @@ Logging level.
 
 ```c
 enum rx_log_level {
-    RX_LOG_LEVEL_FATAL = 0,
-    RX_LOG_LEVEL_ERROR = 1,
-    RX_LOG_LEVEL_WARNING = 2,
-    RX_LOG_LEVEL_INFO = 3,
-    RX_LOG_LEVEL_DEBUG = 4,
-    RX_LOG_LEVEL_TRACE = 5
-}
+    RX_LOG_LEVEL_NONE = 0,
+    RX_LOG_LEVEL_FATAL = 1,
+    RX_LOG_LEVEL_ERROR = 3,
+    RX_LOG_LEVEL_WARNING = 4,
+    RX_LOG_LEVEL_INFO = 5,
+    RX_LOG_LEVEL_DEBUG = 6,
+    RX_LOG_LEVEL_ALL = RX_LOG_LEVEL_DEBUG
+};
 ```
 
 The purpose of each level is defined as follows:

@@ -131,12 +131,13 @@ It suppresses any log that is intended to be displayed in the shell.
 Defines the logging level.
 
 ```c
+#define RX_SET_LOGGING_LEVEL_NONE
 #define RX_SET_LOGGING_LEVEL_FATAL
 #define RX_SET_LOGGING_LEVEL_ERROR
 #define RX_SET_LOGGING_LEVEL_WARNING
 #define RX_SET_LOGGING_LEVEL_INFO
 #define RX_SET_LOGGING_LEVEL_DEBUG
-#define RX_SET_LOGGING_LEVEL_TRACE
+#define RX_SET_LOGGING_LEVEL_ALL
 ```
 
 The logging level can be set to only output logs of a level greater or equal to

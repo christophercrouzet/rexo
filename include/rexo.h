@@ -124,12 +124,13 @@ enum rx_status {
 enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 };
 
 enum rx_log_level {
-    RX_LOG_LEVEL_FATAL = 0,
-    RX_LOG_LEVEL_ERROR = 1,
-    RX_LOG_LEVEL_WARNING = 2,
-    RX_LOG_LEVEL_INFO = 3,
-    RX_LOG_LEVEL_DEBUG = 4,
-    RX_LOG_LEVEL_TRACE = 5
+    RX_LOG_LEVEL_NONE = 0,
+    RX_LOG_LEVEL_FATAL = 1,
+    RX_LOG_LEVEL_ERROR = 3,
+    RX_LOG_LEVEL_WARNING = 4,
+    RX_LOG_LEVEL_INFO = 5,
+    RX_LOG_LEVEL_DEBUG = 6,
+    RX_LOG_LEVEL_ALL = RX_LOG_LEVEL_DEBUG
 };
 
 struct rx_context;
@@ -4079,8 +4080,8 @@ struct rx_context {
     #define RX__LOG_STYLING 0
 #endif
 
-#if defined(RX_SET_LOGGING_LEVEL_TRACE)
-    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_TRACE
+#if defined(RX_SET_LOGGING_LEVEL_ALL)
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_ALL
 #elif defined(RX_SET_LOGGING_LEVEL_DEBUG)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #elif defined(RX_SET_LOGGING_LEVEL_INFO)
@@ -4091,6 +4092,8 @@ struct rx_context {
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_ERROR
 #elif defined(RX_SET_LOGGING_LEVEL_FATAL)
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_FATAL
+#elif defined(RX_SET_LOGGING_LEVEL_NONDE)
+    #define RX__LOGGING_LEVEL RX_LOG_LEVEL_NONE
 #elif RX__DEBUGGING
     #define RX__LOGGING_LEVEL RX_LOG_LEVEL_DEBUG
 #else
@@ -4125,16 +4128,6 @@ struct rx_context {
             }                                                                  \
         } while (0)
 #endif
-
-#define RX__LOG_TRACE(msg)                                                     \
-        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
-                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, msg))
-#define RX__LOG_TRACE_1(fmt, _0)                                               \
-        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
-                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0))
-#define RX__LOG_TRACE_2(fmt, _0, _1)                                           \
-        RX__LOG(RX_LOG_LEVEL_TRACE,                                            \
-                (RX_LOG_LEVEL_TRACE, __FILE__, __LINE__, fmt, _0, _1))
 
 #define RX__LOG_DEBUG(msg)                                                     \
         RX__LOG(RX_LOG_LEVEL_DEBUG,                                            \
@@ -4227,9 +4220,6 @@ rx__log_level_get_name(const char **name, enum rx_log_level level)
         case RX_LOG_LEVEL_DEBUG:
             *name = "debug";
             return;
-        case RX_LOG_LEVEL_TRACE:
-            *name = "trace";
-            return;
         default:
             RX_ASSERT(0);
     }
@@ -4256,9 +4246,6 @@ rx__log_level_get_style(enum rx__log_style *style, enum rx_log_level level)
             return;
         case RX_LOG_LEVEL_DEBUG:
             *style = RX__LOG_STYLE_BRIGHT_CYAN;
-            return;
-        case RX_LOG_LEVEL_TRACE:
-            *style = RX__LOG_STYLE_BRIGHT_BLUE;
             return;
         default:
             RX_ASSERT(0);
