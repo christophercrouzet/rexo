@@ -3014,6 +3014,9 @@ main(int argc, const char **argv)
     rx_size test_case_count;
     struct rx_test_case *test_cases;
 
+    (void)argc;
+    (void)argv;
+
     rx_enumerate_test_cases(&test_case_count, NULL);
     test_cases
         = (struct rx_test_case *)malloc(sizeof *test_cases * test_case_count);

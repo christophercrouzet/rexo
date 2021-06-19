@@ -65,7 +65,14 @@ typedef char rx__invalid_uint32_type[sizeof(rx_uint32) == 4 ? 1 : -1];
 #if defined(RX_UINT64_TYPE)
     typedef RX_UINT64_TYPE rx_uint64;
 #else
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wlong-long"
+    /*
+       Even though the `long long` type is not part of the C89 and C++98
+       standards, assume that it's defined by current compilers.
+    */
     typedef unsigned long long rx_uint64;
+    #pragma GCC diagnostic pop
 #endif
 typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 
@@ -4788,7 +4795,7 @@ struct rx__fixture_desc {
         = {size, update_fn};                                                   \
                                                                                \
     static const struct rx__fixture_desc                                       \
-    *(id) = &RX__FIXTURE_DESC_GET_ID(id);
+    *id = &RX__FIXTURE_DESC_GET_ID(id);
 
 #define RX__FIXTURE_0(id, size)                                                \
     RX__FIXTURE_(id, size, NULL)
