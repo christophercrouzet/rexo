@@ -4943,6 +4943,7 @@ rx__str_initialize_va_list(size_t *count,
             }
 
             size = vfprintf(file, fmt, args);
+            fclose(file);
         }
 #endif
 
