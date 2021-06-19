@@ -213,6 +213,13 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg)
         "hello, world!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "hello, world!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg)
 {
     RX_CHECK_MSG(
@@ -329,6 +336,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG(
         (void *)0x123, (void *)0x123,
+        "hello, world!");
+
+    RX_PTR_CHECK_ALIGNED_MSG(
+        (void *)0x100, 100,
         "hello, world!");
 }
 
@@ -651,6 +662,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_1)
         "hello, %s", "world!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_1)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "hello, %s", "world!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_1(
+        (void *)0x100, 100,
+        "hello, %s", "world!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_1)
 {
     RX_CHECK_MSG_1(
@@ -767,6 +789,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_1)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_1(
         (void *)0x123, (void *)0x123,
+        "hello, %s", "world!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_1(
+        (void *)0x100, 100,
         "hello, %s", "world!");
 }
 
@@ -1089,6 +1115,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_2)
         "hello, %s%s", "world", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_2)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "hello, %s%s", "world", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_2(
+        (void *)0x100, 100,
+        "hello, %s%s", "world", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_2)
 {
     RX_CHECK_MSG_2(
@@ -1205,6 +1242,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_2)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_2(
         (void *)0x123, (void *)0x123,
+        "hello, %s%s", "world", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_2(
+        (void *)0x100, 100,
         "hello, %s%s", "world", "!");
 }
 
@@ -1527,6 +1568,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_3)
         "%s, %s%s", "hello", "world", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_3)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s, %s%s", "hello", "world", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_3(
+        (void *)0x100, 100,
+        "%s, %s%s", "hello", "world", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_3)
 {
     RX_CHECK_MSG_3(
@@ -1643,6 +1695,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_3)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_3(
         (void *)0x123, (void *)0x123,
+        "%s, %s%s", "hello", "world", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_3(
+        (void *)0x100, 100,
         "%s, %s%s", "hello", "world", "!");
 }
 
@@ -1965,6 +2021,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_4)
         "%s%s %s%s", "hello", ",", "world", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_4)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s%s %s%s", "hello", ",", "world", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_4(
+        (void *)0x100, 100,
+        "%s%s %s%s", "hello", ",", "world", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_4)
 {
     RX_CHECK_MSG_4(
@@ -2081,6 +2148,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_4)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_4(
         (void *)0x123, (void *)0x123,
+        "%s%s %s%s", "hello", ",", "world", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_4(
+        (void *)0x100, 100,
         "%s%s %s%s", "hello", ",", "world", "!");
 }
 
@@ -2403,6 +2474,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_5)
         "%s%s %s%s%s", "hello", ",", "worl", "d", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_5)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s%s %s%s%s", "hello", ",", "worl", "d", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_5(
+        (void *)0x100, 100,
+        "%s%s %s%s%s", "hello", ",", "worl", "d", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_5)
 {
     RX_CHECK_MSG_5(
@@ -2519,6 +2601,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_5)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_5(
         (void *)0x123, (void *)0x123,
+        "%s%s %s%s%s", "hello", ",", "worl", "d", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_5(
+        (void *)0x100, 100,
         "%s%s %s%s%s", "hello", ",", "worl", "d", "!");
 }
 
@@ -2841,6 +2927,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_6)
         "%s%s %s%s%s%s", "hello", ",", "wor", "l", "d", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_6)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s", "hello", ",", "wor", "l", "d", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_6(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s", "hello", ",", "wor", "l", "d", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_6)
 {
     RX_CHECK_MSG_6(
@@ -2957,6 +3054,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_6)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_6(
         (void *)0x123, (void *)0x123,
+        "%s%s %s%s%s%s", "hello", ",", "wor", "l", "d", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_6(
+        (void *)0x100, 100,
         "%s%s %s%s%s%s", "hello", ",", "wor", "l", "d", "!");
 }
 
@@ -3279,6 +3380,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_7)
         "%s%s %s%s%s%s%s", "hello", ",", "wo", "r", "l", "d", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_7)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s%s", "hello", ",", "wo", "r", "l", "d", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_7(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s%s", "hello", ",", "wo", "r", "l", "d", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_7)
 {
     RX_CHECK_MSG_7(
@@ -3395,6 +3507,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_7)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_7(
         (void *)0x123, (void *)0x123,
+        "%s%s %s%s%s%s%s", "hello", ",", "wo", "r", "l", "d", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_7(
+        (void *)0x100, 100,
         "%s%s %s%s%s%s%s", "hello", ",", "wo", "r", "l", "d", "!");
 }
 
@@ -3717,6 +3833,17 @@ RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure_msg_8)
         "%s%s %s%s%s%s%s%s", "hello", ",", "w", "o", "r", "l", "d", "!");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure_msg_8)
+{
+    RX_PTR_REQUIRE_ALIGNED_MSG(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s%s%s", "hello", ",", "w", "o", "r", "l", "d", "!");
+
+    RX_PTR_REQUIRE_ALIGNED_MSG_8(
+        (void *)0x100, 100,
+        "%s%s %s%s%s%s%s%s", "hello", ",", "w", "o", "r", "l", "d", "!");
+}
+
 RX_TEST_CASE(my_test_suite, all_check_failures_msg_8)
 {
     RX_CHECK_MSG_8(
@@ -3833,6 +3960,10 @@ RX_TEST_CASE(my_test_suite, all_check_failures_msg_8)
 
     RX_PTR_CHECK_NOT_EQUAL_MSG_8(
         (void *)0x123, (void *)0x123,
+        "%s%s %s%s%s%s%s%s", "hello", ",", "w", "o", "r", "l", "d", "!");
+
+    RX_PTR_CHECK_ALIGNED_MSG_8(
+        (void *)0x100, 100,
         "%s%s %s%s%s%s%s%s", "hello", ",", "w", "o", "r", "l", "d", "!");
 }
 

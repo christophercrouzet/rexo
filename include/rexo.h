@@ -3766,6 +3766,136 @@ rx_main(rx_size test_case_count,
     RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
                         _0, _1, _2, _3, _4, _5, _6, _7)
 
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__PTR_DEFINE_ALIGNMENT_TEST(severity, x, alignment, ...)         \
+        rx__ptr_assess_alignment(RX_PARAM_CONTEXT,                             \
+                                 (x),                                          \
+                                 (alignment),                                  \
+                                 #x,                                           \
+                                 __FILE__,                                     \
+                                 __LINE__,                                     \
+                                 severity,                                     \
+                                 __VA_ARGS__)
+#else
+    #define RX__PTR_DEFINE_ALIGNMENT_TEST(severity, x, alignment, msg,         \
+                                          _0, _1, _2, _3, _4, _5, _6, _7)      \
+        rx__ptr_assess_alignment(RX_PARAM_CONTEXT,                             \
+                                 (x),                                          \
+                                 (alignment),                                  \
+                                 #x,                                           \
+                                 __FILE__,                                     \
+                                 __LINE__,                                     \
+                                 severity,                                     \
+                                 msg,                                          \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)
+#endif
+
+#define RX_PTR_REQUIRE_ALIGNED(x, alignment)                                   \
+    RX_PTR_REQUIRE_ALIGNED_MSG(x, alignment, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_REQUIRE_ALIGNED_MSG(x, alignment, ...)                      \
+        RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, __VA_ARGS__)
+#else
+    #define RX_PTR_REQUIRE_ALIGNED_MSG(x, alignment, msg)                      \
+        RX__PTR_DEFINE_ALIGNMENT_TEST(                                         \
+            RX_FATAL, x, alignment, msg,                                       \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_1(x, alignment, msg,                        \
+                                     _0)                                       \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_2(x, alignment, msg,                        \
+                                     _0, _1)                                   \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_3(x, alignment, msg,                        \
+                                     _0, _1, _2)                               \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_4(x, alignment, msg,                        \
+                                     _0, _1, _2, _3)                           \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_5(x, alignment, msg,                        \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_6(x, alignment, msg,                        \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_7(x, alignment, msg,                        \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_REQUIRE_ALIGNED_MSG_8(x, alignment, msg,                        \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_FATAL, x, alignment, msg,                 \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_PTR_CHECK_ALIGNED(x, alignment)                                     \
+    RX_PTR_CHECK_ALIGNED_MSG(x, alignment, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_CHECK_ALIGNED_MSG(x, alignment, ...)                        \
+        RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, __VA_ARGS__)
+#else
+    #define RX_PTR_CHECK_ALIGNED_MSG(x, alignment, msg)                        \
+        RX__PTR_DEFINE_ALIGNMENT_TEST(                                         \
+            RX_NONFATAL, x, alignment, msg,                                    \
+            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_CHECK_ALIGNED_MSG_1(x, alignment, msg,                          \
+                                   _0)                                         \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_2(x, alignment, msg,                          \
+                                   _0, _1)                                     \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_3(x, alignment, msg,                          \
+                                   _0, _1, _2)                                 \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_4(x, alignment, msg,                          \
+                                   _0, _1, _2, _3)                             \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_5(x, alignment, msg,                          \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_6(x, alignment, msg,                          \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_7(x, alignment, msg,                          \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_CHECK_ALIGNED_MSG_8(x, alignment, msg,                          \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__PTR_DEFINE_ALIGNMENT_TEST(RX_NONFATAL, x, alignment, msg,              \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)
+
 /* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -5951,6 +6081,84 @@ rx__ptr_assess_comparison(struct rx_context *context,
         != RX_SUCCESS) {
         RX__LOG_DEBUG_2("failed to handle the test result for the pointer "
                         "comparison test located at %s:%d\n",
+                        file,
+                        line);
+    }
+
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
+
+    if (!result && severity == RX_FATAL) {
+        rx_abort(context);
+    }
+}
+
+RX__MAYBE_UNUSED static void
+rx__ptr_assess_alignment(struct rx_context *context,
+                         void *x,
+                         size_t alignment,
+                         const char *expr,
+                         const char *file,
+                         int line,
+                         enum rx_severity severity,
+                         const char *failure_fmt,
+                         ...)
+{
+    int result;
+    char *failure_msg;
+    char *diagnostic_msg;
+
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(expr != NULL);
+    RX_ASSERT(file != NULL);
+
+    result = (uintptr_t)x  % alignment == 0;
+
+    if (result) {
+        failure_msg = NULL;
+        diagnostic_msg = NULL;
+    } else {
+        enum rx_status status;
+
+        if (failure_fmt == NULL) {
+            RX__STR_CREATE_2(status,
+                             failure_msg,
+                             "`%s` is expected to have an %zu-byte alignment",
+                             expr,
+                             alignment);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the pointer alignment test located at "
+                            "%s:%d\n",
+                            file,
+                            line);
+            failure_msg = NULL;
+        }
+
+        RX__STR_CREATE_2(status,
+                         diagnostic_msg,
+                         "0x%08x %% %zu != 0",
+                         (uintptr_t)x,
+                         alignment);
+        if (status != RX_SUCCESS) {
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the pointer alignment test located at "
+                            "%s:%d\n",
+                            file,
+                            line);
+            diagnostic_msg = NULL;
+        }
+    }
+
+    if (rx_handle_test_result(
+            context, result, file, line, severity, failure_msg, diagnostic_msg)
+        != RX_SUCCESS) {
+        RX__LOG_DEBUG_2("failed to handle the test result for the pointer "
+                        "alignment test located at %s:%d\n",
                         file,
                         line);
     }
