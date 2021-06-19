@@ -69,12 +69,12 @@ _rule := test-$(subst /,-,$(patsubst \
 	tests/%.c,%,$(patsubst tests/%.cpp,%,$(1))))
 
 
-$$(_rule): $(MAKE_FILES)
-	$(call rx_forward_rule,$$(_rule))
+$(_rule): $(MAKE_FILES)
+	$(call rx_forward_rule,$(_rule))
 
 FILES += $(1)
 
-.PHONY: $$(_rule)
+.PHONY: $(_rule)
 endef
 
 # $(1): parent directory.
