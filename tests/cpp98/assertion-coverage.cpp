@@ -38,6 +38,8 @@ RX_TEST_CASE(my_test_suite, all_check_successes)
     RX_STR_CHECK_NOT_EQUAL("hello", "world!");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "hello");
     RX_STR_CHECK_NOT_EQUAL_NO_CASE("hello", "world!");
+    RX_PTR_CHECK_EQUAL((void *)0x123, (void *)0x123);
+    RX_PTR_CHECK_NOT_EQUAL((void *)0x123, (void *)0x456);
 }
 
 RX_TEST_CASE(my_test_suite, all_require_successes)
@@ -69,6 +71,8 @@ RX_TEST_CASE(my_test_suite, all_require_successes)
     RX_STR_REQUIRE_NOT_EQUAL("hello", "world!");
     RX_STR_REQUIRE_EQUAL_NO_CASE("hello", "hello");
     RX_STR_REQUIRE_NOT_EQUAL_NO_CASE("hello", "world!");
+    RX_PTR_REQUIRE_EQUAL((void *)0x123, (void *)0x123);
+    RX_PTR_REQUIRE_NOT_EQUAL((void *)0x123, (void *)0x456);
 }
 
 RX_TEST_CASE(my_test_suite, all_check_failures)
@@ -100,6 +104,8 @@ RX_TEST_CASE(my_test_suite, all_check_failures)
     RX_STR_CHECK_NOT_EQUAL("hello", "hello");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "world!");
     RX_STR_CHECK_NOT_EQUAL_NO_CASE("hello", "hello");
+    RX_PTR_CHECK_EQUAL((void *)0x123, (void *)0x456);
+    RX_PTR_CHECK_NOT_EQUAL((void *)0x123, (void *)0x123);
 }
 
 RX_TEST_CASE(my_test_suite, require_failure)
@@ -237,6 +243,16 @@ RX_TEST_CASE(my_test_suite, str_require_not_equal_no_case_failure)
     RX_STR_REQUIRE_NOT_EQUAL_NO_CASE("hello", "hello");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_equal_failure)
+{
+    RX_PTR_REQUIRE_EQUAL((void *)0x123, (void *)0x456);
+}
+
+RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure)
+{
+    RX_PTR_REQUIRE_NOT_EQUAL((void *)0x123, (void *)0x123);
+}
+
 int
 main(int argc, const char **argv)
 {
@@ -297,8 +313,8 @@ main(int argc, const char **argv)
 
     free(test_cases);
 
-    ASSERT(assessed_count == 108);
-    ASSERT(nonfatal_failure_count == 27);
-    ASSERT(fatal_failure_count == 27);
+    ASSERT(assessed_count == 116);
+    ASSERT(nonfatal_failure_count == 29);
+    ASSERT(fatal_failure_count == 29);
     return 0;
 }

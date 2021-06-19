@@ -3527,6 +3527,245 @@ rx_main(rx_size test_case_count,
             RX_NONFATAL, RX__OP_NOT_EQUAL, RX__STR_CASE_IGNORE, s1, s2, msg,   \
             _0, _1, _2, _3, _4, _5, _6, _7)
 
+/* Pointer Assertions                                              O-(''Q)
+   -------------------------------------------------------------------------- */
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX__PTR_DEFINE_TEST(severity, op, x1, x2, ...)                     \
+        rx__ptr_assess_comparison(RX_PARAM_CONTEXT,                            \
+                                  (x1),                                        \
+                                  (x2),                                        \
+                                  op,                                          \
+                                  #x1,                                         \
+                                  #x2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  __VA_ARGS__)
+#else
+    #define RX__PTR_DEFINE_TEST(severity, op, x1, x2, msg,                     \
+                                _0, _1, _2, _3, _4, _5, _6, _7)                \
+        rx__ptr_assess_comparison(RX_PARAM_CONTEXT,                            \
+                                  (x1),                                        \
+                                  (x2),                                        \
+                                  op,                                          \
+                                  #x1,                                         \
+                                  #x2,                                         \
+                                  __FILE__,                                    \
+                                  __LINE__,                                    \
+                                  severity,                                    \
+                                  msg,                                         \
+                                  _0, _1, _2, _3, _4, _5, _6, _7)
+#endif
+
+#define RX_PTR_REQUIRE_EQUAL(x1, x2)                                           \
+    RX_PTR_REQUIRE_EQUAL_MSG(x1, x2, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_REQUIRE_EQUAL_MSG(x1, x2, ...)                              \
+        RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
+    #define RX_PTR_REQUIRE_EQUAL_MSG(x1, x2, msg)                              \
+        RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,               \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_1(x1, x2, msg,                                \
+                                    _0)                                        \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_2(x1, x2, msg,                                \
+                                   _0, _1)                                     \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_3(x1, x2, msg,                                \
+                                   _0, _1, _2)                                 \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_4(x1, x2, msg,                                \
+                                   _0, _1, _2, _3)                             \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_5(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4)                         \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_6(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5)                     \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_7(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6)                 \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_REQUIRE_EQUAL_MSG_8(x1, x2, msg,                                \
+                                   _0, _1, _2, _3, _4, _5, _6, _7)             \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_EQUAL, x1, x2, msg,                   \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_PTR_CHECK_EQUAL(x1, x2)                                             \
+    RX_PTR_CHECK_EQUAL_MSG(x1, x2, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_CHECK_EQUAL_MSG(x1, x2, ...)                                \
+        RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, __VA_ARGS__)
+#else
+    #define RX_PTR_CHECK_EQUAL_MSG(x1, x2, msg)                                \
+        RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,            \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_CHECK_EQUAL_MSG_1(x1, x2, msg,                                  \
+                                 _0)                                           \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_2(x1, x2, msg,                                  \
+                                 _0, _1)                                       \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_3(x1, x2, msg,                                  \
+                                 _0, _1, _2)                                   \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_4(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3)                               \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_5(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4)                           \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_6(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5)                       \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_7(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6)                   \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_CHECK_EQUAL_MSG_8(x1, x2, msg,                                  \
+                                 _0, _1, _2, _3, _4, _5, _6, _7)               \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_EQUAL, x1, x2, msg,                \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL(x1, x2)                                       \
+    RX_PTR_REQUIRE_NOT_EQUAL_MSG(x1, x2, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_REQUIRE_NOT_EQUAL_MSG(x1, x2, ...)                          \
+        RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
+    #define RX_PTR_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg)                          \
+        RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,           \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_1(x1, x2, msg,                            \
+                                       _0)                                     \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_2(x1, x2, msg,                            \
+                                       _0, _1)                                 \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_3(x1, x2, msg,                            \
+                                       _0, _1, _2)                             \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_4(x1, x2, msg,                            \
+                                       _0, _1, _2, _3)                         \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_5(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4)                     \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_6(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5)                 \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_7(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5, _6)             \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG_8(x1, x2, msg,                            \
+                                       _0, _1, _2, _3, _4, _5, _6, _7)         \
+    RX__PTR_DEFINE_TEST(RX_FATAL, RX__OP_NOT_EQUAL, x1, x2, msg,               \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
+#define RX_PTR_CHECK_NOT_EQUAL(x1, x2)                                         \
+    RX_PTR_CHECK_NOT_EQUAL_MSG(x1, x2, NULL)
+
+#if RX__HAS_VARIADIC_MACROS
+    #define RX_PTR_CHECK_NOT_EQUAL_MSG(x1, x2, ...)                            \
+        RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, __VA_ARGS__)
+#else
+    #define RX_PTR_CHECK_NOT_EQUAL_MSG(x1, x2, msg)                            \
+        RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,        \
+                            NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+#endif
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_1(x1, x2, msg,                              \
+                                     _0)                                       \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, NULL, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_2(x1, x2, msg,                              \
+                                     _0, _1)                                   \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, NULL, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_3(x1, x2, msg,                              \
+                                     _0, _1, _2)                               \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, NULL, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_4(x1, x2, msg,                              \
+                                     _0, _1, _2, _3)                           \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, NULL, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_5(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4)                       \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, NULL, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_6(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5)                   \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, NULL, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_7(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6)               \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, _6, NULL)
+
+#define RX_PTR_CHECK_NOT_EQUAL_MSG_8(x1, x2, msg,                              \
+                                     _0, _1, _2, _3, _4, _5, _6, _7)           \
+    RX__PTR_DEFINE_TEST(RX_NONFATAL, RX__OP_NOT_EQUAL, x1, x2, msg,            \
+                        _0, _1, _2, _3, _4, _5, _6, _7)
+
 /* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -5611,6 +5850,105 @@ rx__str_assess_comparison(struct rx_context *context,
             context, result, file, line, severity, failure_msg, diagnostic_msg)
         != RX_SUCCESS) {
         RX__LOG_DEBUG_2("failed to handle the test result for the string "
+                        "comparison test located at %s:%d\n",
+                        file,
+                        line);
+    }
+
+    RX_FREE(failure_msg);
+    RX_FREE(diagnostic_msg);
+
+    if (!result && severity == RX_FATAL) {
+        rx_abort(context);
+    }
+}
+
+RX__MAYBE_UNUSED static void
+rx__ptr_assess_comparison(struct rx_context *context,
+                          void *x1,
+                          void *x2,
+                          enum rx__op op,
+                          const char *expr1,
+                          const char *expr2,
+                          const char *file,
+                          int line,
+                          enum rx_severity severity,
+                          const char *failure_fmt,
+                          ...)
+{
+    int result;
+    char *failure_msg;
+    char *diagnostic_msg;
+
+    RX_ASSERT(context != NULL);
+    RX_ASSERT(expr1 != NULL);
+    RX_ASSERT(expr2 != NULL);
+    RX_ASSERT(file != NULL);
+
+    switch (op) {
+        case RX__OP_EQUAL:
+            result = x1 == x2;
+            break;
+        case RX__OP_NOT_EQUAL:
+            result = x1 != x2;
+            break;
+        default:
+            RX_ASSERT(0);
+            result = 0;
+            break;
+    }
+
+    if (result) {
+        failure_msg = NULL;
+        diagnostic_msg = NULL;
+    } else {
+        enum rx_status status;
+        const char *op_symbol;
+
+        if (failure_fmt == NULL) {
+            const char *op_name;
+
+            rx__op_get_name(&op_name, op);
+            RX__STR_CREATE_3(status,
+                             failure_msg,
+                             "`%s` is expected to be %s `%s`",
+                             expr1,
+                             op_name,
+                             expr2);
+        } else {
+            RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
+        }
+
+        if (status != RX_SUCCESS) {
+            RX__LOG_DEBUG_2("failed to create the failure message for "
+                            "the pointer comparison test located at "
+                            "%s:%d\n",
+                            file,
+                            line);
+            failure_msg = NULL;
+        }
+
+        rx__op_get_symbol(&op_symbol, op);
+        RX__STR_CREATE_3(status,
+                         diagnostic_msg,
+                         "0x%08x %s 0x%08x",
+                         (uintptr_t)x1,
+                         op_symbol,
+                         (uintptr_t)x2);
+        if (status != RX_SUCCESS) {
+            RX__LOG_DEBUG_2("failed to create the diagnostic message for "
+                            "the pointer comparison test located at "
+                            "%s:%d\n",
+                            file,
+                            line);
+            diagnostic_msg = NULL;
+        }
+    }
+
+    if (rx_handle_test_result(
+            context, result, file, line, severity, failure_msg, diagnostic_msg)
+        != RX_SUCCESS) {
+        RX__LOG_DEBUG_2("failed to handle the test result for the pointer "
                         "comparison test located at %s:%d\n",
                         file,
                         line);
