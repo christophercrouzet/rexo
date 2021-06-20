@@ -4866,7 +4866,7 @@ struct rx__test_case_desc {
     RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                    \
         = {#suite_id,                                                          \
            #id,                                                                \
-           suite_id##_##id,                          \
+           suite_id##_##id,                                                    \
            config_desc};                                                       \
                                                                                \
     RX__TEST_CASE_REGISTER(suite_id, id);                                      \
