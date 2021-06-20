@@ -105,9 +105,18 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     #define RX__MAYBE_UNUSED
 #endif
 
-#define RX__DEFINE_PARAMS(type)                                                \
+#if defined(_MSC_VER)
+    #define RX__DEFINE_PARAMS(type)                                            \
+        _Pragma("warning(push)")                                               \
+        _Pragma("warning(disable : 4100)")                                     \
+        struct rx_context *RX_PARAM_CONTEXT RX__MAYBE_UNUSED,                  \
+        type *RX_PARAM_DATA RX__MAYBE_UNUSED                                   \
+        _Pragma("warning(pop)")
+#else
+    #define RX__DEFINE_PARAMS(type)                                            \
     struct rx_context *RX_PARAM_CONTEXT RX__MAYBE_UNUSED,                      \
     type *RX_PARAM_DATA RX__MAYBE_UNUSED
+#endif
 
 /* Public Interface                                                O-(''Q)
    -------------------------------------------------------------------------- */
@@ -4114,7 +4123,17 @@ struct rx_context {
     #define RX_LOG rx__log
 #endif
 
-#if defined(__GNUC__)
+#if defined(_MSC_VER)
+    #define RX__LOG(level, args)                                               \
+        do {                                                                   \
+            _Pragma("warning(push)")                                           \
+            _Pragma("warning(disable : 4127)")                                 \
+            if (RX__LOGGING && (level) <= RX__LOGGING_LEVEL) {                 \
+                RX_LOG args;                                                   \
+            }                                                                  \
+            _Pragma("warning(pop)")                                            \
+        } while (0)
+#elif defined(__GNUC__)
     #define RX__LOG(level, args)                                               \
         do {                                                                   \
             _Pragma("GCC diagnostic push")                                     \
@@ -5084,7 +5103,14 @@ rx__str_initialize_va_list(size_t *count,
         return RX_SUCCESS;
     }
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable : 4996)
+#endif
     size = vsprintf(s, fmt, args);
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
     if (size < 0) {
         RX__LOG_DEBUG("unexpected string formatting error\n");
         return RX_ERROR;
