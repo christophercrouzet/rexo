@@ -65,14 +65,18 @@ typedef char rx__invalid_uint32_type[sizeof(rx_uint32) == 4 ? 1 : -1];
 #if defined(RX_UINT64_TYPE)
     typedef RX_UINT64_TYPE rx_uint64;
 #else
-    #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wlong-long"
+    #if defined(__GNUC__)
+        #pragma GCC diagnostic push
+        #pragma GCC diagnostic ignored "-Wlong-long"
+    #endif
     /*
        Even though the `long long` type is not part of the C89 and C++98
        standards, assume that it's defined by current compilers.
     */
     typedef unsigned long long rx_uint64;
-    #pragma GCC diagnostic pop
+    #if defined(__GNUC__)
+        #pragma GCC diagnostic pop
+    #endif
 #endif
 typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
 
