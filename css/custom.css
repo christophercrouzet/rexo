@@ -1,0 +1,31 @@
+:root {
+    --sidebar-width: 277px;
+}
+
+h1 a.header:target::before,
+h2 a.header:target::before,
+h3 a.header:target::before,
+h4 a.header:target::before {
+    display: none;
+}
+
+h1 a.header:hover::after,
+h2 a.header:hover::after,
+h3 a.header:hover::after,
+h4 a.header:hover::after {
+    content: '\f0c1';
+    display: inline-block;
+    font-family: 'FontAwesome';
+    font-size: 0.75em;
+    font-weight: normal;
+    margin-left: 1em;
+}
+
+h1 a.rx-api::before,
+h2 a.rx-api::before,
+h3 a.rx-api::before,
+h4 a.rx-api::before {
+    content: '»';
+    display: inline-block;
+    margin-right: 0.5em;
+}
