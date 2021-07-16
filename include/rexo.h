@@ -118,6 +118,16 @@ typedef char rx__invalid_uint64_type[sizeof(rx_uint64) == 8 ? 1 : -1];
     type *RX_PARAM_DATA RX__MAYBE_UNUSED
 #endif
 
+/*
+   Support compilers that checks printf-style functions.
+*/
+#if defined(__GNUC__)
+    #define RX__PRINTF_CHECK(fmt, args)                                        \
+        __attribute__((format (printf, (fmt), (args))))
+#else
+    #define RX__PRINTF_CHECK(fmt, args)
+#endif
+
 /* Public Interface                                                O-(''Q)
    -------------------------------------------------------------------------- */
 
@@ -4332,6 +4342,7 @@ rx__log_style_get_ansi_code(const char **code, enum rx__log_style style)
 }
 #endif /* RX__LOG_STYLING */
 
+RX__PRINTF_CHECK(4, 5)
 static void
 rx__log(enum rx_log_level level,
         const char *file,
@@ -5120,6 +5131,7 @@ rx__str_initialize_va_list(size_t *count,
     return RX_SUCCESS;
 }
 
+RX__PRINTF_CHECK(3, 4)
 static enum rx_status
 rx__str_initialize(size_t *count, char *s, const char *fmt, ...)
 {
