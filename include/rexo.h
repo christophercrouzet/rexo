@@ -4618,8 +4618,8 @@ rx__test_failure_array_create(struct rx_failure **array, size_t size)
                       + sizeof(struct rx_failure) * capacity);
     if (block == NULL) {
         RX__LOG_DEBUG_1("failed to reserve a large enough capacity for "
-                        "the test failure array (requested capacity: %zu)\n",
-                        size);
+                        "the test failure array (requested capacity: %lu)\n",
+                        (unsigned long)size);
         return RX_ERROR_ALLOCATION;
     }
 
@@ -4664,9 +4664,10 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
         rx__test_failure_array_max_capacity,
         sizeof(struct rx_failure));
     if (status != RX_SUCCESS) {
-        RX__LOG_DEBUG_1("failed to reserve a large enough capacity for "
-                        "the test failure array (requested capacity: %zu)\n",
-                        RX__DYN_ARRAY_GET_HEADER(block)->size + size);
+        RX__LOG_DEBUG_1(
+            "failed to reserve a large enough capacity for "
+            "the test failure array (requested capacity: %lu)\n",
+            (unsigned long)RX__DYN_ARRAY_GET_HEADER(block)->size + size);
         return status;
     }
 
@@ -5005,8 +5006,9 @@ rx__op_get_name(const char **name, enum rx__op op)
         if ((status) == RX_SUCCESS) {                                          \
             (s) = (char *)RX_MALLOC(sizeof *(s) * RX__STR_LENGTH_ID);          \
             if ((s) == NULL) {                                                 \
-                RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n", \
-                                sizeof *(s) * RX__STR_LENGTH_ID);              \
+                RX__LOG_DEBUG_1(                                               \
+                    "failed to allocate the string (%lu bytes)\n",             \
+                    (unsigned long)sizeof *(s) * RX__STR_LENGTH_ID);           \
                 (status) = RX_ERROR_ALLOCATION;                                \
             } else {                                                           \
                 va_start(args, fmt);                                           \
@@ -5029,8 +5031,9 @@ rx__op_get_name(const char **name, enum rx__op op)
         if ((status) == RX_SUCCESS) {                                          \
             (s) = (char *)RX_MALLOC(sizeof *(s) * RX__STR_LENGTH_ID);          \
             if ((s) == NULL) {                                                 \
-                RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n", \
-                                sizeof *(s) * RX__STR_LENGTH_ID);              \
+                RX__LOG_DEBUG_1(                                               \
+                    "failed to allocate the string (%lu bytes)\n",             \
+                    (unsigned long)sizeof *(s) * RX__STR_LENGTH_ID);           \
                 (status) = RX_ERROR_ALLOCATION;                                \
             } else {                                                           \
                 (status) = rx__str_initialize args;                            \
@@ -5156,8 +5159,8 @@ rx__str_copy(char **s, const char *original)
 
     *s = (char *)RX_MALLOC(sizeof **s * size);
     if (*s == NULL) {
-        RX__LOG_DEBUG_1("failed to allocate the string (%zu bytes)\n",
-                        sizeof **s * size);
+        RX__LOG_DEBUG_1("failed to allocate the string (%lu bytes)\n",
+                        (unsigned long)sizeof **s * size);
         return RX_ERROR_ALLOCATION;
     }
 
@@ -5582,8 +5585,12 @@ rx__int_assess_comparison(struct rx_context *context,
         }
 
         rx__op_get_symbol(&op_symbol, op);
-        RX__STR_CREATE_3(
-            status, diagnostic_msg, "%jd %s %jd", x1, op_symbol, x2);
+        RX__STR_CREATE_3(status,
+                         diagnostic_msg,
+                         "%ld %s %ld",
+                         (long)x1,
+                         op_symbol,
+                         (long)x2);
         if (status != RX_SUCCESS) {
             RX__LOG_DEBUG_2("failed to create the diagnostic message for "
                             "the integer comparison test located at %s:%d\n",
@@ -5688,8 +5695,12 @@ rx__uint_assess_comparison(struct rx_context *context,
         }
 
         rx__op_get_symbol(&op_symbol, op);
-        RX__STR_CREATE_3(
-            status, diagnostic_msg, "%ju %s %ju", x1, op_symbol, x2);
+        RX__STR_CREATE_3(status,
+                         diagnostic_msg,
+                         "%lu %s %lu",
+                         (unsigned long)x1,
+                         op_symbol,
+                         (unsigned long)x2);
         if (status != RX_SUCCESS) {
             RX__LOG_DEBUG_2("failed to create the diagnostic message for "
                             "the unsigned integer comparison test located at "
@@ -6098,7 +6109,7 @@ rx__ptr_assess_comparison(struct rx_context *context,
         rx__op_get_symbol(&op_symbol, op);
         RX__STR_CREATE_3(status,
                          diagnostic_msg,
-                         "0x%08x %s 0x%08x",
+                         "0x%08lx %s 0x%08lx",
                          (uintptr_t)x1,
                          op_symbol,
                          (uintptr_t)x2);
@@ -6159,9 +6170,9 @@ rx__ptr_assess_alignment(struct rx_context *context,
         if (failure_fmt == NULL) {
             RX__STR_CREATE_2(status,
                              failure_msg,
-                             "`%s` is expected to have an %zu-byte alignment",
+                             "`%s` is expected to have an %lu-byte alignment",
                              expr,
-                             alignment);
+                             (unsigned long)alignment);
         } else {
             RX__STR_CREATE_VA_LIST(status, failure_msg, failure_fmt);
         }
@@ -6177,9 +6188,9 @@ rx__ptr_assess_alignment(struct rx_context *context,
 
         RX__STR_CREATE_2(status,
                          diagnostic_msg,
-                         "0x%08x %% %zu != 0",
+                         "0x%08lx %% %lu != 0",
                          (uintptr_t)x,
-                         alignment);
+                         (unsigned long)alignment);
         if (status != RX_SUCCESS) {
             RX__LOG_DEBUG_2("failed to create the diagnostic message for "
                             "the pointer alignment test located at "
