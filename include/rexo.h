@@ -5078,6 +5078,7 @@ rx__str_case_get_type(const char **type, enum rx__str_case str_case)
     }
 }
 
+RX__PRINTF_CHECK(3, 0)
 static enum rx_status
 rx__str_initialize_va_list(size_t *count,
                            char *s,
