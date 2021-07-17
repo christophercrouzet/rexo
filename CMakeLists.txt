@@ -24,7 +24,8 @@ else()
     add_compile_options(
         -Wpedantic -Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual
         -Wconversion -Wfloat-equal -Wpointer-arith -Wshadow -Wstrict-overflow=5
-        -Wswitch -Wswitch-default -Wundef -Wunreachable-code -Wwrite-strings)
+        -Wswitch -Wswitch-default -Wundef -Wunreachable-code -Wwrite-strings
+        -Wformat-nonliteral)
 endif()
 
 if(UNIX)
