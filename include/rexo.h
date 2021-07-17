@@ -5367,6 +5367,7 @@ rx__run_registered_test_cases(void)
 /* Implementation: Test Assessments                                O-(''Q)
    -------------------------------------------------------------------------- */
 
+RX__PRINTF_CHECK(8, 0)
 RX__MAYBE_UNUSED static void
 rx__assess_value(struct rx_context *context,
                  int x,
@@ -5437,6 +5438,7 @@ rx__assess_value(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(8, 0)
 RX__MAYBE_UNUSED static void
 rx__bool_assess_value(struct rx_context *context,
                       int x,
@@ -5509,6 +5511,7 @@ rx__bool_assess_value(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(10, 0)
 RX__MAYBE_UNUSED static void
 rx__int_assess_comparison(struct rx_context *context,
                           rx__int x1,
@@ -5618,6 +5621,7 @@ rx__int_assess_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(10, 0)
 RX__MAYBE_UNUSED static void
 rx__uint_assess_comparison(struct rx_context *context,
                            rx__uint x1,
@@ -5729,6 +5733,7 @@ rx__uint_assess_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(10, 0)
 RX__MAYBE_UNUSED static void
 rx__real_assess_comparison(struct rx_context *context,
                            rx__real x1,
@@ -5841,6 +5846,7 @@ rx__real_assess_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(11, 0)
 RX__MAYBE_UNUSED static void
 rx__real_assess_fuzzy_comparison(struct rx_context *context,
                                  rx__real x1,
@@ -5938,6 +5944,7 @@ rx__real_assess_fuzzy_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(11, 0)
 RX__MAYBE_UNUSED static void
 rx__str_assess_comparison(struct rx_context *context,
                           const char *s1,
@@ -6042,6 +6049,7 @@ rx__str_assess_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(10, 0)
 RX__MAYBE_UNUSED static void
 rx__ptr_assess_comparison(struct rx_context *context,
                           void *x1,
@@ -6141,6 +6149,7 @@ rx__ptr_assess_comparison(struct rx_context *context,
     }
 }
 
+RX__PRINTF_CHECK(8, 0)
 RX__MAYBE_UNUSED static void
 rx__ptr_assess_alignment(struct rx_context *context,
                          void *x,
