@@ -4,7 +4,7 @@ Changelog
 Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
-## [Unreleased]
+## [v0.2.1] (2021-07-22)
 
 ### Added
 
@@ -40,5 +40,6 @@ Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
 [Sementic Versioning Specification (SemVer)]: https://semver.org
-[Unreleased]: https://github.com/christophercrouzet/rexo/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/christophercrouzet/rexo/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/christophercrouzet/rexo/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/christophercrouzet/rexo/compare/v0.1.0...v0.2.0
