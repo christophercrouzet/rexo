@@ -4,6 +4,13 @@ Changelog
 Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
+## [v0.2.2] (2021-08-04)
+
+### Changed
+
+* Appended a slash character as required by ‘vcpkg’.
+
+
 ## [v0.2.1] (2021-07-22)
 
 ### Added
@@ -40,6 +47,7 @@ Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
 [Sementic Versioning Specification (SemVer)]: https://semver.org
-[Unreleased]: https://github.com/christophercrouzet/rexo/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/christophercrouzet/rexo/compare/v0.2.2...HEAD
+[v0.2.2]: https://github.com/christophercrouzet/rexo/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/christophercrouzet/rexo/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/christophercrouzet/rexo/compare/v0.1.0...v0.2.0
