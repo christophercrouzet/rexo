@@ -6052,8 +6052,8 @@ rx__str_assess_comparison(struct rx_context *context,
 RX__PRINTF_CHECK(10, 0)
 RX__MAYBE_UNUSED static void
 rx__ptr_assess_comparison(struct rx_context *context,
-                          void *x1,
-                          void *x2,
+                          const void *x1,
+                          const void *x2,
                           enum rx__op op,
                           const char *expr1,
                           const char *expr2,
@@ -6152,7 +6152,7 @@ rx__ptr_assess_comparison(struct rx_context *context,
 RX__PRINTF_CHECK(8, 0)
 RX__MAYBE_UNUSED static void
 rx__ptr_assess_alignment(struct rx_context *context,
-                         void *x,
+                         const void *x,
                          size_t alignment,
                          const char *expr,
                          const char *file,
