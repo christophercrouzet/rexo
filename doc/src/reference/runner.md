@@ -13,7 +13,7 @@ enum rx_status
 rx_main(size_t test_case_count,
         const struct rx_test_case *test_cases,
         int argc,
-        const char **argv)
+        const char * const *argv)
 ```
 
 The `rx_main` function can be seen as composing all the orthogonal calls into

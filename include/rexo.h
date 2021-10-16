@@ -258,7 +258,7 @@ RX__STORAGE enum rx_status
 rx_main(rx_size test_case_count,
         const struct rx_test_case *test_cases,
         int argc,
-        const char **argv);
+        const char * const *argv);
 
 #if defined(__cplusplus)
 }
@@ -6686,7 +6686,7 @@ RX__MAYBE_UNUSED RX__STORAGE enum rx_status
 rx_main(rx_size test_case_count,
         const struct rx_test_case *test_cases,
         int argc,
-        const char **argv)
+        const char * const *argv)
 {
     RX__UNUSED(argc);
     RX__UNUSED(argv);
