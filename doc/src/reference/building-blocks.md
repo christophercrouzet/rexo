@@ -278,15 +278,18 @@ their default values.
 
 ### `rx_fixture`
 
-Fixture defining function pointers to run before and after the function defining
+Fixture defining data type size and function pointers to run before and after
 the test is run.
 
 ```c
 struct rx_fixture {
-    rx_set_up_fn set_up;
-    rx_tear_down_fn tear_down;
+    rx_size size;
+    struct rx_fixture_config config;
 };
 ```
+
+Any configuration can be set through the `config` option. See
+the [`rx_fixture_config`][struct-rx_fixture_config] struct.
 
 
 ### `rx_test_case`
@@ -472,5 +475,6 @@ at most `test_case_count` objects will be written.
 [type-rx_uint32]: #rx_uint32
 [type-rx_uint64]: #rx_uint64
 [struct-rx_fixture]: #rx_fixture
+[struct-rx_fixture_config]: #rx_fixture_config
 [struct-rx_summary]: #rx_summary
 [struct-rx_test_case_config]: #rx_test_case_config
