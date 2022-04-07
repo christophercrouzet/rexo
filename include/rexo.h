@@ -4698,6 +4698,12 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    anything registered in these sections.
 */
 
+#if defined(_MSC_VER) || defined(__GNUC__)
+    #define RX__TEST_DISCOVERY 1
+#else
+    #define RX__TEST_DISCOVERY 0
+#endif
+
 #if defined(_MSC_VER)
     __pragma(section("rxsuite$a", read))
     __pragma(section("rxsuite$b", read))
@@ -4719,7 +4725,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
     #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
-#else
+#elif defined(__GNUC__)
     #if defined(RX__PLATFORM_DARWIN)
         extern const struct rx__test_suite_desc * const __start_rxsuite        \
             __asm("section$start$__DATA$rxsuite");
@@ -4747,6 +4753,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
     #define RX__TEST_SUITE_SECTION_END (&__stop_rxsuite)
+#else
+    #define RX__TEST_SUITE_REGISTER(name) RX__REQUIRE_SEMICOLON
 #endif
 
 #if defined(_MSC_VER)
@@ -4770,7 +4778,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
     #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
-#else
+#elif defined(__GNUC__)
     #if defined(RX__PLATFORM_DARWIN)
         extern const struct rx__test_case_desc * const __start_rxcase          \
             __asm("section$start$__DATA$rxcase");
@@ -4798,6 +4806,8 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_CASE_SECTION_BEGIN (&__start_rxcase)
     #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
+#else
+    #define RX__TEST_CASE_REGISTER(suite_name, name) RX__REQUIRE_SEMICOLON
 #endif
 
 /* Implementation: Fixture                                         O-(''Q)
@@ -4866,7 +4876,7 @@ struct rx__test_suite_desc {
 };
 
 #define RX__TEST_SUITE_(id, config_desc)                                       \
-    static const struct rx__test_suite_desc                                    \
+    RX__MAYBE_UNUSED static const struct rx__test_suite_desc                   \
     RX__TEST_SUITE_DESC_GET_ID(id)                                             \
         = {#id, config_desc};                                                  \
                                                                                \
@@ -4893,7 +4903,7 @@ struct rx__test_case_desc {
     static void                                                                \
     suite_id##_##id(RX__DEFINE_PARAMS(void));                                  \
                                                                                \
-    static const struct rx__test_case_desc                                     \
+    RX__MAYBE_UNUSED static const struct rx__test_case_desc                    \
     RX__TEST_CASE_DESC_GET_ID(suite_id, id)                                    \
         = {#suite_id,                                                          \
            #id,                                                                \
@@ -5172,7 +5182,7 @@ rx__str_copy(char **s, const char *original)
 /* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
 
-static int
+RX__MAYBE_UNUSED static int
 rx__compare_test_cases(const void *a, const void *b)
 {
     int out;
@@ -6588,6 +6598,14 @@ rx_enumerate_test_cases(rx_size *test_case_count,
 
     RX_ASSERT(test_case_count != NULL);
 
+#if !RX__TEST_DISCOVERY
+    RX__UNUSED(test_cases);
+    RX__UNUSED(i);
+    RX__UNUSED(c_it);
+
+    *test_case_count = 0;
+    return;
+#else
     if (test_cases == NULL) {
         *test_case_count = 0;
         for (c_it = RX__TEST_CASE_SECTION_BEGIN;
@@ -6668,6 +6686,7 @@ rx_enumerate_test_cases(rx_size *test_case_count,
           *test_case_count,
           sizeof *test_cases,
           rx__compare_test_cases);
+#endif
 }
 
 RX__MAYBE_UNUSED RX__STORAGE enum rx_status
