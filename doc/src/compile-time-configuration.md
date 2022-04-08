@@ -164,6 +164,15 @@ The `RX_DISABLE_LOG_STYLING` macro ensures that no styling is ever applied to
 the output logs.
 
 
+### `RX_DISABLE_TEST_DISCOVERY`
+
+Disables the automatic discovery of tests.
+
+```c
+#define RX_DISABLE_TEST_DISCOVERY
+```
+
+
 ## Type Macros
 
 ### `RX_UINT32_TYPE`

@@ -225,6 +225,11 @@ if(REXO_BUILD_TESTS)
         DEPENDS rexo)
 
     rx_add_test(
+        NAME no-discovery
+        FILES tests/no-discovery.c
+        DEPENDS rexo)
+
+    rx_add_test(
         NAME semi-explicit
         FILES tests/semi-explicit.c
         DEPENDS rexo)

@@ -4698,13 +4698,16 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
    anything registered in these sections.
 */
 
-#if defined(_MSC_VER) || defined(__GNUC__)
+#if !defined(RX_DISABLE_TEST_DISCOVERY)                                        \
+    && (defined(_MSC_VER) || defined(__GNUC__))
     #define RX__TEST_DISCOVERY 1
 #else
     #define RX__TEST_DISCOVERY 0
 #endif
 
-#if defined(_MSC_VER)
+#if !RX__TEST_DISCOVERY
+    #define RX__TEST_SUITE_REGISTER(name) RX__REQUIRE_SEMICOLON
+#elif defined(_MSC_VER)
     __pragma(section("rxsuite$a", read))
     __pragma(section("rxsuite$b", read))
     __pragma(section("rxsuite$c", read))
@@ -4753,11 +4756,11 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
     #define RX__TEST_SUITE_SECTION_END (&__stop_rxsuite)
-#else
-    #define RX__TEST_SUITE_REGISTER(name) RX__REQUIRE_SEMICOLON
 #endif
 
-#if defined(_MSC_VER)
+#if !RX__TEST_DISCOVERY
+    #define RX__TEST_CASE_REGISTER(suite_name, name) RX__REQUIRE_SEMICOLON
+#elif defined(_MSC_VER)
     __pragma(section("rxcase$a", read))
     __pragma(section("rxcase$b", read))
     __pragma(section("rxcase$c", read))
@@ -4806,8 +4809,6 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_CASE_SECTION_BEGIN (&__start_rxcase)
     #define RX__TEST_CASE_SECTION_END (&__stop_rxcase)
-#else
-    #define RX__TEST_CASE_REGISTER(suite_name, name) RX__REQUIRE_SEMICOLON
 #endif
 
 /* Implementation: Fixture                                         O-(''Q)
