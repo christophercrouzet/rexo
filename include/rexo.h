@@ -4699,7 +4699,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 */
 
 #if !defined(RX_DISABLE_TEST_DISCOVERY)                                        \
-    && (defined(_MSC_VER) || defined(__GNUC__))
+    && (defined(_MSC_VER) || defined(__GNUC__) || defined(__MINGW64__))
     #define RX__TEST_DISCOVERY 1
 #else
     #define RX__TEST_DISCOVERY 0
@@ -4728,7 +4728,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_SUITE_SECTION_BEGIN (&rx__test_suite_section_begin + 1)
     #define RX__TEST_SUITE_SECTION_END (&rx__test_suite_section_end)
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__MINGW64__)
     #if defined(RX__PLATFORM_DARWIN)
         extern const struct rx__test_suite_desc * const __start_rxsuite        \
             __asm("section$start$__DATA$rxsuite");
@@ -4781,7 +4781,7 @@ rx__test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RX__TEST_CASE_SECTION_BEGIN (&rx__test_case_section_begin + 1)
     #define RX__TEST_CASE_SECTION_END (&rx__test_case_section_end)
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__MINGW64__)
     #if defined(RX__PLATFORM_DARWIN)
         extern const struct rx__test_case_desc * const __start_rxcase          \
             __asm("section$start$__DATA$rxcase");
