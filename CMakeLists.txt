@@ -25,7 +25,10 @@ else()
         -Wpedantic -Wall -Wextra -Waggregate-return -Wcast-align -Wcast-qual
         -Wconversion -Wfloat-equal -Wpointer-arith -Wshadow -Wstrict-overflow=5
         -Wswitch -Wswitch-default -Wundef -Wunreachable-code -Wwrite-strings
-        -Wformat-nonliteral)
+        -Wformat-nonliteral -fsanitize=undefined,address)
+    add_link_options(
+        -fsanitize=undefined,address
+    )
 endif()
 
 if(UNIX)
