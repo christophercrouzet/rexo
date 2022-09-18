@@ -1244,13 +1244,13 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxsuite");
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("__DATA,rxsuite")))
+            __attribute__((used,section("__DATA,rxsuite"),no_sanitize_address))
     #else
         extern const struct rxp_test_suite_desc * const __start_rxsuite;
         extern const struct rxp_test_suite_desc * const __stop_rxsuite;
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("rxsuite")))
+            __attribute__((used,section("rxsuite"),no_sanitize_address))
     #endif
 
     RXP_TEST_SUITE_SECTION
@@ -1297,13 +1297,13 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxcase");
 
         #define RXP_TEST_CASE_SECTION                                          \
-            __attribute__((used,section("__DATA,rxcase")))
+            __attribute__((used,section("__DATA,rxcase"),no_sanitize_address))
     #else
         extern const struct rxp_test_case_desc * const __start_rxcase;
         extern const struct rxp_test_case_desc * const __stop_rxcase;
 
         #define RXP_TEST_CASE_SECTION                                          \
-            __attribute__((used,section("rxcase")))
+            __attribute__((used,section("rxcase"),no_sanitize_address))
     #endif
 
     RXP_TEST_CASE_SECTION
