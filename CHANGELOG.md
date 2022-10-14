@@ -4,11 +4,31 @@ Changelog
 Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
+## [v0.2.3] (2021-10-15)
+
+### Added
+
+* Macro `RX_DISABLE_TEST_DISCOVERY` to disable the automatic discovery of tests.
+* Support for MinGW.
+
+
+### Changed
+
+* Disable address sanitizer for custom data sections.
+* Disable test discovery for unsupported compilers.
+* Bump Contributor Covenant's code of conduct to version 2.1.
+
+
+### Fixed
+
+* Compilation with MSVC in C++ mode failing.
+
+
 ## [v0.2.2] (2021-08-04)
 
 ### Changed
 
-* Appended a slash character as required by ‘vcpkg’.
+* Append a slash character as required by ‘vcpkg’.
 
 
 ## [v0.2.1] (2021-07-22)
@@ -47,7 +67,7 @@ Version numbers comply with the [Sementic Versioning Specification (SemVer)].
 
 
 [Sementic Versioning Specification (SemVer)]: https://semver.org
-[Unreleased]: https://github.com/christophercrouzet/rexo/compare/v0.2.2...HEAD
+[v0.2.3]: https://github.com/christophercrouzet/rexo/compare/v0.2.2...v0.2.3
 [v0.2.2]: https://github.com/christophercrouzet/rexo/compare/v0.2.1...v0.2.2
 [v0.2.1]: https://github.com/christophercrouzet/rexo/compare/v0.2.0...v0.2.1
 [v0.2.0]: https://github.com/christophercrouzet/rexo/compare/v0.1.0...v0.2.0
