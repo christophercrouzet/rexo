@@ -337,15 +337,15 @@ rx_main(rx_size test_case_count,
     #define RX_FIXTURE(ID, TYPE)                                               \
         RXP_FIXTURE_0(ID, sizeof(TYPE))                                        \
         RXP_REQUIRE_SEMICOLON
-
-    #define RX_FIXTURE_1(ID, TYPE, _0)                                         \
-        RXP_FIXTURE_1(ID, sizeof(TYPE), 1, (_0))                               \
-        RXP_REQUIRE_SEMICOLON
-
-    #define RX_FIXTURE_2(ID, TYPE, _0, _1)                                     \
-        RXP_FIXTURE_1(ID, sizeof(TYPE), 2, (_0, _1))                           \
-        RXP_REQUIRE_SEMICOLON
 #endif
+
+#define RX_FIXTURE_1(ID, TYPE, _0)                                             \
+    RXP_FIXTURE_1(ID, sizeof(TYPE), 1, (_0))                                   \
+    RXP_REQUIRE_SEMICOLON
+
+#define RX_FIXTURE_2(ID, TYPE, _0, _1)                                         \
+    RXP_FIXTURE_1(ID, sizeof(TYPE), 2, (_0, _1))                               \
+    RXP_REQUIRE_SEMICOLON
 
 #if RXP_HAS_VARIADIC_MACROS
     #define RX_VOID_FIXTURE(...)                                               \
@@ -368,15 +368,15 @@ rx_main(rx_size test_case_count,
     #define RX_VOID_FIXTURE(ID)                                                \
         RXP_FIXTURE_0(ID, 0)                                                   \
         RXP_REQUIRE_SEMICOLON
-
-    #define RX_VOID_FIXTURE_1(ID, _0)                                          \
-        RXP_FIXTURE_1(ID, 0, 1, (_0))                                          \
-        RXP_REQUIRE_SEMICOLON
-
-    #define RX_VOID_FIXTURE_2(ID, _0, _1)                                      \
-        RXP_FIXTURE_1(ID, 0, 2, (_0, _1))                                      \
-        RXP_REQUIRE_SEMICOLON
 #endif
+
+#define RX_VOID_FIXTURE_1(ID, _0)                                              \
+    RXP_FIXTURE_1(ID, 0, 1, (_0))                                              \
+    RXP_REQUIRE_SEMICOLON
+
+#define RX_VOID_FIXTURE_2(ID, _0, _1)                                          \
+    RXP_FIXTURE_1(ID, 0, 2, (_0, _1))                                          \
+    RXP_REQUIRE_SEMICOLON
 
 #if RXP_HAS_VARIADIC_MACROS
     #define RX_TEST_SUITE(...)                                                 \
@@ -398,15 +398,15 @@ rx_main(rx_size test_case_count,
     #define RX_TEST_SUITE(ID)                                                  \
         RXP_TEST_SUITE_0(ID)                                                   \
         RXP_REQUIRE_SEMICOLON
-
-    #define RX_TEST_SUITE_1(ID, _0)                                            \
-        RXP_TEST_SUITE_1(ID, 1, (_0))                                          \
-        RXP_REQUIRE_SEMICOLON
-
-    #define RX_TEST_SUITE_2(ID, _0, _1)                                        \
-        RXP_TEST_SUITE_1(ID, 2, (_0, _1))                                      \
-        RXP_REQUIRE_SEMICOLON
 #endif
+
+#define RX_TEST_SUITE_1(ID, _0)                                                \
+    RXP_TEST_SUITE_1(ID, 1, (_0))                                              \
+    RXP_REQUIRE_SEMICOLON
+
+#define RX_TEST_SUITE_2(ID, _0, _1)                                            \
+    RXP_TEST_SUITE_1(ID, 2, (_0, _1))                                          \
+    RXP_REQUIRE_SEMICOLON
 
 #if RXP_HAS_VARIADIC_MACROS
     #define RX_TEST_CASE(...)                                                  \
@@ -427,13 +427,13 @@ rx_main(rx_size test_case_count,
 #else
     #define RX_TEST_CASE(SUIE_ID, ID)                                         \
         RXP_TEST_CASE_0(SUIE_ID, ID)
-
-    #define RX_TEST_CASE_1(SUIE_ID, ID, _0)                                   \
-        RXP_TEST_CASE_1(SUIE_ID, ID, 1, (_0))
-
-    #define RX_TEST_CASE_2(SUIE_ID, ID, _0, _1)                               \
-        RXP_TEST_CASE_1(SUIE_ID, ID, 2, (_0, _1))
 #endif
+
+#define RX_TEST_CASE_1(SUIE_ID, ID, _0)                                        \
+    RXP_TEST_CASE_1(SUIE_ID, ID, 1, (_0))
+
+#define RX_TEST_CASE_2(SUIE_ID, ID, _0, _1)                                    \
+    RXP_TEST_CASE_1(SUIE_ID, ID, 2, (_0, _1))
 
 /* Implementation: Helpers                                         O-(''Q)
    -------------------------------------------------------------------------- */
@@ -1221,16 +1221,16 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxsuite$c", read))
 
     __declspec(allocate("rxsuite$a"))
-    const struct rxp_test_suite_desc * const rxp_test_suite_section_begin
+    extern const struct rxp_test_suite_desc * const rxp_test_suite_section_begin
         = NULL;
 
     __declspec(allocate("rxsuite$c"))
-    const struct rxp_test_suite_desc * const rxp_test_suite_section_end
+    extern const struct rxp_test_suite_desc * const rxp_test_suite_section_end
         = NULL;
 
     #define RXP_TEST_SUITE_REGISTER(NAME)                                      \
         __declspec(allocate("rxsuite$b"))                                      \
-        const struct rxp_test_suite_desc * const                               \
+        extern const struct rxp_test_suite_desc * const                        \
         RXP_TEST_SUITE_DESC_PTR_GET_ID(NAME)                                   \
             = &RXP_TEST_SUITE_DESC_GET_ID(NAME)
 
@@ -1274,16 +1274,16 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
     __pragma(section("rxcase$c", read))
 
     __declspec(allocate("rxcase$a"))
-    const struct rxp_test_case_desc * const rxp_test_case_section_begin
+    extern const struct rxp_test_case_desc * const rxp_test_case_section_begin
         = NULL;
 
     __declspec(allocate("rxcase$c"))
-    const struct rxp_test_case_desc * const rxp_test_case_section_end
+    extern const struct rxp_test_case_desc * const rxp_test_case_section_end
         = NULL;
 
     #define RXP_TEST_CASE_REGISTER(SUITE_NAME, NAME)                           \
         __declspec(allocate("rxcase$b"))                                       \
-        const struct rxp_test_case_desc * const                                \
+        extern const struct rxp_test_case_desc * const                         \
         RXP_TEST_CASE_DESC_PTR_GET_ID(SUITE_NAME, NAME)                        \
             = &RXP_TEST_CASE_DESC_GET_ID(SUITE_NAME, NAME)
 

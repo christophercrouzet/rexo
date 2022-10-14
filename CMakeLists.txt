@@ -133,49 +133,47 @@ if(REXO_BUILD_TESTS)
                 C_STANDARD 90)
     endif()
 
-    if(NOT MSVC)
-        rx_add_test(
-            NAME cpp98-assertion-coverage
-            FILES tests/cpp98/assertion-coverage.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-assertion-coverage
+        FILES tests/cpp98/assertion-coverage.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-        rx_add_test(
-            NAME cpp98-assertion-failure-messages
-            FILES tests/cpp98/assertion-failure-messages.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-assertion-failure-messages
+        FILES tests/cpp98/assertion-failure-messages.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-        rx_add_test(
-            NAME cpp98-config-inherit
-            FILES tests/cpp98/config-inherit.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-config-inherit
+        FILES tests/cpp98/config-inherit.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-        rx_add_test(
-            NAME cpp98-fixture
-            FILES tests/cpp98/fixture.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-fixture
+        FILES tests/cpp98/fixture.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-        rx_add_test(
-            NAME cpp98-fixture-void
-            FILES tests/cpp98/fixture-void.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
+    rx_add_test(
+        NAME cpp98-fixture-void
+        FILES tests/cpp98/fixture-void.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
-        rx_add_test(
-            NAME cpp98-minimal
-            FILES tests/cpp98/minimal.cpp
-            DEPENDS rexo
-            PROPERTIES
-                CXX_STANDARD 98)
-    endif()
+    rx_add_test(
+        NAME cpp98-minimal
+        FILES tests/cpp98/minimal.cpp
+        DEPENDS rexo
+        PROPERTIES
+            CXX_STANDARD 98)
 
     rx_add_test(
         NAME assertion-coverage
