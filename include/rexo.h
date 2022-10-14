@@ -1232,7 +1232,10 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
         __declspec(allocate("rxsuite$b"))                                      \
         const struct rxp_test_suite_desc * const                               \
         RXP_TEST_SUITE_DESC_PTR_GET_ID(NAME)                                   \
-            = &RXP_TEST_SUITE_DESC_GET_ID(NAME)
+            = &RXP_TEST_SUITE_DESC_GET_ID(NAME);                               \
+        const struct rxp_test_suite_desc * const *                             \
+        RXP_TEST_SUITE_DESC_PTR_GET_ID(NAME)_nodiscard                         \
+            = &RXP_TEST_SUITE_DESC_PTR_GET_ID(NAME)
 
     #define RXP_TEST_SUITE_SECTION_BEGIN (&rxp_test_suite_section_begin + 1)
     #define RXP_TEST_SUITE_SECTION_END (&rxp_test_suite_section_end)
@@ -1285,7 +1288,10 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
         __declspec(allocate("rxcase$b"))                                       \
         const struct rxp_test_case_desc * const                                \
         RXP_TEST_CASE_DESC_PTR_GET_ID(SUITE_NAME, NAME)                        \
-            = &RXP_TEST_CASE_DESC_GET_ID(SUITE_NAME, NAME)
+            = &RXP_TEST_CASE_DESC_GET_ID(SUITE_NAME, NAME);                    \
+        const struct rxp_test_case_desc * const *                              \
+        RXP_TEST_CASE_DESC_PTR_GET_ID(SUITE_NAME, NAME)_nodiscard              \
+            = &RXP_TEST_CASE_DESC_PTR_GET_ID(SUITE_NAME, NAME)
 
     #define RXP_TEST_CASE_SECTION_BEGIN (&rxp_test_case_section_begin + 1)
     #define RXP_TEST_CASE_SECTION_END (&rxp_test_case_section_end)
