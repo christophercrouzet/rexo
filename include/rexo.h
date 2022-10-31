@@ -1213,6 +1213,18 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
     #define RXP_TEST_DISCOVERY 0
 #endif
 
+#if !defined(RXP_SANITIZE_ADDRESS)
+    #define RXP_SANITIZE_ADDRESS 1
+#endif
+
+#if !RXP_SANITIZE_ADDRESS
+    #define ATTRIBUTE(A) \
+        __attribute__((used,section(A)))
+#else
+    #define ATTRIBUTE(A) \
+        __attribute__((used,section(A),no_sanitize_address))
+#endif
+
 #if !RXP_TEST_DISCOVERY
     #define RXP_TEST_SUITE_REGISTER(NAME) RXP_REQUIRE_SEMICOLON
 #elif defined(_MSC_VER)
@@ -1244,13 +1256,13 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxsuite");
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("__DATA,rxsuite")))
+            ATTRIBUTE("__DATA,rxsuite")
     #else
         extern const struct rxp_test_suite_desc * const __start_rxsuite;
         extern const struct rxp_test_suite_desc * const __stop_rxsuite;
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("rxsuite")))
+            ATTRIBUTE("rxsuite")
     #endif
 
     RXP_TEST_SUITE_SECTION
@@ -1264,18 +1276,6 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
 
     #define RXP_TEST_SUITE_SECTION_BEGIN (&__start_rxsuite)
     #define RXP_TEST_SUITE_SECTION_END (&__stop_rxsuite)
-#endif
-
-#if !defined(RXP_SANITIZE_ADDRESS)
-    #define RXP_SANITIZE_ADDRESS 1
-#endif
-
-#if !RXP_SANITIZE_ADDRESS
-    #define ATTRIBUTE(A) \
-        __attribute__((used,section(A)))
-#else
-    #define ATTRIBUTE(A) \
-        __attribute__((used,section(A),no_sanitize_address))
 #endif
 
 #if !RXP_TEST_DISCOVERY
@@ -1309,13 +1309,13 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxcase");
 
         #define RXP_TEST_CASE_SECTION                                          \
-            ATTRIBUTE(("__DATA,rxcase"))
+            ATTRIBUTE("__DATA,rxcase")
     #else
         extern const struct rxp_test_case_desc * const __start_rxcase;
         extern const struct rxp_test_case_desc * const __stop_rxcase;
 
         #define RXP_TEST_CASE_SECTION                                          \
-            ATTRIBUTE(("rxcase"))
+            ATTRIBUTE("rxcase")
     #endif
 
     RXP_TEST_CASE_SECTION
