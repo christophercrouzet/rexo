@@ -42,15 +42,15 @@ endef
 # Create a Makefile rule.
 # $(1): configuration.
 define rx_create_makefile =
-$$(OUT_DIR)/$(1)/Makefile:
-	@ mkdir -p $$(OUT_DIR)/$(1)
-	@ cd $$(OUT_DIR)/$(1) && cmake \
+$(OUT_DIR)/$(1)/Makefile:
+	@ mkdir -p $(OUT_DIR)/$(1)
+	@ cd $(OUT_DIR)/$(1) && cmake \
 		-DCMAKE_BUILD_TYPE=$(1) \
 		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
 		$(PROJECT_DIR)
 
-BUILD_DIRS += $$(OUT_DIR)/$(1)
-MAKE_FILES += $$(OUT_DIR)/$(1)/Makefile
+BUILD_DIRS += $(OUT_DIR)/$(1)
+MAKE_FILES += $(OUT_DIR)/$(1)/Makefile
 endef
 
 $(foreach _config,$(CONFIG),$(eval $(call \
@@ -65,12 +65,12 @@ FILES += $(wildcard include/*.h)
 # Create the rule to build a test.
 # $(1): path.
 define rx_create_test_rules =
-_rule := test-$$(subst /,-,$(patsubst \
+_rule := test-$(subst /,-,$(patsubst \
 	tests/%.c,%,$(patsubst tests/%.cpp,%,$(1))))
 
 
-$(_rule): $$(MAKE_FILES)
-	$$(call rx_forward_rule,$(_rule))
+$(_rule): $(MAKE_FILES)
+	$(call rx_forward_rule,$(_rule))
 
 FILES += $(1)
 

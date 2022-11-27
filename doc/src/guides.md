@@ -11,7 +11,7 @@ The easiest way to run a single test is to rely on the [framework][framework]
 by defining a test case with the [`RX_TEST_CASE`][macro-rx_test_case] macro,
 writing a test in there using one of the [assertion macros][assertion-macros]
 available, and finally running that test case by calling
-the [`rx_run`][fn-rx_run] function:
+the [`rx_main`][fn-rx_main] function:
 
 ```c
 #include <rexo.h>
@@ -32,12 +32,12 @@ int
 main(int argc, const char **argv)
 {
     /* Execute the main function that runs the test cases found. */
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
 
-> **Note:** Setting the `test_cases` argument from the [`rx_run`][fn-rx_run]
+> **Note:** Setting the `test_cases` argument from the [`rx_main`][fn-rx_main]
 > function to `NULL` means that the function is responsible for finding all
 > the test cases that were defined using the [framework][framework]'s automatic
 > registration feature.
@@ -75,7 +75,7 @@ RX_TEST_CASE(foo, baz, .skip = 0)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -148,7 +148,7 @@ RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -203,7 +203,7 @@ RX_TEST_CASE(foo, bar)
 int
 main(int argc, const char **argv)
 {
-    return rx_run(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
 
@@ -284,7 +284,7 @@ int
 main(int argc, const char **argv)
 {
     /* Explicitly pass the test cases to be run. */
-    return rx_run(test_case_count, test_cases, argc, argv) == RX_SUCCESS
+    return rx_main(test_case_count, test_cases, argc, argv) == RX_SUCCESS
         ? 0 : 1;
 }
 ```
@@ -307,7 +307,7 @@ main(int argc, const char **argv)
 [compile-time-config]: ./compile-time-configuration.md
 [framework]: ./reference/framework.md
 
-[fn-rx_run]: ./reference/runner.md#rx_run
+[fn-rx_main]: ./reference/runner.md#rx_main
 [macro-rx_data]: ./reference/building-blocks.md#rx_data
 [macro-rx_param_context]: ./reference/building-blocks.md#rx_param_context
 [macro-rx_param_data]: ./reference/building-blocks.md#rx_param_data

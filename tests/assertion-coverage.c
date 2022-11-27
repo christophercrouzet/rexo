@@ -38,6 +38,9 @@ RX_TEST_CASE(my_test_suite, all_check_successes)
     RX_STR_CHECK_NOT_EQUAL("hello", "world!");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "hello");
     RX_STR_CHECK_NOT_EQUAL_NO_CASE("hello", "world!");
+    RX_PTR_CHECK_EQUAL((void *)0x123, (void *)0x123);
+    RX_PTR_CHECK_NOT_EQUAL((void *)0x123, (void *)0x456);
+    RX_PTR_CHECK_ALIGNED((void *)0x100, 128);
 }
 
 RX_TEST_CASE(my_test_suite, all_require_successes)
@@ -69,6 +72,9 @@ RX_TEST_CASE(my_test_suite, all_require_successes)
     RX_STR_REQUIRE_NOT_EQUAL("hello", "world!");
     RX_STR_REQUIRE_EQUAL_NO_CASE("hello", "hello");
     RX_STR_REQUIRE_NOT_EQUAL_NO_CASE("hello", "world!");
+    RX_PTR_REQUIRE_EQUAL((void *)0x123, (void *)0x123);
+    RX_PTR_REQUIRE_NOT_EQUAL((void *)0x123, (void *)0x456);
+    RX_PTR_REQUIRE_ALIGNED((void *)0x100, 128);
 }
 
 RX_TEST_CASE(my_test_suite, all_check_failures)
@@ -100,6 +106,9 @@ RX_TEST_CASE(my_test_suite, all_check_failures)
     RX_STR_CHECK_NOT_EQUAL("hello", "hello");
     RX_STR_CHECK_EQUAL_NO_CASE("hello", "world!");
     RX_STR_CHECK_NOT_EQUAL_NO_CASE("hello", "hello");
+    RX_PTR_CHECK_EQUAL((void *)0x123, (void *)0x456);
+    RX_PTR_CHECK_NOT_EQUAL((void *)0x123, (void *)0x123);
+    RX_PTR_CHECK_ALIGNED((void *)0x100, 100);
 }
 
 RX_TEST_CASE(my_test_suite, require_failure)
@@ -237,6 +246,21 @@ RX_TEST_CASE(my_test_suite, str_require_not_equal_no_case_failure)
     RX_STR_REQUIRE_NOT_EQUAL_NO_CASE("hello", "hello");
 }
 
+RX_TEST_CASE(my_test_suite, ptr_require_equal_failure)
+{
+    RX_PTR_REQUIRE_EQUAL((void *)0x123, (void *)0x456);
+}
+
+RX_TEST_CASE(my_test_suite, ptr_require_not_equal_failure)
+{
+    RX_PTR_REQUIRE_NOT_EQUAL((void *)0x123, (void *)0x123);
+}
+
+RX_TEST_CASE(my_test_suite, ptr_require_aligned_failure)
+{
+    RX_PTR_REQUIRE_ALIGNED((void *)0x100, 100);
+}
+
 int
 main(int argc, const char **argv)
 {
@@ -246,6 +270,9 @@ main(int argc, const char **argv)
     size_t assessed_count;
     size_t nonfatal_failure_count;
     size_t fatal_failure_count;
+
+    (void)argc;
+    (void)argv;
 
     assessed_count = 0;
     nonfatal_failure_count = 0;
@@ -297,8 +324,8 @@ main(int argc, const char **argv)
 
     free(test_cases);
 
-    ASSERT(assessed_count == 108);
-    ASSERT(nonfatal_failure_count == 27);
-    ASSERT(fatal_failure_count == 27);
+    ASSERT(assessed_count == 120);
+    ASSERT(nonfatal_failure_count == 30);
+    ASSERT(fatal_failure_count == 30);
     return 0;
 }

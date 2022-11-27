@@ -46,13 +46,14 @@ Logging level.
 
 ```c
 enum rx_log_level {
-    RX_LOG_LEVEL_FATAL = 0,
-    RX_LOG_LEVEL_ERROR = 1,
-    RX_LOG_LEVEL_WARNING = 2,
-    RX_LOG_LEVEL_INFO = 3,
-    RX_LOG_LEVEL_DEBUG = 4,
-    RX_LOG_LEVEL_TRACE = 5
-}
+    RX_LOG_LEVEL_NONE = 0,
+    RX_LOG_LEVEL_FATAL = 1,
+    RX_LOG_LEVEL_ERROR = 3,
+    RX_LOG_LEVEL_WARNING = 4,
+    RX_LOG_LEVEL_INFO = 5,
+    RX_LOG_LEVEL_DEBUG = 6,
+    RX_LOG_LEVEL_ALL = RX_LOG_LEVEL_DEBUG
+};
 ```
 
 The purpose of each level is defined as follows:
@@ -277,15 +278,18 @@ their default values.
 
 ### `rx_fixture`
 
-Fixture defining function pointers to run before and after the function defining
+Fixture defining data type size and function pointers to run before and after
 the test is run.
 
 ```c
 struct rx_fixture {
-    rx_set_up_fn set_up;
-    rx_tear_down_fn tear_down;
+    rx_size size;
+    struct rx_fixture_config config;
 };
 ```
+
+Any configuration can be set through the `config` option. See
+the [`rx_fixture_config`][struct-rx_fixture_config] struct.
 
 
 ### `rx_test_case`
@@ -471,5 +475,6 @@ at most `test_case_count` objects will be written.
 [type-rx_uint32]: #rx_uint32
 [type-rx_uint64]: #rx_uint64
 [struct-rx_fixture]: #rx_fixture
+[struct-rx_fixture_config]: #rx_fixture_config
 [struct-rx_summary]: #rx_summary
 [struct-rx_test_case_config]: #rx_test_case_config

@@ -209,6 +209,24 @@ tests but it is recommended to use the more specialized assertions available.
 ```
 
 
+## Pointer Assertions
+
+```c
+#define RX_PTR_REQUIRE_EQUAL(x1, x2)
+#define RX_PTR_REQUIRE_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_PTR_CHECK_EQUAL(x1, x2)
+#define RX_PTR_CHECK_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL(x1, x2)
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_PTR_CHECK_NOT_EQUAL(x1, x2)
+#define RX_PTR_CHECK_NOT_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_PTR_REQUIRE_ALIGNED(x, alignment)
+#define RX_PTR_REQUIRE_ALIGNED_MSG(x, alignment, msg, ...)
+```
+
+
 [gotcha-variadic-macros]: ../gotchas.md#variadic_macros_in_c89_compatibility_mode
 [macro-rx_enable_c89_compat]: ../compile-time-configuration.md#rx_enable_c89_compat
 

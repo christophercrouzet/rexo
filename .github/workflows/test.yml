@@ -1,59 +1,41 @@
-name: Tests
+name: Test
 
-on: [push]
+on: [ push ]
 
 jobs:
   main:
     strategy:
       matrix:
         name: [
-          Ubuntu 18.04 | Clang 9,
-          Ubuntu 18.04 | Clang 8,
-          Ubuntu 18.04 | GCC 9,
-          Ubuntu 18.04 | GCC 8,
-          Ubuntu 18.04 | GCC 7,
-          macOS Catalina 10.15 | Clang,
-          macOS Catalina 10.15 | GCC,
-          Windows Server 2019,
+          Ubuntu | Clang,
+          Ubuntu | GCC,
+          macOS | Clang,
+          macOS | GCC,
+          Windows Server,
         ]
         include:
-          - name: Ubuntu 18.04 | Clang 9
-            os: ubuntu-18.04
-            cc: clang-9
-            cxx: clang++-9
-
-          - name: Ubuntu 18.04 | Clang 8
-            os: ubuntu-18.04
-            cc: clang-8
-            cxx: clang++-8
-
-          - name: Ubuntu 18.04 | GCC 9
-            os: ubuntu-18.04
-            cc: gcc-9
-            cxx: g++-9
-
-          - name: Ubuntu 18.04 | GCC 8
-            os: ubuntu-18.04
-            cc: gcc-8
-            cxx: g++-8
-
-          - name: Ubuntu 18.04 | GCC 7
-            os: ubuntu-18.04
-            cc: gcc-7
-            cxx: g++-7
-
-          - name: macOS Catalina 10.15 | Clang
-            os: macos-10.15
+          - name: Ubuntu | Clang
+            os: ubuntu-latest
             cc: clang
             cxx: clang++
 
-          - name: macOS Catalina 10.15 | GCC
-            os: macos-10.15
+          - name: Ubuntu | GCC
+            os: ubuntu-latest
             cc: gcc
             cxx: g++
 
-          - name: Windows Server 2019
-            os: windows-2019
+          - name: macOS | Clang
+            os: macos-latest
+            cc: clang
+            cxx: clang++
+
+          - name: macOS | GCC
+            os: macos-latest
+            cc: gcc
+            cxx: g++
+
+          - name: Windows Server
+            os: windows-latest
             cc: cl
             cxx: cl
     runs-on: ${{ matrix.os }}
@@ -61,7 +43,7 @@ jobs:
       - name: Check out
         uses: actions/checkout@v2
 
-      - name: Create build directory
+      - name: Create the build directory
         run: cmake -E make_directory ${{ runner.workspace }}/build
 
       - name: Configure CMake
@@ -81,7 +63,7 @@ jobs:
       - name: Test (debug)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
-        run: ctest -C Debug
+        run: ctest -C Debug --output-on-failure
 
       - name: Build (release)
         working-directory: ${{ runner.workspace }}/build
@@ -91,4 +73,4 @@ jobs:
       - name: Test (release)
         working-directory: ${{ runner.workspace }}/build
         shell: bash
-        run: ctest -C Release
+        run: ctest -C Release --output-on-failure
