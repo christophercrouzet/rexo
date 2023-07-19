@@ -1206,6 +1206,17 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
    anything registered in these sections.
 */
 
+#if defined(__clang__)
+    /*
+       Older versions of Clang's address sanitizer incorrectly report
+       a global buffer overflow in custom data sections.
+    */
+    #define RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER                             \
+        __attribute__((no_sanitize_address))
+#else
+    #define RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER
+#endif
+
 #if !defined(RX_DISABLE_TEST_DISCOVERY)                                        \
     && (defined(_MSC_VER) || defined(__GNUC__) || defined(__MINGW64__))
     #define RXP_TEST_DISCOVERY 1
@@ -1244,13 +1255,15 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxsuite");
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("__DATA,rxsuite"),no_sanitize_address))
+            RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER                             \
+            __attribute__((used,section("__DATA,rxsuite")))
     #else
         extern const struct rxp_test_suite_desc * const __start_rxsuite;
         extern const struct rxp_test_suite_desc * const __stop_rxsuite;
 
         #define RXP_TEST_SUITE_SECTION                                         \
-            __attribute__((used,section("rxsuite"),no_sanitize_address))
+            RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER                             \
+            __attribute__((used,section("rxsuite")))
     #endif
 
     RXP_TEST_SUITE_SECTION
@@ -1297,13 +1310,15 @@ rxp_test_failure_array_extend_back(struct rx_failure **slice,
             __asm("section$end$__DATA$rxcase");
 
         #define RXP_TEST_CASE_SECTION                                          \
-            __attribute__((used,section("__DATA,rxcase"),no_sanitize_address))
+            RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER                             \
+            __attribute__((used,section("__DATA,rxcase")))
     #else
         extern const struct rxp_test_case_desc * const __start_rxcase;
         extern const struct rxp_test_case_desc * const __stop_rxcase;
 
         #define RXP_TEST_CASE_SECTION                                          \
-            __attribute__((used,section("rxcase"),no_sanitize_address))
+            RXP_SECTION_SUPPRESS_ADDRESS_SANITIZER                             \
+            __attribute__((used,section("rxcase")))
     #endif
 
     RXP_TEST_CASE_SECTION
@@ -1778,6 +1793,28 @@ rxp_run_test_cases(size_t test_case_count,
     enum rx_status status;
     struct rx_summary *summaries;
 
+#ifdef RXP_DEBUG_TESTS
+
+    enum rx_log_level level = RX_LOG_LEVEL_DEBUG;
+    const char* level_style_begin = 0;
+    const char* level_style_end = 0;
+
+#if RXP_LOG_STYLING
+    if (RXP_ISATTY(RXP_FILENO(stderr))) {
+        enum rxp_log_style level_style;
+
+        rxp_log_level_get_style(&level_style, level);
+        rxp_log_style_get_ansi_code(&level_style_begin, level_style);
+        rxp_log_style_get_ansi_code(&level_style_end, RXP_LOG_STYLE_RESET);
+    } else {
+        level_style_begin = level_style_end = "";
+    }
+#else
+    level_style_begin = level_style_end = "";
+#endif
+
+#endif
+
     if (test_case_count == 0) {
         RXP_LOG_INFO("nothing to run\n");
         return RX_SUCCESS;
@@ -1814,6 +1851,12 @@ rxp_run_test_cases(size_t test_case_count,
         }
 
         ++i;
+        
+#ifdef RXP_DEBUG_TESTS
+        fprintf(stderr,
+            "[%s%s%s] (suite: \"%s\", case: \"%s\")\n",
+            level_style_begin, "EXECUTING", level_style_end, test_case->suite_name, test_case->name);
+#endif
 
         status = rx_test_case_run(summary, test_case);
         if (status != RX_SUCCESS) {
