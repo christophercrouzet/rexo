@@ -1795,22 +1795,19 @@ rxp_run_test_cases(size_t test_case_count,
 
 #ifdef RXP_DEBUG_TESTS
 
-    enum rx_log_level level = RX_LOG_LEVEL_DEBUG;
-    const char* level_style_begin = 0;
-    const char* level_style_end = 0;
+    const char *style_begin;
+    const char *style_end;
 
 #if RXP_LOG_STYLING
     if (RXP_ISATTY(RXP_FILENO(stderr))) {
-        enum rxp_log_style level_style;
-
-        rxp_log_level_get_style(&level_style, level);
-        rxp_log_style_get_ansi_code(&level_style_begin, level_style);
-        rxp_log_style_get_ansi_code(&level_style_end, RXP_LOG_STYLE_RESET);
+        rxp_log_style_get_ansi_code(
+            &style_begin, RXP_LOG_STYLE_GREEN);
+        rxp_log_style_get_ansi_code(&style_end, RXP_LOG_STYLE_RESET);
     } else {
-        level_style_begin = level_style_end = "";
+        style_begin = style_end = "";
     }
 #else
-    level_style_begin = level_style_end = "";
+    style_begin = style_end = "";
 #endif
 
 #endif
@@ -1855,7 +1852,7 @@ rxp_run_test_cases(size_t test_case_count,
 #ifdef RXP_DEBUG_TESTS
         fprintf(stderr,
             "[%s%s%s] (suite: \"%s\", case: \"%s\")\n",
-            level_style_begin, "EXECUTING", level_style_end, test_case->suite_name, test_case->name);
+            style_begin, "EXECUTING", style_end, test_case->suite_name, test_case->name);
 #endif
 
         status = rx_test_case_run(summary, test_case);
@@ -3234,10 +3231,12 @@ rx_enumerate_test_cases(rx_size *test_case_count,
     /* Objects that are defined in a custom memory section can only be retrieved
        in an undefined order, so these need to be manually sorted afterwards
        in a sensible way. */
-    qsort(test_cases,
-          *test_case_count,
-          sizeof *test_cases,
-          rxp_compare_test_cases);
+    #ifndef RXP_DEBUG_TESTS
+        qsort(test_cases,
+            *test_case_count,
+            sizeof *test_cases,
+            rxp_compare_test_cases);
+    #endif
 #endif
 }
 
