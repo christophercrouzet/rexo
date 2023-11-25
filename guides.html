@@ -1,0 +1,505 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Guides - Rexo</title>
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Rexo is a neat unit testing framework for C and C++.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/custom.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Rexo</a></li><li class="chapter-item expanded "><a href="getting-started.html"><strong aria-hidden="true">2.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="guides.html" class="active"><strong aria-hidden="true">3.</strong> Guides</a></li><li class="chapter-item expanded "><a href="design/index.html"><strong aria-hidden="true">4.</strong> Design Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/auto-registration.html"><strong aria-hidden="true">4.1.</strong> Automatic Registration</a></li><li class="chapter-item expanded "><a href="design/options.html"><strong aria-hidden="true">4.2.</strong> Options Definition</a></li></ol></li><li class="chapter-item expanded "><a href="reference/index.html"><strong aria-hidden="true">5.</strong> API Reference</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="reference/framework.html"><strong aria-hidden="true">5.1.</strong> Framework</a></li><li class="chapter-item expanded "><a href="reference/assertions.html"><strong aria-hidden="true">5.2.</strong> Assertion Macros</a></li><li class="chapter-item expanded "><a href="reference/runner.html"><strong aria-hidden="true">5.3.</strong> Runner</a></li><li class="chapter-item expanded "><a href="reference/building-blocks.html"><strong aria-hidden="true">5.4.</strong> Building Blocks</a></li><li class="chapter-item expanded "><a href="reference/constants.html"><strong aria-hidden="true">5.5.</strong> Constants</a></li></ol></li><li class="chapter-item expanded "><a href="compile-time-configuration.html"><strong aria-hidden="true">6.</strong> Compile-Time Configuration</a></li><li class="chapter-item expanded "><a href="gotchas.html"><strong aria-hidden="true">7.</strong> Gotchas</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rexo</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/christophercrouzet/rexo" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="guides"><a class="header" href="#guides">Guides</a></h1>
+<p>These guides take you over some concrete examples and how-tos covering most
+of Rexo's features.</p>
+<h2 id="minimal"><a class="header" href="#minimal">Minimal</a></h2>
+<p>The easiest way to run a single test is to rely on the <a href="./reference/framework.html">framework</a>
+by defining a test case with the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro,
+writing a test in there using one of the <a href="./reference/assertions.html">assertion macros</a>
+available, and finally running that test case by calling
+the <a href="./reference/runner.html#rx_main"><code>rx_main</code></a> function:</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+/*
+   Define a new test case 'bar' that is part of an implicit test suite 'foo'.
+
+   The main purpose of the `RX_TEST_CASE` macro is to declare the test case's
+   function.
+*/
+RX_TEST_CASE(foo, bar)
+{
+    /* Run a single test that compares two integer values for equality. */
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    /* Execute the main function that runs the test cases found. */
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> Setting the <code>test_cases</code> argument from the <a href="./reference/runner.html#rx_main"><code>rx_main</code></a>
+function to <code>NULL</code> means that the function is responsible for finding all
+the test cases that were defined using the <a href="./reference/framework.html">framework</a>'s automatic
+registration feature.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> In the example above, the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro
+implicitly creates a test suite named <em>foo</em>.</p>
+</blockquote>
+<h2 id="runtime-configuration"><a class="header" href="#runtime-configuration">Runtime Configuration</a></h2>
+<p>When using the <a href="./reference/framework.html">framework</a> and its automatic registration feature,
+configuring test cases is done by passing optional arguments to the
+<a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> and/or
+<a href="./reference/framework.html#rx_test_suite"><code>RX_TEST_SUITE</code></a> macros.</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+#include &lt;rexo.h&gt;
+
+RX_TEST_SUITE(foo, .skip = 1);
+
+/* Inherit the skip option from the test suite 'foo'. */
+RX_TEST_CASE(foo, bar)
+{
+    printf(&quot;this does NOT print\n&quot;);
+}
+
+/* Override the skip option to run this specific test case. */
+RX_TEST_CASE(foo, baz, .skip = 0)
+{
+    printf(&quot;this does print!\n&quot;);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<p>This example explicitly creates a test suite named <em>foo</em> with the <code>skip</code> option
+enabled.</p>
+<p>Any option defined on a test suite is to be inherited by all the test cases of
+that test suite, unless overidden by a specific test case like here with <em>baz</em>.</p>
+<blockquote>
+<p><strong>Note:</strong> For a list of all the runtime options available,
+see the <a href="./reference/building-blocks.html#rx_test_case_config"><code>rx_test_case_config</code></a> struct.</p>
+</blockquote>
+<h2 id="fixtures"><a class="header" href="#fixtures">Fixtures</a></h2>
+<p>Often times a dataset is required to be prepared in advance, before test cases
+should be run.</p>
+<p>Like with every other xUnit-like frameworks, Rexo allows this do be done using
+fixtures.</p>
+<p>You can define a new fixture through the <a href="./reference/framework.html#rx_fixture"><code>RX_FIXTURE</code></a> macro
+with optional set up and tear down functions, then reference this fixture by
+setting the <code>fixture</code> option on the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro.</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+/* Data structure to use at the core of our fixture. */
+struct foo_data {
+    const char *value;
+};
+
+/* Initialize the data structure. Its allocation is handled by Rexo. */
+RX_SET_UP(foo_set_up)
+{
+    struct foo_data *data;
+
+    /*
+       The macro `RX_DATA` references our data as a pointer to `void` that
+       needs to be cast to the correct type before being used.
+    */
+    data = (struct foo_data *)RX_DATA;
+
+    /* Initialize it! */
+    data-&gt;value = &quot;world!&quot;;
+
+    /* Let Rexo know that everything went well. */
+    return RX_SUCCESS;
+}
+
+/* Define the fixture. */
+RX_FIXTURE(foo_fixture, struct foo_data, .set_up = foo_set_up);
+
+RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
+{
+    struct foo_data *data;
+
+    /* Here again, casting needs to be node before operating on the data. */
+    data = (struct foo_data *)RX_DATA;
+
+    /*
+       Run a string equality test that will fail since 'Hello' isn't equal
+       to the value 'world!' that we initialized earlier.
+    */
+    RX_STR_REQUIRE_EQUAL(&quot;Hello&quot;, data-&gt;value);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<p>Fixture data can be accessed at any time using the <a href="./reference/building-blocks.html#rx_data"><code>RX_DATA</code></a>
+macro.</p>
+<h2 id="compile-time-configuration"><a class="header" href="#compile-time-configuration">Compile-Time Configuration</a></h2>
+<p>Configurations that applies globally are sometimes best done once and for all
+during the compilation step.</p>
+<p>Rexo offers a set of macros that, for example, allows redefining the <code>malloc</code>
+and <code>assert</code> functions to use, or to set global flags:</p>
+<pre><code class="language-c">#include &lt;stddef.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+/* Define a custom `malloc` function. */
+void *
+my_malloc(size_t size)
+{
+    printf(&quot;something worth %ld bytes is being allocated\n&quot;, size);
+    return malloc(size);
+}
+
+/* Override the default `malloc` function used by Rexo with ours. */
+#define RX_MALLOC my_malloc
+
+/* Override the default `assert` macro used by Rexo. */
+#define RX_ASSERT(x)                                                           \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ &quot;:%d: assertion `&quot; #x &quot;` failed\n&quot;, __LINE__), 0)  \
+        || (abort(), 0))
+
+/* Force Rexo's compatibility with C89. */
+#define RX_ENABLE_C89_COMPAT
+
+/* Proceed with including Rexo and writing tests as usual. */
+
+#include &lt;rexo.h&gt;
+
+RX_TEST_CASE(foo, bar)
+{
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> The use of <code>#include &lt;rexo.h&gt;</code> needs to come after the definition
+of any compile-time option.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> For a list of all the compile-time options available,
+see the <a href="./compile-time-configuration.html">Compile-Time Configuration</a> page.</p>
+</blockquote>
+<h2 id="explicit-registration"><a class="header" href="#explicit-registration">Explicit Registration</a></h2>
+<p>If you would like to not make use of the <a href="./reference/framework.html">framework</a>'s automatic
+registration feature, it is possible to register everything explicitly in
+the same way as most C unit testing frameworks offer:</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+struct foo_data {
+    int value;
+};
+
+enum rx_status
+foo_set_up(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
+{
+    struct foo_data *data;
+
+    /* Suppress the ‘defined but not used’ compiler warning. */
+    (void)RX_PARAM_CONTEXT;
+
+    data = (struct foo_data *)RX_DATA;
+    data-&gt;value = 123;
+    return RX_SUCCESS;
+}
+
+void
+foo_bar(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    RX_INT_REQUIRE_EQUAL(data-&gt;value, 123);
+}
+
+static const struct rx_test_case test_cases[] = {
+    {  /* First test case's definition. */
+
+        &quot;foo&quot;,    /* Name of the test suite. */
+        &quot;bar&quot;,    /* Name of the test case. */
+        foo_bar,  /* Function to run. */
+        {         /* Test case's configuration. */
+
+            0,  /* Option 'skip'. */
+            {   /* Option 'fixture'. */
+
+                sizeof(struct foo_data),  /* Size of the data in bytes. */
+                {                         /* Fixture's configuration. */
+
+                    foo_set_up,  /* Function to initialize the fixture. */
+                    NULL         /* Function to clean up the fixture. */
+
+                }
+
+            }
+
+        }
+
+    }
+
+};
+
+/* Retrieve the number of test cases to run. */
+static const size_t test_case_count
+    = sizeof(test_cases) / sizeof(test_cases[0]);
+
+int
+main(int argc, const char **argv)
+{
+    /* Explicitly pass the test cases to be run. */
+    return rx_main(test_case_count, test_cases, argc, argv) == RX_SUCCESS
+        ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> See the <a href="./reference/building-blocks.html#rx_test_case">rx_test_case</a> struct.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> The function parameters <code>struct rx_context *</code> and <code>void *</code>
+are required to be respectively named using
+the <a href="./reference/building-blocks.html#rx_param_context"><code>RX_PARAM_CONTEXT</code></a> and
+<a href="./reference/building-blocks.html#rx_param_data"><code>RX_PARAM_DATA</code></a> macros.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> Alternatively, the data parameter can be defined with its actual
+type instead of <code>void *</code>, thus removing the need to cast the data within
+the functions. Although this approach requires casting function pointers,
+which is not standard compliant and hence not used in the implementation
+of Rexo, in practice the behaviour is well-defined for the common platforms.</p>
+</blockquote>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+                            <a rel="prev" href="getting-started.html" class="mobile-nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                                <i class="fa fa-angle-left"></i>
+                            </a>
+
+                            <a rel="next prefetch" href="design/index.html" class="mobile-nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                                <i class="fa fa-angle-right"></i>
+                            </a>
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+                    <a rel="prev" href="getting-started.html" class="nav-chapters previous" title="Previous chapter" aria-label="Previous chapter" aria-keyshortcuts="Left">
+                        <i class="fa fa-angle-left"></i>
+                    </a>
+
+                    <a rel="next prefetch" href="design/index.html" class="nav-chapters next" title="Next chapter" aria-label="Next chapter" aria-keyshortcuts="Right">
+                        <i class="fa fa-angle-right"></i>
+                    </a>
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="js/custom.js"></script>
+
+
+    </div>
+    </body>
+</html>

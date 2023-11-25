@@ -1,0 +1,1724 @@
+<!DOCTYPE HTML>
+<html lang="en" class="light" dir="ltr">
+    <head>
+        <!-- Book generated using mdBook -->
+        <meta charset="UTF-8">
+        <title>Rexo</title>
+        <meta name="robots" content="noindex">
+
+
+        <!-- Custom HTML head -->
+        
+        <meta name="description" content="Rexo is a neat unit testing framework for C and C++.">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#ffffff">
+
+        <link rel="icon" href="favicon.svg">
+        <link rel="shortcut icon" href="favicon.png">
+        <link rel="stylesheet" href="css/variables.css">
+        <link rel="stylesheet" href="css/general.css">
+        <link rel="stylesheet" href="css/chrome.css">
+        <link rel="stylesheet" href="css/print.css" media="print">
+
+        <!-- Fonts -->
+        <link rel="stylesheet" href="FontAwesome/css/font-awesome.css">
+        <link rel="stylesheet" href="fonts/fonts.css">
+
+        <!-- Highlight.js Stylesheets -->
+        <link rel="stylesheet" href="highlight.css">
+        <link rel="stylesheet" href="tomorrow-night.css">
+        <link rel="stylesheet" href="ayu-highlight.css">
+
+        <!-- Custom theme stylesheets -->
+        <link rel="stylesheet" href="css/custom.css">
+
+    </head>
+    <body class="sidebar-visible no-js">
+    <div id="body-container">
+        <!-- Provide site root to javascript -->
+        <script>
+            var path_to_root = "";
+            var default_theme = window.matchMedia("(prefers-color-scheme: dark)").matches ? "navy" : "light";
+        </script>
+
+        <!-- Work around some values being stored in localStorage wrapped in quotes -->
+        <script>
+            try {
+                var theme = localStorage.getItem('mdbook-theme');
+                var sidebar = localStorage.getItem('mdbook-sidebar');
+
+                if (theme.startsWith('"') && theme.endsWith('"')) {
+                    localStorage.setItem('mdbook-theme', theme.slice(1, theme.length - 1));
+                }
+
+                if (sidebar.startsWith('"') && sidebar.endsWith('"')) {
+                    localStorage.setItem('mdbook-sidebar', sidebar.slice(1, sidebar.length - 1));
+                }
+            } catch (e) { }
+        </script>
+
+        <!-- Set the theme before any content is loaded, prevents flash -->
+        <script>
+            var theme;
+            try { theme = localStorage.getItem('mdbook-theme'); } catch(e) { }
+            if (theme === null || theme === undefined) { theme = default_theme; }
+            var html = document.querySelector('html');
+            html.classList.remove('light')
+            html.classList.add(theme);
+            var body = document.querySelector('body');
+            body.classList.remove('no-js')
+            body.classList.add('js');
+        </script>
+
+        <input type="checkbox" id="sidebar-toggle-anchor" class="hidden">
+
+        <!-- Hide / unhide sidebar before it is displayed -->
+        <script>
+            var body = document.querySelector('body');
+            var sidebar = null;
+            var sidebar_toggle = document.getElementById("sidebar-toggle-anchor");
+            if (document.body.clientWidth >= 1080) {
+                try { sidebar = localStorage.getItem('mdbook-sidebar'); } catch(e) { }
+                sidebar = sidebar || 'visible';
+            } else {
+                sidebar = 'hidden';
+            }
+            sidebar_toggle.checked = sidebar === 'visible';
+            body.classList.remove('sidebar-visible');
+            body.classList.add("sidebar-" + sidebar);
+        </script>
+
+        <nav id="sidebar" class="sidebar" aria-label="Table of contents">
+            <div class="sidebar-scrollbox">
+                <ol class="chapter"><li class="chapter-item expanded "><a href="index.html"><strong aria-hidden="true">1.</strong> Rexo</a></li><li class="chapter-item expanded "><a href="getting-started.html"><strong aria-hidden="true">2.</strong> Getting Started</a></li><li class="chapter-item expanded "><a href="guides.html"><strong aria-hidden="true">3.</strong> Guides</a></li><li class="chapter-item expanded "><a href="design/index.html"><strong aria-hidden="true">4.</strong> Design Rationale</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="design/auto-registration.html"><strong aria-hidden="true">4.1.</strong> Automatic Registration</a></li><li class="chapter-item expanded "><a href="design/options.html"><strong aria-hidden="true">4.2.</strong> Options Definition</a></li></ol></li><li class="chapter-item expanded "><a href="reference/index.html"><strong aria-hidden="true">5.</strong> API Reference</a></li><li><ol class="section"><li class="chapter-item expanded "><a href="reference/framework.html"><strong aria-hidden="true">5.1.</strong> Framework</a></li><li class="chapter-item expanded "><a href="reference/assertions.html"><strong aria-hidden="true">5.2.</strong> Assertion Macros</a></li><li class="chapter-item expanded "><a href="reference/runner.html"><strong aria-hidden="true">5.3.</strong> Runner</a></li><li class="chapter-item expanded "><a href="reference/building-blocks.html"><strong aria-hidden="true">5.4.</strong> Building Blocks</a></li><li class="chapter-item expanded "><a href="reference/constants.html"><strong aria-hidden="true">5.5.</strong> Constants</a></li></ol></li><li class="chapter-item expanded "><a href="compile-time-configuration.html"><strong aria-hidden="true">6.</strong> Compile-Time Configuration</a></li><li class="chapter-item expanded "><a href="gotchas.html"><strong aria-hidden="true">7.</strong> Gotchas</a></li></ol>
+            </div>
+            <div id="sidebar-resize-handle" class="sidebar-resize-handle"></div>
+        </nav>
+
+        <!-- Track and set sidebar scroll position -->
+        <script>
+            var sidebarScrollbox = document.querySelector('#sidebar .sidebar-scrollbox');
+            sidebarScrollbox.addEventListener('click', function(e) {
+                if (e.target.tagName === 'A') {
+                    sessionStorage.setItem('sidebar-scroll', sidebarScrollbox.scrollTop);
+                }
+            }, { passive: true });
+            var sidebarScrollTop = sessionStorage.getItem('sidebar-scroll');
+            sessionStorage.removeItem('sidebar-scroll');
+            if (sidebarScrollTop) {
+                // preserve sidebar scroll position when navigating via links within sidebar
+                sidebarScrollbox.scrollTop = sidebarScrollTop;
+            } else {
+                // scroll sidebar to current active section when navigating via "next/previous chapter" buttons
+                var activeSection = document.querySelector('#sidebar .active');
+                if (activeSection) {
+                    activeSection.scrollIntoView({ block: 'center' });
+                }
+            }
+        </script>
+
+        <div id="page-wrapper" class="page-wrapper">
+
+            <div class="page">
+                                <div id="menu-bar-hover-placeholder"></div>
+                <div id="menu-bar" class="menu-bar sticky">
+                    <div class="left-buttons">
+                        <label id="sidebar-toggle" class="icon-button" for="sidebar-toggle-anchor" title="Toggle Table of Contents" aria-label="Toggle Table of Contents" aria-controls="sidebar">
+                            <i class="fa fa-bars"></i>
+                        </label>
+                        <button id="theme-toggle" class="icon-button" type="button" title="Change theme" aria-label="Change theme" aria-haspopup="true" aria-expanded="false" aria-controls="theme-list">
+                            <i class="fa fa-paint-brush"></i>
+                        </button>
+                        <ul id="theme-list" class="theme-popup" aria-label="Themes" role="menu">
+                            <li role="none"><button role="menuitem" class="theme" id="light">Light</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="rust">Rust</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="coal">Coal</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="navy">Navy</button></li>
+                            <li role="none"><button role="menuitem" class="theme" id="ayu">Ayu</button></li>
+                        </ul>
+                        <button id="search-toggle" class="icon-button" type="button" title="Search. (Shortkey: s)" aria-label="Toggle Searchbar" aria-expanded="false" aria-keyshortcuts="S" aria-controls="searchbar">
+                            <i class="fa fa-search"></i>
+                        </button>
+                    </div>
+
+                    <h1 class="menu-title">Rexo</h1>
+
+                    <div class="right-buttons">
+                        <a href="print.html" title="Print this book" aria-label="Print this book">
+                            <i id="print-button" class="fa fa-print"></i>
+                        </a>
+                        <a href="https://github.com/christophercrouzet/rexo" title="Git repository" aria-label="Git repository">
+                            <i id="git-repository-button" class="fa fa-github"></i>
+                        </a>
+
+                    </div>
+                </div>
+
+                <div id="search-wrapper" class="hidden">
+                    <form id="searchbar-outer" class="searchbar-outer">
+                        <input type="search" id="searchbar" name="searchbar" placeholder="Search this book ..." aria-controls="searchresults-outer" aria-describedby="searchresults-header">
+                    </form>
+                    <div id="searchresults-outer" class="searchresults-outer hidden">
+                        <div id="searchresults-header" class="searchresults-header"></div>
+                        <ul id="searchresults">
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Apply ARIA attributes after the sidebar and the sidebar toggle button are added to the DOM -->
+                <script>
+                    document.getElementById('sidebar-toggle').setAttribute('aria-expanded', sidebar === 'visible');
+                    document.getElementById('sidebar').setAttribute('aria-hidden', sidebar !== 'visible');
+                    Array.from(document.querySelectorAll('#sidebar a')).forEach(function(link) {
+                        link.setAttribute('tabIndex', sidebar === 'visible' ? 0 : -1);
+                    });
+                </script>
+
+                <div id="content" class="content">
+                    <main>
+                        <h1 id="rexo"><a class="header" href="#rexo">Rexo</a></h1>
+<p>Rexo is a neat single-file cross-platform unit testing framework for C/C++.</p>
+<p>It offers the same <a href="https://en.wikipedia.org/wiki/XUnit">xUnit</a>-like structure than most other unit testing
+frameworks but aims at providing a <em>truly</em> polished API.</p>
+<h2 id="features"><a class="header" href="#features">Features</a></h2>
+<ul>
+<li><strong>sleek</strong>: polished API with great attention to details.</li>
+<li><strong>easy</strong>: no learning curve, it's yet another framework based on xUnit
+with test suites, test cases, and fixtures.</li>
+<li><strong>convenient</strong>: automatic registration of tests.</li>
+<li><strong>granular</strong>: high level or low level API? You choose.</li>
+<li><strong>portable</strong>: compatible with C89 (ANSI C) and C++.</li>
+<li><strong>cross-platform</strong>: tested on Linux, macOS, and Windows.</li>
+<li><strong>simple</strong>: straightforward implementation—KISS all the things!</li>
+<li><strong>cascading configuration</strong>: configure a whole test suite at once and/or tweak
+specific options for each test case.</li>
+<li><strong>painless</strong>: deployment couldn't be easier—it all fits into a single
+header file and has no external dependencies.</li>
+</ul>
+<p>But also...</p>
+<ul>
+<li>fully standard compliant minus the optional automatic registration of tests
+that relies on a widespread compiler-specific feature.</li>
+<li>designated initializer-like syntax to all C and C++ versions.</li>
+</ul>
+<h2 id="roadmap"><a class="header" href="#roadmap">Roadmap</a></h2>
+<ul>
+<li>implement a command-line option parser (e.g.: for filtering test cases).</li>
+<li>allow choosing the output format of the summary (e.g.: jUnit XML).</li>
+<li>support more assertion macros (e.g.: array comparison, signal handling).</li>
+<li>improve failure messages to be more visual (e.g.: an arrow pointing
+where strings differ).</li>
+</ul>
+<h2 id="usage"><a class="header" href="#usage">Usage</a></h2>
+<h3 id="minimal"><a class="header" href="#minimal">Minimal</a></h3>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+RX_TEST_CASE(foo, bar)
+{
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<h3 id="fixture"><a class="header" href="#fixture">Fixture</a></h3>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+struct foo_data {
+    const char *value;
+};
+
+RX_SET_UP(foo_set_up)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    data-&gt;value = &quot;world!&quot;;
+    return RX_SUCCESS;
+}
+
+RX_FIXTURE(foo_fixture, struct foo_data, .set_up = foo_set_up);
+
+RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    RX_STR_REQUIRE_EQUAL(&quot;Hello&quot;, data-&gt;value);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<h2 id="documentation"><a class="header" href="#documentation">Documentation</a></h2>
+<p><a href="https://christophercrouzet.github.io/rexo">https://christophercrouzet.github.io/rexo</a></p>
+<h2 id="repository"><a class="header" href="#repository">Repository</a></h2>
+<p><a href="https://github.com/christophercrouzet/rexo">https://github.com/christophercrouzet/rexo</a></p>
+<h2 id="license"><a class="header" href="#license">License</a></h2>
+<p><a href="https://unlicense.org">Unlicense</a>.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="getting-started"><a class="header" href="#getting-started">Getting Started</a></h1>
+<h2 id="prerequisites"><a class="header" href="#prerequisites">Prerequisites</a></h2>
+<ul>
+<li>a C89 (ANSI C) or a C++ compiler.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> The automatic registration of tests requires a widespread
+compiler-specific feature that places data in a given memory section.
+The compilers currently supported are the GNU compilers (<a href="https://clang.llvm.org">clang</a>,
+<a href="https://gcc.gnu.org">gcc</a>, <a href="https://software.intel.com/en-us/c-compilers">icc</a>) and <a href="https://visualstudio.microsoft.com/vs/features/cplusplus">MSVC</a>.</p>
+</blockquote>
+<h2 id="installation"><a class="header" href="#installation">Installation</a></h2>
+<h3 id="just-the-one-file"><a class="header" href="#just-the-one-file">Just the One File</a></h3>
+<p>The simplest option to be good to go is to copy the file <a href="https://github.com/christophercrouzet/rexo/blob/master/include/rexo.h"><code>rexo.h</code></a> into
+your source directory.</p>
+<p>The folder containing the file <code>rexo.h</code> needs to be recognized as an include
+directory by your compiler, which will make Rexo available by using
+<code>#include &lt;rexo.h&gt;</code> in your code.</p>
+<h3 id="the-whole-repository"><a class="header" href="#the-whole-repository">The Whole Repository</a></h3>
+<p>Instead of copying solely the <code>rexo.h</code> file, you could also grab the whole
+code repository, which brings in some additional features such as being able
+to link against the library using <a href="https://cmake.org">CMake</a>.</p>
+<p>Additionally, <a href="https://git-scm.com">Git</a> can be used to add Rexo's repository as a submodule of
+your project, thus allowing to conveniently pull updates at any time.
+This can be done by running the <code>git submodule</code> command from within
+the directory where Rexo should be added to:</p>
+<pre><code class="language-sh">git submodule add git@github.com:christophercrouzet/rexo.git
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> Linking against the Rexo library using CMake is really simple.
+If your project <em>Foo</em> has a structure on disk similar to this one:</p>
+<pre><code>foo/
+├── deps/
+│   └── rexo/
+│       └── ...
+├── src/
+├── tests/
+└── CMakeLists.txt
+</code></pre>
+<p>Then you'd only have to add two lines to your own <code>CMakeFiles.txt</code> file:</p>
+<pre><code>add_subdirectory(deps/rexo)
+target_link_libraries(foo PRIVATE rexo)
+</code></pre>
+</blockquote>
+<h2 id="writing-a-first-test"><a class="header" href="#writing-a-first-test">Writing a First Test</a></h2>
+<p>To verify that everything is correctly set-up, create a new file containing
+a simple test like the <a href="./guides.html#minimal">minimal</a> one from the guides section,
+compile it, and run it!</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="guides"><a class="header" href="#guides">Guides</a></h1>
+<p>These guides take you over some concrete examples and how-tos covering most
+of Rexo's features.</p>
+<h2 id="minimal-1"><a class="header" href="#minimal-1">Minimal</a></h2>
+<p>The easiest way to run a single test is to rely on the <a href="./reference/framework.html">framework</a>
+by defining a test case with the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro,
+writing a test in there using one of the <a href="./reference/assertions.html">assertion macros</a>
+available, and finally running that test case by calling
+the <a href="./reference/runner.html#rx_main"><code>rx_main</code></a> function:</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+/*
+   Define a new test case 'bar' that is part of an implicit test suite 'foo'.
+
+   The main purpose of the `RX_TEST_CASE` macro is to declare the test case's
+   function.
+*/
+RX_TEST_CASE(foo, bar)
+{
+    /* Run a single test that compares two integer values for equality. */
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    /* Execute the main function that runs the test cases found. */
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> Setting the <code>test_cases</code> argument from the <a href="./reference/runner.html#rx_main"><code>rx_main</code></a>
+function to <code>NULL</code> means that the function is responsible for finding all
+the test cases that were defined using the <a href="./reference/framework.html">framework</a>'s automatic
+registration feature.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> In the example above, the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro
+implicitly creates a test suite named <em>foo</em>.</p>
+</blockquote>
+<h2 id="runtime-configuration"><a class="header" href="#runtime-configuration">Runtime Configuration</a></h2>
+<p>When using the <a href="./reference/framework.html">framework</a> and its automatic registration feature,
+configuring test cases is done by passing optional arguments to the
+<a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> and/or
+<a href="./reference/framework.html#rx_test_suite"><code>RX_TEST_SUITE</code></a> macros.</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+#include &lt;rexo.h&gt;
+
+RX_TEST_SUITE(foo, .skip = 1);
+
+/* Inherit the skip option from the test suite 'foo'. */
+RX_TEST_CASE(foo, bar)
+{
+    printf(&quot;this does NOT print\n&quot;);
+}
+
+/* Override the skip option to run this specific test case. */
+RX_TEST_CASE(foo, baz, .skip = 0)
+{
+    printf(&quot;this does print!\n&quot;);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<p>This example explicitly creates a test suite named <em>foo</em> with the <code>skip</code> option
+enabled.</p>
+<p>Any option defined on a test suite is to be inherited by all the test cases of
+that test suite, unless overidden by a specific test case like here with <em>baz</em>.</p>
+<blockquote>
+<p><strong>Note:</strong> For a list of all the runtime options available,
+see the <a href="./reference/building-blocks.html#rx_test_case_config"><code>rx_test_case_config</code></a> struct.</p>
+</blockquote>
+<h2 id="fixtures"><a class="header" href="#fixtures">Fixtures</a></h2>
+<p>Often times a dataset is required to be prepared in advance, before test cases
+should be run.</p>
+<p>Like with every other xUnit-like frameworks, Rexo allows this do be done using
+fixtures.</p>
+<p>You can define a new fixture through the <a href="./reference/framework.html#rx_fixture"><code>RX_FIXTURE</code></a> macro
+with optional set up and tear down functions, then reference this fixture by
+setting the <code>fixture</code> option on the <a href="./reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro.</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+/* Data structure to use at the core of our fixture. */
+struct foo_data {
+    const char *value;
+};
+
+/* Initialize the data structure. Its allocation is handled by Rexo. */
+RX_SET_UP(foo_set_up)
+{
+    struct foo_data *data;
+
+    /*
+       The macro `RX_DATA` references our data as a pointer to `void` that
+       needs to be cast to the correct type before being used.
+    */
+    data = (struct foo_data *)RX_DATA;
+
+    /* Initialize it! */
+    data-&gt;value = &quot;world!&quot;;
+
+    /* Let Rexo know that everything went well. */
+    return RX_SUCCESS;
+}
+
+/* Define the fixture. */
+RX_FIXTURE(foo_fixture, struct foo_data, .set_up = foo_set_up);
+
+RX_TEST_CASE(foo, bar, .fixture = foo_fixture)
+{
+    struct foo_data *data;
+
+    /* Here again, casting needs to be node before operating on the data. */
+    data = (struct foo_data *)RX_DATA;
+
+    /*
+       Run a string equality test that will fail since 'Hello' isn't equal
+       to the value 'world!' that we initialized earlier.
+    */
+    RX_STR_REQUIRE_EQUAL(&quot;Hello&quot;, data-&gt;value);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<p>Fixture data can be accessed at any time using the <a href="./reference/building-blocks.html#rx_data"><code>RX_DATA</code></a>
+macro.</p>
+<h2 id="compile-time-configuration"><a class="header" href="#compile-time-configuration">Compile-Time Configuration</a></h2>
+<p>Configurations that applies globally are sometimes best done once and for all
+during the compilation step.</p>
+<p>Rexo offers a set of macros that, for example, allows redefining the <code>malloc</code>
+and <code>assert</code> functions to use, or to set global flags:</p>
+<pre><code class="language-c">#include &lt;stddef.h&gt;
+#include &lt;stdio.h&gt;
+#include &lt;stdlib.h&gt;
+
+/* Define a custom `malloc` function. */
+void *
+my_malloc(size_t size)
+{
+    printf(&quot;something worth %ld bytes is being allocated\n&quot;, size);
+    return malloc(size);
+}
+
+/* Override the default `malloc` function used by Rexo with ours. */
+#define RX_MALLOC my_malloc
+
+/* Override the default `assert` macro used by Rexo. */
+#define RX_ASSERT(x)                                                           \
+    (void)(                                                                    \
+        (x)                                                                    \
+        || (printf(__FILE__ &quot;:%d: assertion `&quot; #x &quot;` failed\n&quot;, __LINE__), 0)  \
+        || (abort(), 0))
+
+/* Force Rexo's compatibility with C89. */
+#define RX_ENABLE_C89_COMPAT
+
+/* Proceed with including Rexo and writing tests as usual. */
+
+#include &lt;rexo.h&gt;
+
+RX_TEST_CASE(foo, bar)
+{
+    RX_INT_REQUIRE_EQUAL(2 * 3 * 7, 42);
+}
+
+int
+main(int argc, const char **argv)
+{
+    return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> The use of <code>#include &lt;rexo.h&gt;</code> needs to come after the definition
+of any compile-time option.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> For a list of all the compile-time options available,
+see the <a href="./compile-time-configuration.html">Compile-Time Configuration</a> page.</p>
+</blockquote>
+<h2 id="explicit-registration"><a class="header" href="#explicit-registration">Explicit Registration</a></h2>
+<p>If you would like to not make use of the <a href="./reference/framework.html">framework</a>'s automatic
+registration feature, it is possible to register everything explicitly in
+the same way as most C unit testing frameworks offer:</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+
+struct foo_data {
+    int value;
+};
+
+enum rx_status
+foo_set_up(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
+{
+    struct foo_data *data;
+
+    /* Suppress the ‘defined but not used’ compiler warning. */
+    (void)RX_PARAM_CONTEXT;
+
+    data = (struct foo_data *)RX_DATA;
+    data-&gt;value = 123;
+    return RX_SUCCESS;
+}
+
+void
+foo_bar(struct rx_context *RX_PARAM_CONTEXT, void *RX_PARAM_DATA)
+{
+    struct foo_data *data;
+
+    data = (struct foo_data *)RX_DATA;
+    RX_INT_REQUIRE_EQUAL(data-&gt;value, 123);
+}
+
+static const struct rx_test_case test_cases[] = {
+    {  /* First test case's definition. */
+
+        &quot;foo&quot;,    /* Name of the test suite. */
+        &quot;bar&quot;,    /* Name of the test case. */
+        foo_bar,  /* Function to run. */
+        {         /* Test case's configuration. */
+
+            0,  /* Option 'skip'. */
+            {   /* Option 'fixture'. */
+
+                sizeof(struct foo_data),  /* Size of the data in bytes. */
+                {                         /* Fixture's configuration. */
+
+                    foo_set_up,  /* Function to initialize the fixture. */
+                    NULL         /* Function to clean up the fixture. */
+
+                }
+
+            }
+
+        }
+
+    }
+
+};
+
+/* Retrieve the number of test cases to run. */
+static const size_t test_case_count
+    = sizeof(test_cases) / sizeof(test_cases[0]);
+
+int
+main(int argc, const char **argv)
+{
+    /* Explicitly pass the test cases to be run. */
+    return rx_main(test_case_count, test_cases, argc, argv) == RX_SUCCESS
+        ? 0 : 1;
+}
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> See the <a href="./reference/building-blocks.html#rx_test_case">rx_test_case</a> struct.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> The function parameters <code>struct rx_context *</code> and <code>void *</code>
+are required to be respectively named using
+the <a href="./reference/building-blocks.html#rx_param_context"><code>RX_PARAM_CONTEXT</code></a> and
+<a href="./reference/building-blocks.html#rx_param_data"><code>RX_PARAM_DATA</code></a> macros.</p>
+</blockquote>
+<blockquote>
+<p><strong>Note:</strong> Alternatively, the data parameter can be defined with its actual
+type instead of <code>void *</code>, thus removing the need to cast the data within
+the functions. Although this approach requires casting function pointers,
+which is not standard compliant and hence not used in the implementation
+of Rexo, in practice the behaviour is well-defined for the common platforms.</p>
+</blockquote>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="design-rationale"><a class="header" href="#design-rationale">Design Rationale</a></h1>
+<p>With dozens of well-established unit testing frameworks out there, the question
+<em>why yet another one?</em> is unavoidable.</p>
+<p>The answer is fairly simple—the goal has been to try to further <strong>polish</strong>
+the user experience from existing frameworks while maintaining <strong>compatibility</strong>
+with both C89 and C++.</p>
+<p>Also, it sounded like a great exercise! 😊</p>
+<p>It is important to note that nothing is truly novel in Rexo—the main concepts
+are inspired by existing frameworks like <a href="https://github.com/Snaipe/Criterion">Criterion</a>,
+<a href="https://github.com/novaprova/novaprova">novaprova</a>, and others, although their form and implementation
+have been entirely revised.</p>
+<h2 id="automatic-registration"><a class="header" href="#automatic-registration">Automatic Registration</a></h2>
+<p>These two frameworks in particular proved that it was possible to make
+automatic registration of tests also possible in C, where most C frameworks
+require a <em>lot</em> of boilerplate to register these.</p>
+<p>The advantages that Rexo has in this regard are that:</p>
+<ul>
+<li>it only relies on a <strong>widespread</strong> compiler-specific feature to get
+the automatic registration going.</li>
+<li>it works on both <strong>Unix</strong> and <strong>Windows</strong> platforms.</li>
+<li>it is implemented in a fairly <strong>simple</strong> fashion.</li>
+</ul>
+<p>Automatic features are always nice to have <em>unless</em> they cannot be overridden.
+Rexo is designed in such a way that it is possible for the users to skip either
+parts or the whole automatic registration framework by allowing <a href="design/../guides.html#explicit-registration">explicit
+registration of tests</a>, like more conventional C
+frameworks offer.</p>
+<p>See the <a href="design/./auto-registration.html">automatic registration</a> design page for
+more details.</p>
+<h2 id="options-definition"><a class="header" href="#options-definition">Options Definition</a></h2>
+<p><a href="https://github.com/Snaipe/Criterion">Criterion</a> also cleverly demonstrated that it was possible to abuse
+the languages to make a <strong>named argument syntax</strong> available for configuring
+objects.</p>
+<p>Rexo took this a step further by allowing test cases not only to <strong>inherit</strong>
+options from their parent test suites, but also to <strong>tweak only specific
+fields</strong> for each test case.</p>
+<p>Since <strong>consistency</strong> is king in design, the approach was also extended to work
+with fixtures, thus providing a <strong>unified</strong> interface to configure <em>all
+the things</em>.</p>
+<p>See the <a href="design/./options.html">options definition</a> design page for more details.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="automatic-registration-1"><a class="header" href="#automatic-registration-1">Automatic Registration</a></h1>
+<p>Rexo aims at closing the gap between the C and C++ unit testing frameworks by
+implementing one feature that is almost a given in C++ frameworks but that is
+<em>rarely</em> seen in their C counterparts: automatic registration of test suites,
+test cases, and fixtures.</p>
+<h2 id="common-implementation"><a class="header" href="#common-implementation">Common Implementation</a></h2>
+<p>The automatic registration of such C++ frameworks is commonly achieved by
+defining a function to run for each test case and by having these functions
+added to a global array that can then be iterated over at runtime,
+as demonstrated in this snippet:</p>
+<pre><code class="language-c">/* C++ only! */
+#include &lt;stdio.h&gt;
+
+struct test_case {
+    const char *name;
+    void (*run_fn)();
+};
+
+struct test_case *test_cases[128];
+static int next_test_case_idx = 0;
+
+static int
+register_test_case(struct test_case *test_case)
+{
+    test_cases[next_test_case_idx++] = test_case;
+    return 0;
+}
+
+#define TEST_CASE(name)                                                        \
+    static void name();                                                        \
+    struct test_case test_case_##name = {#name, name};                         \
+    int dummy_##name = register_test_case(&amp;test_case_##name);                  \
+    static void name()
+
+TEST_CASE(foo)
+{
+    printf(&quot;Hello, world, I'm foo!\n&quot;);
+}
+
+TEST_CASE(bar)
+{
+    printf(&quot;Hello, world, I'm bar!\n&quot;);
+}
+
+int
+main(void)
+{
+    int i;
+
+    for (i = 0; i &lt; next_test_case_idx; ++i) {
+        printf(&quot;running `%s`\n&quot;, test_cases[i]-&gt;name);
+        test_cases[i]-&gt;run_fn();
+    }
+
+    return 0;
+}
+</code></pre>
+<p>By the time that this program iterates over the test cases in <code>main</code>,
+the two test cases <em>foo</em> and <em>bar</em> have already been added to the array through
+a call to the <code>register_test_case</code> function.</p>
+<h2 id="enter-c-land"><a class="header" href="#enter-c-land">Enter C Land</a></h2>
+<p>Running the previous snippet is possible in C++ because it is able to call any
+function <em>before</em> executing <code>main</code>.</p>
+<p>Alas, this doesn't work in C due to additional constraints to the language:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+static int
+get_foo()
+{
+    return 123;
+}
+
+static int foo = get_foo(); /* only allowed in C++ :( */
+
+int
+main(void)
+{
+    printf(&quot;%d\n&quot;, foo);
+    return 0;
+}
+</code></pre>
+<p>Without any standard way of providing an automatic registration framework in C,
+most minimalist samples from conventional frameworks look like something along
+these lines:</p>
+<pre><code class="language-c">#include &lt;stdlib.h&gt;
+#include &lt;unittestframework.h&gt;
+
+struct my_string {
+    int length;
+    const char *value;
+};
+
+static int
+set_up(void **data)
+{
+    struct my_string *s;
+
+    s = (struct my_string *)malloc(sizeof *s);
+    if (s == NULL) {
+        return 1;
+    }
+
+    s-&gt;length = 13;
+    s-&gt;value = &quot;hello, world!&quot;;
+
+    *data = (void *)s;
+    return 0;
+}
+
+static void
+tear_down(void *data)
+{
+    free(data);
+}
+
+static void
+test_foo(void *data)
+{
+    struct my_string *s;
+
+    s = (struct my_string *)data;
+    ASSERT_INT_EQUAL(s-&gt;length, 13);
+}
+
+static void
+test_bar(void *data)
+{
+    struct my_string *s;
+
+    s = (struct my_string *)data;
+    ASSERT_STR_EQUAL(s, &quot;hello, world!&quot;);
+}
+
+static const struct test_cases cases[] = {
+    {&quot;foo&quot;, test_foo},
+    {&quot;bar&quot;, test_bar},
+};
+
+static const struct test_suite suites[]= {
+    {&quot;suite&quot;, sizeof cases / sizeof cases[0], cases, set_up, tear_down},
+};
+
+int
+main(void)
+{
+    return run(sizeof suites / sizeof suites[0], suites);
+}
+</code></pre>
+<p>Not only is this a lot of <strong>boilerplate</strong> but it is also fairly <strong>error-prone</strong>
+since it is easy to add new tests while forgetting to register them further down
+the line.</p>
+<h2 id="making-it-work"><a class="header" href="#making-it-work">Making It Work</a></h2>
+<p>One solution for C is to use a compiler extension that is expected to be
+available for all compilers in a form or another and that provides <strong>custom
+memory sections</strong>.</p>
+<p>Custom memory sections allow grouping related objects in the same memory space
+and to then iterate over them at runtime.</p>
+<p>As an example, this is the gist of how such an implementation might look like
+for the GNU-compliant compilers:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+struct test_case {
+    const char *name;
+};
+
+const struct test_case test_case_foo = {&quot;foo&quot;};
+const struct test_case test_case_bar = {&quot;bar&quot;};
+
+const struct test_case *__start_rxcases;
+const struct test_case *__stop_rxcases;
+
+__attribute__((section(&quot;rxcases&quot;)))
+const struct test_case *test_case_foo_ptr = &amp;test_case_foo;
+
+__attribute__((section(&quot;rxcases&quot;)))
+const struct test_case *test_case_bar_ptr = &amp;test_case_bar;
+
+int
+main(void)
+{
+    const struct test_case **it;
+
+    for (it = &amp;__start_rxcases; it &lt; &amp;__stop_rxcases; ++it) {
+        if (*it != NULL) {
+            printf(&quot;found `%s`\n&quot;, (*it)-&gt;name);
+        }
+    }
+
+    return 0;
+}
+</code></pre>
+<p>And here's the equivalent implementation, adapted to MSVC:</p>
+<pre><code class="language-c">#include &lt;stdio.h&gt;
+
+struct test_case {
+    const char *name;
+};
+
+const struct test_case test_case_foo = {&quot;foo&quot;};
+const struct test_case test_case_bar = {&quot;bar&quot;};
+
+__pragma(section(&quot;rxcases$a&quot;, read))
+__pragma(section(&quot;rxcases$b&quot;, read))
+__pragma(section(&quot;rxcases$c&quot;, read))
+
+__declspec(allocate(&quot;rxcases$a&quot;))
+const struct test_case *section_begin = NULL;
+
+__declspec(allocate(&quot;rxcases$c&quot;))
+const struct test_case *section_end = NULL;
+
+__declspec(allocate(&quot;rxcases$b&quot;))
+const struct test_case *test_case_foo_ptr = &amp;test_case_foo;
+
+__declspec(allocate(&quot;rxcases$b&quot;))
+const struct test_case *test_case_bar_ptr = &amp;test_case_bar;
+
+int
+main(void)
+{
+    const struct test_case **it;
+
+    for (it = &amp;section_begin + 1; it &lt; &amp;section_end; ++it) {
+        if (*it != NULL) {
+            printf(&quot;found `%s`\n&quot;, (*it)-&gt;name);
+        }
+    }
+
+    return 0;
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="options-definition-1"><a class="header" href="#options-definition-1">Options Definition</a></h1>
+<p>To build an expressive and intuitive framework, it was important to put
+a system in place that makes the experience of configuring the different objects
+as frictionless as possible.</p>
+<h2 id="named-arguments-syntax"><a class="header" href="#named-arguments-syntax">Named Arguments Syntax</a></h2>
+<p>When it comes to setting a bunch of options at once, the most user-friendly
+approach is usually to define a struct where <code>0</code> (or <code>NULL</code>) corresponds to
+the default value for each field, and to let the users initialize instances
+of that struct by only setting the fields that need to have their value changed
+from the defaults through.</p>
+<p>This is exactly what the designated initializer syntax introduced with C99
+offers:</p>
+<pre><code class="language-c">struct config {
+    const char *foo;
+    int bar;
+    double baz;
+};
+
+/* Only setting the bar field leaves foo and baz to 0. */
+struct config my_config = {.bar = 123};
+</code></pre>
+<p>Despite Rexo's intention of supporting C89 and C++ when both languages are
+not compatible with the designated initializer syntax, it was still a strong
+design goal to provide a similar approach for setting options.</p>
+<p>This is done by using variadic macros where the optional arguments start with
+a dot character:</p>
+<pre><code class="language-c">MY_MACRO(arg_1, arg_2, .option_1 = 123, .option_2 = &quot;abc&quot;);
+</code></pre>
+<h2 id="options-sharing"><a class="header" href="#options-sharing">Options Sharing</a></h2>
+<p>This designated initialized syntax can be used to set-up individual test cases
+but, to avoid redundancy, it is possible to group test cases with a similar
+configuration into a same test suite, configure only that test suite, and have
+all of its test cases automatically inherit the configuration.</p>
+<p>Not only that but it is still possible to override only specific options for
+individual test cases:</p>
+<pre><code class="language-c">RX_TEST_SUITE(my_test_suite, .foo = 123, .bar = &quot;abc&quot;);
+
+RX_TEST_CASE(my_test_suite, my_test_case, .bar = &quot;def&quot;, .baz = 1.23)
+{
+    /*
+       foo is 123.
+       bar is &quot;def&quot;.
+       baz is 1.23
+    */
+}
+</code></pre>
+<h2 id="variadic-macros-fallback"><a class="header" href="#variadic-macros-fallback">Variadic Macros Fallback</a></h2>
+<p>Since C89 and C++98 don't support variadic macros, an alternative set of macros
+is provided, each suffixed with a digit representing the number of options
+to pass.</p>
+<p>For example, the equivalent of the previous examples become:</p>
+<pre><code class="language-c">MY_MACRO(arg_1, arg_2)
+MY_MACRO_1(arg_1, arg_2, .option_2 = &quot;abc&quot;);
+MY_MACRO_2(arg_1, arg_2, .option_1 = 123, .option_2 = &quot;abc&quot;);
+
+RX_TEST_SUITE_2(my_test_suite, .foo = 123, .bar = &quot;abc&quot;);
+
+RX_TEST_CASE_2(my_test_suite, my_test_case, .bar = &quot;def&quot;, .baz = 1.23)
+{
+    /* ... */
+}
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="api-reference"><a class="header" href="#api-reference">API Reference</a></h1>
+<p>As a single-header file library, all of Rexo's public API and implementation is
+available from within a single include:</p>
+<pre><code class="language-c">#include &lt;rexo.h&gt;
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="framework"><a class="header" href="#framework">Framework</a></h1>
+<p>The framework defines the go-to approach when wanting to use the mechanism
+that automatically registers test suites, test cases, and fixtures.</p>
+<h3 id="rx_set_up"><a class="header" href="#rx_set_up"><code>RX_SET_UP</code></a></h3>
+<p>Defines the initialization function of a fixture.</p>
+<pre><code class="language-c">#define RX_SET_UP(id)
+</code></pre>
+<p>The name for this function needs to be passed to the <code>id</code> parameter and can then
+referenced through the <code>set_up</code> option available as part of
+the <a href="reference/framework.html#rx_fixture"><code>RX_FIXTURE</code></a> macro.</p>
+<h3 id="rx_tear_down"><a class="header" href="#rx_tear_down"><code>RX_TEAR_DOWN</code></a></h3>
+<p>Defines the clean-up function of a fixture.</p>
+<pre><code class="language-c">#define RX_TEAR_DOWN(id)
+</code></pre>
+<p>The name for this function needs to be passed to the <code>id</code> parameter and can then
+be referenced through the <code>tear_down</code> option available as part of
+the <a href="reference/framework.html#rx_fixture"><code>RX_FIXTURE</code></a> macro.</p>
+<h3 id="rx_fixture"><a class="header" href="#rx_fixture"><code>RX_FIXTURE</code></a></h3>
+<p>Defines a fixture.</p>
+<pre><code class="language-c">#define RX_FIXTURE(id, type, ...)
+</code></pre>
+<p>The name for this fixture needs to be passed to the <code>id</code> parameter and can then
+be referenced through the configuration of
+the <a href="reference/framework.html#rx_test_suite"><code>RX_TEST_SUITE</code></a> and
+the <a href="reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macros.</p>
+<p>For a list of all the options available through the variadic parameter, see
+the <a href="reference/./building-blocks.html#rx_fixture_config"><code>rx_fixture_config</code></a> struct.</p>
+<p>If the fixture defines some data to be used by its test cases, its type needs
+to be passed to the <code>type</code> parameter. Otherwise, the alternative
+macro <a href="reference/framework.html#rx_void_fixture"><code>RX_VOID_FIXTURE</code></a> should be used instead.</p>
+<h3 id="rx_void_fixture"><a class="header" href="#rx_void_fixture"><code>RX_VOID_FIXTURE</code></a></h3>
+<p>Defines a fixture without any user data.</p>
+<pre><code class="language-c">#define RX_VOID_FIXTURE(id, ...)
+</code></pre>
+<p>The name for this fixture needs to be passed to the <code>id</code> parameter and can then
+be referenced through the configuration of
+the <a href="reference/framework.html#rx_test_suite"><code>RX_TEST_SUITE</code></a> and
+the <a href="reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macros.</p>
+<h3 id="rx_test_suite"><a class="header" href="#rx_test_suite"><code>RX_TEST_SUITE</code></a></h3>
+<p>Defines a test suite.</p>
+<pre><code class="language-c">#define RX_TEST_SUITE(id, ...)
+</code></pre>
+<p>The name for this suite needs to be passed to the <code>id</code> parameter and can then be
+referenced by the <a href="reference/framework.html#rx_test_case"><code>RX_TEST_CASE</code></a> macro.</p>
+<p>For a list of all the options available through the variadic parameter, see
+the <a href="reference/./building-blocks.html#rx_test_case_config"><code>rx_test_case_config</code></a> struct.</p>
+<h3 id="rx_test_case"><a class="header" href="#rx_test_case"><code>RX_TEST_CASE</code></a></h3>
+<p>Defines a test case function.</p>
+<pre><code class="language-c">#define RX_TEST_CASE(suite_id, id, ...)
+</code></pre>
+<p>For a list of all the options available through the variadic parameter, see
+the <a href="reference/./building-blocks.html#rx_test_case_config"><code>rx_test_case_config</code></a> struct.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="assertion-macros"><a class="header" href="#assertion-macros">Assertion Macros</a></h1>
+<p>Each assertion macro comes in two variants that define a different behaviour
+when an assertion fails:</p>
+<ul>
+<li><code>REQUIRE</code>: reports a fatal failure and aborts the current test case.</li>
+<li><code>CHECK</code>: reports a nonfatal failure and keeps running other tests found within
+the same test case.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> When in <a href="reference/../compile-time-configuration.html#rx_enable_c89_compat">C89 compatibility mode</a>,
+variadic macro arguments are not available as part of the language.
+See the associated <a href="reference/../gotchas.html#variadic_macros_in_c89_compatibility_mode">gotcha</a>.</p>
+</blockquote>
+<h2 id="generic-assertions"><a class="header" href="#generic-assertions">Generic Assertions</a></h2>
+<pre><code class="language-c">#define RX_REQUIRE(condition)
+#define RX_REQUIRE_MSG(condition, msg, ...)
+#define RX_CHECK(condition)
+#define RX_CHECK_MSG(condition, msg, ...)
+</code></pre>
+<p>Ultimately, these two assertion macros could be enough to express all possible 
+tests but it is recommended to use the more specialized assertions available.</p>
+<h2 id="boolean-assertions"><a class="header" href="#boolean-assertions">Boolean Assertions</a></h2>
+<pre><code class="language-c">#define RX_BOOL_REQUIRE_TRUE(condition)
+#define RX_BOOL_REQUIRE_TRUE_MSG(condition, msg, ...)
+#define RX_BOOL_CHECK_TRUE(condition)
+#define RX_BOOL_CHECK_TRUE_MSG(condition, msg, ...)
+
+#define RX_BOOL_REQUIRE_FALSE(condition)
+#define RX_BOOL_REQUIRE_FALSE_MSG(condition, msg, ...)
+#define RX_BOOL_CHECK_FALSE(condition)
+#define RX_BOOL_CHECK_FALSE_MSG(condition, msg, ...)
+</code></pre>
+<h2 id="integer-assertions"><a class="header" href="#integer-assertions">Integer Assertions</a></h2>
+<pre><code class="language-c">#define RX_INT_REQUIRE_EQUAL(x1, x2)
+#define RX_INT_REQUIRE_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_EQUAL(x1, x2)
+#define RX_INT_CHECK_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_INT_REQUIRE_NOT_EQUAL(x1, x2)
+#define RX_INT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_NOT_EQUAL(x1, x2)
+#define RX_INT_CHECK_NOT_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_INT_REQUIRE_GREATER(x1, x2)
+#define RX_INT_REQUIRE_GREATER_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_GREATER(x1, x2)
+#define RX_INT_CHECK_GREATER_MSG(x1, x2, msg, ...)
+
+#define RX_INT_REQUIRE_LESSER(x1, x2)
+#define RX_INT_REQUIRE_LESSER_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_LESSER(x1, x2)
+#define RX_INT_CHECK_LESSER_MSG(x1, x2, msg, ...)
+
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL(x1, x2)
+#define RX_INT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_GREATER_OR_EQUAL(x1, x2)
+#define RX_INT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL(x1, x2)
+#define RX_INT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_INT_CHECK_LESSER_OR_EQUAL(x1, x2)
+#define RX_INT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+</code></pre>
+<h2 id="unsigned-integer-assertions"><a class="header" href="#unsigned-integer-assertions">Unsigned Integer Assertions</a></h2>
+<pre><code class="language-c">#define RX_UINT_REQUIRE_EQUAL(x1, x2)
+#define RX_UINT_REQUIRE_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_EQUAL(x1, x2)
+#define RX_UINT_CHECK_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_UINT_REQUIRE_NOT_EQUAL(x1, x2)
+#define RX_UINT_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_NOT_EQUAL(x1, x2)
+#define RX_UINT_CHECK_NOT_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_UINT_REQUIRE_GREATER(x1, x2)
+#define RX_UINT_REQUIRE_GREATER_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_GREATER(x1, x2)
+#define RX_UINT_CHECK_GREATER_MSG(x1, x2, msg, ...)
+
+#define RX_UINT_REQUIRE_LESSER(x1, x2)
+#define RX_UINT_REQUIRE_LESSER_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_LESSER(x1, x2)
+#define RX_UINT_CHECK_LESSER_MSG(x1, x2, msg, ...)
+
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL(x1, x2)
+#define RX_UINT_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_GREATER_OR_EQUAL(x1, x2)
+#define RX_UINT_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL(x1, x2)
+#define RX_UINT_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_UINT_CHECK_LESSER_OR_EQUAL(x1, x2)
+#define RX_UINT_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+</code></pre>
+<h2 id="floating-point-assertions"><a class="header" href="#floating-point-assertions">Floating-Point Assertions</a></h2>
+<pre><code class="language-c">#define RX_REAL_REQUIRE_EQUAL(x1, x2)
+#define RX_REAL_REQUIRE_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_EQUAL(x1, x2)
+#define RX_REAL_CHECK_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_NOT_EQUAL(x1, x2)
+#define RX_REAL_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_NOT_EQUAL(x1, x2)
+#define RX_REAL_CHECK_NOT_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_GREATER(x1, x2)
+#define RX_REAL_REQUIRE_GREATER_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_GREATER(x1, x2)
+#define RX_REAL_CHECK_GREATER_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_LESSER(x1, x2)
+#define RX_REAL_REQUIRE_LESSER_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_LESSER(x1, x2)
+#define RX_REAL_CHECK_LESSER_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL(x1, x2)
+#define RX_REAL_REQUIRE_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_GREATER_OR_EQUAL(x1, x2)
+#define RX_REAL_CHECK_GREATER_OR_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL(x1, x2)
+#define RX_REAL_REQUIRE_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_REAL_CHECK_LESSER_OR_EQUAL(x1, x2)
+#define RX_REAL_CHECK_LESSER_OR_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_REAL_REQUIRE_FUZZY_EQUAL(x1, x2, tol)
+#define RX_REAL_REQUIRE_FUZZY_EQUAL_MSG(x1, x2, tol, msg, ...)
+#define RX_REAL_CHECK_FUZZY_EQUAL(x1, x2, tol)
+#define RX_REAL_CHECK_FUZZY_EQUAL_MSG(x1, x2, tol, msg, ...)
+
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL(x1, x2, tol)
+#define RX_REAL_REQUIRE_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg, ...)
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL(x1, x2, tol)
+#define RX_REAL_CHECK_FUZZY_NOT_EQUAL_MSG(x1, x2, tol, msg, ...)
+</code></pre>
+<blockquote>
+<p><strong>Note:</strong> The <code>EQUAL</code> and <code>NOT_EQUAL</code> comparisons perform strict equality
+checks, which is usually not what you would want to do in the case of
+floating-point due to precision errors.</p>
+<p>Therefore, each of these two assertions come with a corresponding <code>FUZZY</code>
+alternative that takes a tolerance parameter and performs a relative
+comparison followed by an absolute one, similar to what is described in
+Bruce Dawson's article
+<a href="https://randomascii.wordpress.com/2012/02/25/comparing-floating-point-numbers-2012-edition">Comparing Floating Point Numbers, 2012 Edition</a>.</p>
+<p>The fuzzy comparison test is described with the following logic:</p>
+<pre><code class="language-c">int
+are_equal_fuzzy(float a, float b, float tol)
+{
+    float diff;
+
+    diff = fabs(a - b);
+    if (diff &lt;= tol) {
+        return 1;
+    }
+
+    a = fabs(a);
+    b = fabs(b);
+    return diff &lt;= (a &gt; b ? a : b) * tol;
+}
+</code></pre>
+</blockquote>
+<h2 id="string-assertions"><a class="header" href="#string-assertions">String Assertions</a></h2>
+<pre><code class="language-c">#define RX_STR_REQUIRE_EQUAL(s1, s2)
+#define RX_STR_REQUIRE_EQUAL_MSG(s1, s2, msg, ...)
+#define RX_STR_CHECK_EQUAL(s1, s2)
+#define RX_STR_CHECK_EQUAL_MSG(s1, s2, msg, ...)
+
+#define RX_STR_REQUIRE_NOT_EQUAL(s1, s2)
+#define RX_STR_REQUIRE_NOT_EQUAL_MSG(s1, s2, msg, ...)
+#define RX_STR_CHECK_NOT_EQUAL(s1, s2)
+#define RX_STR_CHECK_NOT_EQUAL_MSG(s1, s2, msg, ...)
+
+#define RX_STR_REQUIRE_EQUAL_NO_CASE(s1, s2)
+#define RX_STR_REQUIRE_EQUAL_NO_CASE_MSG(s1, s2, msg, ...)
+#define RX_STR_CHECK_EQUAL_NO_CASE(s1, s2)
+#define RX_STR_CHECK_EQUAL_NO_CASE_MSG(s1, s2, msg, ...)
+
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE(s1, s2)
+#define RX_STR_REQUIRE_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg, ...)
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE(s1, s2)
+#define RX_STR_CHECK_NOT_EQUAL_NO_CASE_MSG(s1, s2, msg, ...)
+</code></pre>
+<h2 id="pointer-assertions"><a class="header" href="#pointer-assertions">Pointer Assertions</a></h2>
+<pre><code class="language-c">#define RX_PTR_REQUIRE_EQUAL(x1, x2)
+#define RX_PTR_REQUIRE_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_PTR_CHECK_EQUAL(x1, x2)
+#define RX_PTR_CHECK_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_PTR_REQUIRE_NOT_EQUAL(x1, x2)
+#define RX_PTR_REQUIRE_NOT_EQUAL_MSG(x1, x2, msg, ...)
+#define RX_PTR_CHECK_NOT_EQUAL(x1, x2)
+#define RX_PTR_CHECK_NOT_EQUAL_MSG(x1, x2, msg, ...)
+
+#define RX_PTR_REQUIRE_ALIGNED(x, alignment)
+#define RX_PTR_REQUIRE_ALIGNED_MSG(x, alignment, msg, ...)
+</code></pre>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="runner"><a class="header" href="#runner">Runner</a></h1>
+<p>High-level API to run all the unit tests.</p>
+<h3 id="rx_main"><a class="header" href="#rx_main"><code>rx_main</code></a></h3>
+<p>Runs the given tests.</p>
+<pre><code class="language-c">enum rx_status
+rx_main(size_t test_case_count,
+        const struct rx_test_case *test_cases,
+        int argc,
+        const char * const *argv)
+</code></pre>
+<p>The <code>rx_main</code> function can be seen as composing all the orthogonal calls into
+a single higher level API for ease of use and is likely to be the only one
+function needing to ever be called by most users.</p>
+<p>If the <code>test_cases</code> argument is <code>NULL</code>, then the tests found through
+the <a href="reference/./framework.html">framework</a>'s automatic registration feature are used.</p>
+<p>This function is implemented using the lower level API described in
+<a href="reference/./building-blocks.html">building blocks</a>. Use these directly instead of <code>rx_main</code>
+if you'd like to further customize the process.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="building-blocks"><a class="header" href="#building-blocks">Building Blocks</a></h1>
+<p>Core of Rexo—data structures, required macros, and lower level API calls.</p>
+<p>Most of these are abstracted away when using the <a href="reference/./runner.html">runner</a>,
+the <a href="reference/./framework.html">framework</a>'s automatic registration feature,
+and the <a href="reference/./assertions.html">assertion macros</a>.</p>
+<h2 id="enumerators"><a class="header" href="#enumerators">Enumerators</a></h2>
+<h3 id="rx_status"><a class="header" href="#rx_status"><code>rx_status</code></a></h3>
+<p>Return codes.</p>
+<pre><code class="language-c">enum rx_status {
+    RX_SUCCESS = 0,
+    RX_ERROR = -1,
+    RX_ERROR_ALLOCATION = -2,
+    RX_ERROR_MAX_SIZE_EXCEEDED = -3
+}
+</code></pre>
+<p>Error codes come in different categories that all evaluate to negative numbers.</p>
+<h3 id="rx_severity"><a class="header" href="#rx_severity"><code>rx_severity</code></a></h3>
+<p>Severity levels for test failures.</p>
+<pre><code class="language-c">enum rx_severity { RX_NONFATAL = 0, RX_FATAL = 1 }
+</code></pre>
+<p>Nonfatal failures arise from <code>RX_CHECK*</code> assertions while <code>RX_REQUIRE*</code> trigger
+fatal failures.</p>
+<p>See also the <a href="reference/./assertions.html">assertion macros</a>.</p>
+<h3 id="rx_log_level"><a class="header" href="#rx_log_level"><code>rx_log_level</code></a></h3>
+<p>Logging level.</p>
+<pre><code class="language-c">enum rx_log_level {
+    RX_LOG_LEVEL_NONE = 0,
+    RX_LOG_LEVEL_FATAL = 1,
+    RX_LOG_LEVEL_ERROR = 3,
+    RX_LOG_LEVEL_WARNING = 4,
+    RX_LOG_LEVEL_INFO = 5,
+    RX_LOG_LEVEL_DEBUG = 6,
+    RX_LOG_LEVEL_ALL = RX_LOG_LEVEL_DEBUG
+};
+</code></pre>
+<p>The purpose of each level is defined as follows:</p>
+<div class="table-wrapper"><table><thead><tr><th style="text-align: center">level</th><th>description</th><th>example</th></tr></thead><tbody>
+<tr><td style="text-align: center"><strong>fatal</strong></td><td>critical failure that causes premature termination of the application</td><td>lack of disk space, data corruption</td></tr>
+<tr><td style="text-align: center"><strong>error</strong></td><td>failure that doesn't require the application to be prematurely terminated</td><td>unable to open a file, allocation failure</td></tr>
+<tr><td style="text-align: center"><strong>warning</strong></td><td>situation that is not ideal but that is not an actual failure per se</td><td>use of a deprecated API, poor use of an API</td></tr>
+<tr><td style="text-align: center"><strong>info</strong></td><td>event of general interest corresponding to normal application behaviour</td><td>addition of a database entry, statistics</td></tr>
+<tr><td style="text-align: center"><strong>debug</strong></td><td>detailed information to help maintainers troubleshooting problems</td><td>allocation size, state of data</td></tr>
+<tr><td style="text-align: center"><strong>trace</strong></td><td>control flow of the application to help maintainers pinpointing problems</td><td>entry/exit of functions, dump of argument values</td></tr>
+</tbody></table>
+</div>
+<h2 id="function-pointers"><a class="header" href="#function-pointers">Function Pointers</a></h2>
+<h3 id="rx_set_up_fn"><a class="header" href="#rx_set_up_fn"><code>rx_set_up_fn</code></a></h3>
+<p>Function part of the fixture feature, to be called before the function defining
+the tests is run.</p>
+<pre><code class="language-c">typedef enum rx_status (*rx_set_up_fn)(struct rx_context *, void *)
+</code></pre>
+<p>The <code>struct rx_context *</code> parameter is reserved for the implementation and
+shouldn't be directly accessed by the users.</p>
+<p>The <code>void *</code> parameter is used to output any data initialized within
+this function. The pointer can be accessed within the function's definition
+using the <a href="reference/building-blocks.html#rx_data"><code>RX_DATA</code></a> macro.</p>
+<p>When <a href="reference/../guides.html#explicit-registration">explicitly registering tests</a>, the macros
+<a href="reference/building-blocks.html#rx_param_context"><code>RX_PARAM_CONTEXT</code></a>
+and <a href="reference/building-blocks.html#rx_param_data"><code>RX_PARAM_DATA</code></a> need to be used to define
+the parameter names.</p>
+<p>The function is expected to return an error code if something went wrong,
+or <code>RX_SUCCESS</code> otherwise.</p>
+<h3 id="rx_tear_down_fn"><a class="header" href="#rx_tear_down_fn"><code>rx_tear_down_fn</code></a></h3>
+<p>Function part of the fixture feature, to be called after the function defining
+the tests is run.</p>
+<pre><code class="language-c">typedef void (*rx_tear_down_fn)(struct rx_context *, void *)
+</code></pre>
+<p>The <code>struct rx_context *</code> parameter is reserved for the implementation and
+shouldn't be directly accessed by the users.</p>
+<p>The <code>void *</code> parameter is used to output any data initialized within
+this function. The pointer can be accessed within the function's definition
+using the <a href="reference/building-blocks.html#rx_data"><code>RX_DATA</code></a> macro.</p>
+<p>When <a href="reference/../guides.html#explicit-registration">explicitly registering tests</a>, the macros
+<a href="reference/building-blocks.html#rx_param_context"><code>RX_PARAM_CONTEXT</code></a>
+and <a href="reference/building-blocks.html#rx_param_data"><code>RX_PARAM_DATA</code></a> need to be used to define
+the parameter names.</p>
+<h3 id="rx_run_fn"><a class="header" href="#rx_run_fn"><code>rx_run_fn</code></a></h3>
+<p>Function defining the tests to run.</p>
+<pre><code class="language-c">typedef void (*rx_run_fn)(struct rx_context *, void *)
+</code></pre>
+<p>The <code>struct rx_context *</code> parameter is reserved for the implementation and
+shouldn't be directly accessed by the users.</p>
+<p>The <code>void *</code> parameter is used to output any data initialized within
+this function. The pointer can be accessed within the function's definition
+using the <a href="reference/building-blocks.html#rx_data"><code>RX_DATA</code></a> macro.</p>
+<p>When <a href="reference/../guides.html#explicit-registration">explicitly registering tests</a>, the macros
+<a href="reference/building-blocks.html#rx_param_context"><code>RX_PARAM_CONTEXT</code></a>
+and <a href="reference/building-blocks.html#rx_param_data"><code>RX_PARAM_DATA</code></a> need to be used to define
+the parameter names.</p>
+<h2 id="parameters"><a class="header" href="#parameters">Parameters</a></h2>
+<h3 id="rx_param_context"><a class="header" href="#rx_param_context"><code>RX_PARAM_CONTEXT</code></a></h3>
+<p>Refers to the name expected for the context parameter.</p>
+<pre><code class="language-c">#define RX_PARAM_CONTEXT
+</code></pre>
+<p>The context parameter is used for the functions
+<a href="reference/building-blocks.html#rx_set_up_fn">rx_set_up_fn</a>, <a href="reference/building-blocks.html#rx_tear_down_fn">rx_tear_down_fn</a>,
+and <a href="reference/building-blocks.html#rx_run_fn">rx_run_fn</a>.</p>
+<p>It is not to be directly used unless when
+<a href="reference/../guides.html#explicit-registration">explicitly registering tests</a>. In this case,
+the macro <code>RX_PARAM_CONTEXT</code> is required to name
+the <code>struct rx_context *</code> parameter.</p>
+<h3 id="rx_param_data"><a class="header" href="#rx_param_data"><code>RX_PARAM_DATA</code></a></h3>
+<p>Refers to the name expected for the data parameter.</p>
+<pre><code class="language-c">#define RX_PARAM_DATA
+</code></pre>
+<p>The context parameter is used for the functions
+<a href="reference/building-blocks.html#rx_set_up_fn">rx_set_up_fn</a>, <a href="reference/building-blocks.html#rx_tear_down_fn">rx_tear_down_fn</a>,
+and <a href="reference/building-blocks.html#rx_run_fn">rx_run_fn</a>.</p>
+<p>It is not to be directly used unless when
+<a href="reference/../guides.html#explicit-registration">explicitly registering tests</a>. In this case,
+the macro <code>RX_PARAM_DATA</code> is required to name the <code>void *</code> parameter.</p>
+<h2 id="data-accessors"><a class="header" href="#data-accessors">Data Accessors</a></h2>
+<h3 id="rx_data"><a class="header" href="#rx_data"><code>RX_DATA</code></a></h3>
+<p>Access the data's pointer.</p>
+<pre><code class="language-c">#define RX_DATA
+</code></pre>
+<p>This macro can be used within the definitions of the functions
+<a href="reference/building-blocks.html#rx_set_up_fn">rx_set_up_fn</a>, <a href="reference/building-blocks.html#rx_tear_down_fn">rx_tear_down_fn</a>,
+and <a href="reference/building-blocks.html#rx_run_fn">rx_run_fn</a>.</p>
+<h2 id="types"><a class="header" href="#types">Types</a></h2>
+<h3 id="rx_uint32"><a class="header" href="#rx_uint32"><code>rx_uint32</code></a></h3>
+<p>Type for 32-bit unsigned integers.</p>
+<pre><code class="language-c">typedef TYPE rx_uint32;
+</code></pre>
+<p>The type is determined by the value of
+the <a href="reference/../compile-time-configuration.html#rx_uint32_type"><code>RX_UINT32_TYPE</code></a> macro. If the macro isn't set,
+<code>unsigned int</code> is used, which fits the common data models, that is ILP32
+(most recent 32-bit systems), LP64 (Unix-like systems), and LLP64 (Windows).</p>
+<h3 id="rx_uint64"><a class="header" href="#rx_uint64"><code>rx_uint64</code></a></h3>
+<p>Type for 64-bit unsigned integers.</p>
+<pre><code class="language-c">typedef TYPE rx_uint64;
+</code></pre>
+<p>The type is determined by the value of
+the <a href="reference/../compile-time-configuration.html#rx_uint64_type"><code>RX_UINT64_TYPE</code></a> macro. If the macro isn't set,
+<code>unsigned long long</code> is used, which fits the common data models, that is ILP32
+(most recent 32-bit systems), LP64 (Unix-like systems), and LLP64 (Windows).</p>
+<h3 id="rx_size"><a class="header" href="#rx_size"><code>rx_size</code></a></h3>
+<p>Type to use in place of <code>size_t</code>.</p>
+<pre><code class="language-c">typedef TYPE rx_size;
+</code></pre>
+<p>The type is determined by the value of the <a href="reference/../compile-time-configuration.html#rx_size_type"><code>RX_SIZE_TYPE</code></a>
+macro. If the macro isn't set, either <a href="reference/building-blocks.html#rx_uint32"><code>rx_uint32</code></a>
+or <a href="reference/building-blocks.html#rx_uint64"><code>rx_uint64</code></a> is used, depending on whether the environment
+is running on a 32-bit or 64-bit platform.</p>
+<h2 id="structures"><a class="header" href="#structures">Structures</a></h2>
+<h3 id="rx_test_case_config"><a class="header" href="#rx_test_case_config"><code>rx_test_case_config</code></a></h3>
+<p>Configuration object to apply to a test case.</p>
+<pre><code class="language-c">struct rx_test_case_config {
+    int skip;
+    struct rx_fixture fixture;
+}
+</code></pre>
+<p>In the event where a test case should be skipped by the runner,
+the <code>skip</code> option can be used.</p>
+<p>Fixtures are defined through the <code>fixture</code> option, see
+the <a href="reference/building-blocks.html#rx_fixture"><code>rx_fixture</code></a> struct.</p>
+<p>Filling the struct with the value <code>0</code> sets all the members to
+their default values.</p>
+<h3 id="rx_fixture_config"><a class="header" href="#rx_fixture_config"><code>rx_fixture_config</code></a></h3>
+<p>Configuration object to apply to a fixture.</p>
+<pre><code class="language-c">struct rx_fixture_config {
+    rx_set_up_fn set_up;
+    rx_tear_down_fn tear_down;
+}
+</code></pre>
+<p>The <code>set_up</code> and <code>tear_down</code> options respectively define
+the <a href="reference/building-blocks.html#rx_set_up_fn">rx_set_up_fn</a> and
+the <a href="reference/building-blocks.html#rx_tear_down_fn">rx_tear_down_fn</a> functions.</p>
+<p>Filling the struct with the value <code>0</code> sets all the members to
+their default values.</p>
+<h3 id="rx_fixture-1"><a class="header" href="#rx_fixture-1"><code>rx_fixture</code></a></h3>
+<p>Fixture defining data type size and function pointers to run before and after
+the test is run.</p>
+<pre><code class="language-c">struct rx_fixture {
+    rx_size size;
+    struct rx_fixture_config config;
+};
+</code></pre>
+<p>Any configuration can be set through the <code>config</code> option. See
+the <a href="reference/building-blocks.html#rx_fixture_config"><code>rx_fixture_config</code></a> struct.</p>
+<h3 id="rx_test_case-1"><a class="header" href="#rx_test_case-1"><code>rx_test_case</code></a></h3>
+<p>Definition of a single test case.</p>
+<pre><code class="language-c">struct rx_test_case {
+    const char *suite_name;
+    const char *name;
+    rx_run_fn run;
+    struct rx_test_case_config config;
+};
+</code></pre>
+<p>The <code>run</code> function pointer needs to point to the function that contains
+the tests for the test case. See the <a href="reference/building-blocks.html#rx_run_fn"><code>rx_run_fn</code></a> function.</p>
+<p>Any configuration can be set through the <code>config</code> option. See
+the <a href="reference/building-blocks.html#rx_test_case_config"><code>rx_test_case_config</code></a> struct.</p>
+<h3 id="rx_failure"><a class="header" href="#rx_failure"><code>rx_failure</code></a></h3>
+<p>Information related to a test that failed.</p>
+<pre><code class="language-c">struct rx_failure {
+    const char *file;
+    int line;
+    enum rx_severity severity;
+    const char *msg;
+    const char *diagnostic_msg;
+}
+</code></pre>
+<h3 id="rx_summary"><a class="header" href="#rx_summary"><code>rx_summary</code></a></h3>
+<p>Report from running a test case.</p>
+<pre><code class="language-c">struct rx_summary {
+    const struct rx_test_case *test_case;
+    int skipped;
+    const char *error;
+    rx_size assessed_count;
+    rx_size failure_count;
+    struct rx_failure *failures;
+    rx_uint64 elapsed;
+}
+</code></pre>
+<h3 id="rx_context"><a class="header" href="#rx_context"><code>rx_context</code></a></h3>
+<p>Opaque data required internally by Rexo.</p>
+<pre><code class="language-c">struct rx_context
+</code></pre>
+<h2 id="functions"><a class="header" href="#functions">Functions</a></h2>
+<h3 id="rx_abort"><a class="header" href="#rx_abort"><code>rx_abort</code></a></h3>
+<p>Aborts the execution of the test case being currently run.</p>
+<pre><code class="language-c">void
+rx_abort(struct rx_context *context)
+</code></pre>
+<h3 id="rx_handle_test_result"><a class="header" href="#rx_handle_test_result"><code>rx_handle_test_result</code></a></h3>
+<p>Handles the result of a single test.</p>
+<pre><code class="language-c">enum rx_status
+rx_handle_test_result(struct rx_context *context,
+                      int result,
+                      const char *file,
+                      int line,
+                      enum rx_severity severity,
+                      const char *failure_msg,
+                      const char *diagnostic_msg)
+</code></pre>
+<p>This records the result and any error or diagnostic messages related to it.</p>
+<h3 id="rx_summary_initialize"><a class="header" href="#rx_summary_initialize"><code>rx_summary_initialize</code></a></h3>
+<p>Initializes a summary.</p>
+<pre><code class="language-c">enum rx_status
+rx_summary_initialize(struct rx_summary *summary,
+                      const struct rx_test_case *test_case)
+</code></pre>
+<p>The struct <a href="reference/building-blocks.html#rx_summary"><code>rx_summary</code></a> must be already manually
+allocated beforehand.</p>
+<h3 id="rx_summary_terminate"><a class="header" href="#rx_summary_terminate"><code>rx_summary_terminate</code></a></h3>
+<p>Terminates a summary.</p>
+<pre><code class="language-c">void
+rx_summary_terminate(struct rx_summary *summary)
+</code></pre>
+<p>The struct <a href="reference/building-blocks.html#rx_summary"><code>rx_summary</code></a> must be manually freed
+afterwards, if needed.</p>
+<h3 id="rx_summary_print"><a class="header" href="#rx_summary_print"><code>rx_summary_print</code></a></h3>
+<p>Prints a summary covering the result of running a single test case.</p>
+<pre><code class="language-c">void
+rx_summary_print(const struct rx_summary *summary)
+</code></pre>
+<p>The summary is printed out to <code>stderr</code> as it is not intended for further
+processing, but to only show the progress of each test case as the results
+come in.</p>
+<h3 id="rx_test_case_run"><a class="header" href="#rx_test_case_run"><code>rx_test_case_run</code></a></h3>
+<p>Runs a single test case.</p>
+<pre><code class="language-c">enum rx_status
+rx_test_case_run(struct rx_summary *summary,
+                 const struct rx_test_case *test_case)
+</code></pre>
+<p>The <code>run</code> function set for the given test case is being executed with
+the results are being stored in the <code>summary</code> argument.</p>
+<h3 id="rx_enumerate_test_cases"><a class="header" href="#rx_enumerate_test_cases"><code>rx_enumerate_test_cases</code></a></h3>
+<p>Enumerates the test cases automatically registered.</p>
+<pre><code class="language-c">void
+rx_enumerate_test_cases(size_t *test_case_count,
+                        struct rx_test_case *test_cases)
+</code></pre>
+<p>If <code>test_cases</code> is <code>NULL</code>, then the number of test cases available is returned
+in <code>test_case_count</code>. Otherwise, <code>test_case_count</code> must point to a variable set
+by the user to the number of elements in the <code>test_cases</code> array, and on return
+the variable is overwritten with the number of objects actually written to
+<code>test_cases</code>.</p>
+<p>If <code>test_case_count</code> is less than the number of test cases available,
+at most <code>test_case_count</code> objects will be written.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="constants"><a class="header" href="#constants">Constants</a></h1>
+<h2 id="versioning"><a class="header" href="#versioning">Versioning</a></h2>
+<h3 id="rx_major_version"><a class="header" href="#rx_major_version"><code>RX_MAJOR_VERSION</code></a></h3>
+<p>Major version of Rexo.</p>
+<pre><code class="language-c">#define RX_MAJOR_VERSION
+</code></pre>
+<h3 id="rx_minor_version"><a class="header" href="#rx_minor_version"><code>RX_MINOR_VERSION</code></a></h3>
+<p>Minor version of Rexo.</p>
+<pre><code class="language-c">#define RX_MINOR_VERSION
+</code></pre>
+<h3 id="rx_patch_version"><a class="header" href="#rx_patch_version"><code>RX_PATCH_VERSION</code></a></h3>
+<p>Patch version of Rexo.</p>
+<pre><code class="language-c">#define RX_PATCH_VERSION
+</code></pre>
+<h3 id="rx_version"><a class="header" href="#rx_version"><code>RX_VERSION</code></a></h3>
+<p>Version of Rexo as a single integer.</p>
+<pre><code class="language-c">#define RX_VERSION
+</code></pre>
+<p>The major, minor, and patch versions are combined into <code>RX_VERSION</code> as a single
+integer value that can be used for comparison purposes.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="compile-time-configuration-1"><a class="header" href="#compile-time-configuration-1">Compile-Time Configuration</a></h1>
+<p>One strength of single-file header libraries is that they allow to easily
+change some behaviour at compile-time by allowing to redefine some macros
+before including <code>rexo.h</code>.</p>
+<p>This page lists all such macros that can be overridden if desired.</p>
+<blockquote>
+<p><strong>Note:</strong> See the <a href="./guides.html#compile-time-configuration">guide</a> for a detailed example.</p>
+</blockquote>
+<h2 id="flag-macros"><a class="header" href="#flag-macros">Flag Macros</a></h2>
+<h3 id="rx_enable_external_linking"><a class="header" href="#rx_enable_external_linking"><code>RX_ENABLE_EXTERNAL_LINKING</code></a></h3>
+<p>Sets the storage class qualifier of the public functions to <code>extern</code>.</p>
+<pre><code class="language-c">#define RX_ENABLE_EXTERNAL_LINKING
+</code></pre>
+<p>If not set, the public functions are defined with the <code>static</code> qualifier
+instead.</p>
+<h3 id="rx_enable_nprintf"><a class="header" href="#rx_enable_nprintf"><code>RX_ENABLE_NPRINTF</code></a></h3>
+<p>Enables the usage of the standard <code>*nprintf</code> functions.</p>
+<pre><code class="language-c">#define RX_ENABLE_NPRINTF
+</code></pre>
+<p>If neither the <code>RX_ENABLE_NPRINTF</code> nor the <code>RX_DISABLE_NPRINTF</code>
+macros are explicitly defined, the standard <code>*nprintf</code> functions are used
+depending on the language (C or C++) and its version.</p>
+<h3 id="rx_disable_nprintf"><a class="header" href="#rx_disable_nprintf"><code>RX_DISABLE_NPRINTF</code></a></h3>
+<p>Disables the usage of the standard <code>*nprintf</code> functions.</p>
+<pre><code class="language-c">#define RX_DISABLE_NPRINTF
+</code></pre>
+<p>If neither the <code>RX_ENABLE_NPRINTF</code> nor the <code>RX_DISABLE_NPRINTF</code>
+macros are explicitly defined, the standard <code>*nprintf</code> functions are used
+depending on the language (C or C++) and its version.</p>
+<p>This macro takes precedence over
+the [<code>RX_ENABLE_NPRINTF</code>][macro-rx_enable-nprintf] macro.</p>
+<h3 id="rx_enable_variadic_macros"><a class="header" href="#rx_enable_variadic_macros"><code>RX_ENABLE_VARIADIC_MACROS</code></a></h3>
+<p>Enables the usage of variadic macros.</p>
+<pre><code class="language-c">#define RX_ENABLE_VARIADIC_MACROS
+</code></pre>
+<p>If neither the <code>RX_ENABLE_VARIADIC_MACROS</code> nor the <code>RX_DISABLE_VARIADIC_MACROS</code>
+macros are explicitly defined, variadic macros are used depending on
+the language (C or C++) and its version.</p>
+<p>See the <a href="./gotchas.html#variadic-macros">variadic macros</a> gotcha.</p>
+<h3 id="rx_disable_variadic_macros"><a class="header" href="#rx_disable_variadic_macros"><code>RX_DISABLE_VARIADIC_MACROS</code></a></h3>
+<p>Disables the usage of variadic macros.</p>
+<pre><code class="language-c">#define RX_DISABLE_VARIADIC_MACROS
+</code></pre>
+<p>If neither the <code>RX_ENABLE_VARIADIC_MACROS</code> nor the <code>RX_DISABLE_VARIADIC_MACROS</code>
+macros are explicitly defined, variadic macros are used depending on
+the language (C or C++) and its version.</p>
+<p>This macro takes precedence over
+the [<code>RX_ENABLE_VARIADIC_MACROS</code>][macro-rx_enable-variadic-macros] macro.</p>
+<p>See the <a href="./gotchas.html#variadic-macros">variadic macros</a> gotcha.</p>
+<h3 id="rx_enable_debugging"><a class="header" href="#rx_enable_debugging"><code>RX_ENABLE_DEBUGGING</code></a></h3>
+<p>Enables the debugging mode.</p>
+<pre><code class="language-c">#define RX_ENABLE_DEBUGGING
+</code></pre>
+<p>If neither the <code>RX_ENABLE_DEBUGGING</code> nor the <code>RX_DISABLE_DEBUGGING</code> macros are
+explicitly defined, the debugging mode is enabled depending on the values of
+the <code>DEBUG</code> and <code>NDEBUG</code> macros.</p>
+<p>This takes precedence over
+the <a href="compile-time-configuration.html#rx_disable_debugging"><code>RX_DISABLE_DEBUGGING</code></a> macro.</p>
+<h3 id="rx_disable_debugging"><a class="header" href="#rx_disable_debugging"><code>RX_DISABLE_DEBUGGING</code></a></h3>
+<p>Disables the debugging mode.</p>
+<pre><code class="language-c">#define RX_DISABLE_DEBUGGING
+</code></pre>
+<p>If neither the <code>RX_ENABLE_DEBUGGING</code> nor the <code>RX_DISABLE_DEBUGGING</code> macros are
+explicitly defined, the debugging mode is enabled depending on the values of
+the <code>DEBUG</code> and <code>NDEBUG</code> macros.</p>
+<h3 id="rx_disable_logging"><a class="header" href="#rx_disable_logging"><code>RX_DISABLE_LOGGING</code></a></h3>
+<p>Disables logging.</p>
+<pre><code class="language-c">#define RX_DISABLE_LOGGING
+</code></pre>
+<p>It suppresses any log that is intended to be displayed in the shell.</p>
+<h3 id="rx_set_logging_level"><a class="header" href="#rx_set_logging_level"><code>RX_SET_LOGGING_LEVEL</code></a></h3>
+<p>Defines the logging level.</p>
+<pre><code class="language-c">#define RX_SET_LOGGING_LEVEL_NONE
+#define RX_SET_LOGGING_LEVEL_FATAL
+#define RX_SET_LOGGING_LEVEL_ERROR
+#define RX_SET_LOGGING_LEVEL_WARNING
+#define RX_SET_LOGGING_LEVEL_INFO
+#define RX_SET_LOGGING_LEVEL_DEBUG
+#define RX_SET_LOGGING_LEVEL_ALL
+</code></pre>
+<p>The logging level can be set to only output logs of a level greater or equal to
+the given one, e.g.:  if the macro <code>RX_SET_LOGGING_LEVEL_INFO</code> is set,
+then logs of the info, warning, and error levels are printed out.</p>
+<p>See the <a href="./reference/building-blocks.html#rx_log_level"><code>enum rx_log_level</code></a> enumerator for a description
+of each level.</p>
+<h3 id="rx_disable_log_styling"><a class="header" href="#rx_disable_log_styling"><code>RX_DISABLE_LOG_STYLING</code></a></h3>
+<p>Disables the styling of logs in the shell.</p>
+<pre><code class="language-c">#define RX_DISABLE_LOG_STYLING
+</code></pre>
+<p>If the <a href="compile-time-configuration.html#rx_log"><code>RX_LOG</code></a> macro hasn't been redefined, its default
+implementation adds colours to the logs outputted to Unix shells in order to
+visually highlight some bits of information and to help with readability.</p>
+<p>The <code>RX_DISABLE_LOG_STYLING</code> macro ensures that no styling is ever applied to
+the output logs.</p>
+<h3 id="rx_disable_test_discovery"><a class="header" href="#rx_disable_test_discovery"><code>RX_DISABLE_TEST_DISCOVERY</code></a></h3>
+<p>Disables the automatic discovery of tests.</p>
+<pre><code class="language-c">#define RX_DISABLE_TEST_DISCOVERY
+</code></pre>
+<h2 id="type-macros"><a class="header" href="#type-macros">Type Macros</a></h2>
+<h3 id="rx_uint32_type"><a class="header" href="#rx_uint32_type"><code>RX_UINT32_TYPE</code></a></h3>
+<p>Override the unsigned integer 32-bit type.</p>
+<pre><code class="language-c">#define RX_UINT32_TYPE
+</code></pre>
+<p>See the <a href="./reference/building-blocks.html#rx_uint32"><code>rx_uint32</code></a> type for more info.</p>
+<h3 id="rx_uint64_type"><a class="header" href="#rx_uint64_type"><code>RX_UINT64_TYPE</code></a></h3>
+<p>Override the unsigned integer 64-bit type.</p>
+<pre><code class="language-c">#define RX_UINT64_TYPE
+</code></pre>
+<p>See the <a href="./reference/building-blocks.html#rx_uint64"><code>rx_uint64</code></a> type for more info.</p>
+<h3 id="rx_size_type"><a class="header" href="#rx_size_type"><code>RX_SIZE_TYPE</code></a></h3>
+<p>Override the <code>size_t</code> type.</p>
+<pre><code class="language-c">#define RX_SIZE_TYPE
+</code></pre>
+<p>See the <a href="./reference/building-blocks#rx_size"><code>rx_size</code></a> type for more info.</p>
+<h2 id="function-like-macros"><a class="header" href="#function-like-macros">Function-Like Macros</a></h2>
+<h3 id="rx_assert"><a class="header" href="#rx_assert"><code>RX_ASSERT</code></a></h3>
+<p>Assertion macro.</p>
+<pre><code class="language-c">#define RX_ASSERT(condition)
+</code></pre>
+<p>Its purpose is to output an error when the argument <code>condition</code> evaluates
+to zero. The default implementation runs this check only when the <code>NDEBUG</code> macro
+is set, otherwise it does nothing.</p>
+<p>If not redefined, the standard header file <code>assert.h</code> is included.</p>
+<h3 id="rx_malloc"><a class="header" href="#rx_malloc"><code>RX_MALLOC</code></a></h3>
+<p>Allocation macro.</p>
+<pre><code class="language-c">#define RX_MALLOC(size)
+</code></pre>
+<p>Allocates the given <code>size</code> in bytes of uninitialized storage.</p>
+<p>It returns a pointer to the allocated block of memory, or <code>NULL</code>
+if the operation failed.</p>
+<p>If not redefined, the standard header file <code>stdlib.h</code> is included.</p>
+<h3 id="rx_realloc"><a class="header" href="#rx_realloc"><code>RX_REALLOC</code></a></h3>
+<p>Reallocation macro.</p>
+<pre><code class="language-c">#define RX_REALLOC(ptr, size)
+</code></pre>
+<p>Reallocates the given block of memory pointed by <code>ptr</code>. It is being done either
+by expanding/shrinking the existing block of memory, if possible, or allocating
+a new block of memory otherwise, before copying the data over and freeing
+the previous block.</p>
+<p>It returns a pointer to the reallocated block of memory.</p>
+<p>If the operation failed, <code>NULL</code> is returned and the original block of memory
+isn't freed.</p>
+<p>If not redefined, the standard header file <code>stdlib.h</code> is included.</p>
+<h3 id="rx_free"><a class="header" href="#rx_free"><code>RX_FREE</code></a></h3>
+<p>Deallocation macro.</p>
+<pre><code class="language-c">#define RX_FREE(ptr)
+</code></pre>
+<p>Deallocates the given block of memory pointed by <code>ptr</code>, that was previously
+allocated through <a href="compile-time-configuration.html#rx_malloc"><code>RX_MALLOC</code></a>
+or <a href="compile-time-configuration.html#rx_realloc"><code>RX_REALLOC</code></a>.</p>
+<p>If not redefined, the standard header file <code>stdlib.h</code> is included.</p>
+<h3 id="rx_log"><a class="header" href="#rx_log"><code>RX_LOG</code></a></h3>
+<p>Logging macro.</p>
+<pre><code class="language-c">#define RX_LOG(level, format, ...)
+</code></pre>
+<p>Prints a message to <code>stderr</code> with a level defined through
+<a href="./reference/building-blocks.html#rx_log_level"><code>enum rx_log_level</code></a>.</p>
+<p>The content of the message is defined through a combination of the <code>format</code>
+argument and the variadic arguments, in a similar fashion to the standard
+<code>printf()</code> function.</p>
+<div style="break-before: page; page-break-before: always;"></div><h1 id="gotchas"><a class="header" href="#gotchas">Gotchas</a></h1>
+<h2 id="variadic-macros"><a class="header" href="#variadic-macros">Variadic Macros</a></h2>
+<p>Since variadic macros are not available as part of the C89 and C++98
+specifications, having
+the <a href="./compile-time-configuration.html#rx_enable_variadic_macros">variadic macros flag</a> disabled assumes
+no support for variadic macros and defines an alternative set of macros
+for each macro that would otherwise accept variadic arguments.</p>
+<p>In other words, a macro documented as <code>RX_DO_DOMETHING(fixed_arg, ...)</code>
+translates in fact to set of macros suffixed with the number of variadic
+arguments such as:</p>
+<ul>
+<li><code>RX_DO_DOMETHING(fixed_arg)</code>.</li>
+<li><code>RX_DO_DOMETHING_1(fixed_arg, var_arg_1)</code>.</li>
+<li><code>RX_DO_DOMETHING_2(fixed_arg, var_arg_1, var_arg_2)</code>.</li>
+<li>...</li>
+<li><code>RX_DO_DOMETHING_N(fixed_arg, var_arg_1, var_arg_2, ..., var_arg_n)</code>.</li>
+</ul>
+<blockquote>
+<p><strong>Note:</strong> The set of macros suffixed with a number is available whether the
+<a href="./compile-time-configuration.html#rx_enable_variadic_macros">variadic macros flag</a> is enabled or not
+in order to provide a compatibility layer between the two modes if needed.
+The only difference comes from the base macro <code>RX_DO_DOMETHING</code> being
+defined with variadic arguments or only fixed arguments otherwise.</p>
+</blockquote>
+<p>Examples of such macros can be found in the <a href="./reference/framework.html">framework</a> and as part
+of the <a href="./reference/assertions.html">assertion macros</a>.</p>
+
+                    </main>
+
+                    <nav class="nav-wrapper" aria-label="Page navigation">
+                        <!-- Mobile navigation buttons -->
+
+
+                        <div style="clear: both"></div>
+                    </nav>
+                </div>
+            </div>
+
+            <nav class="nav-wide-wrapper" aria-label="Page navigation">
+
+            </nav>
+
+        </div>
+
+
+
+
+        <script>
+            window.playground_copyable = true;
+        </script>
+
+
+        <script src="elasticlunr.min.js"></script>
+        <script src="mark.min.js"></script>
+        <script src="searcher.js"></script>
+
+        <script src="clipboard.min.js"></script>
+        <script src="highlight.js"></script>
+        <script src="book.js"></script>
+
+        <!-- Custom JS scripts -->
+        <script src="js/custom.js"></script>
+
+        <script>
+        window.addEventListener('load', function() {
+            window.setTimeout(window.print, 100);
+        });
+        </script>
+
+    </div>
+    </body>
+</html>
