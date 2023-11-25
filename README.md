@@ -60,6 +60,8 @@ main(int argc, const char **argv)
 }
 ```
 
+![passed](./img/passed.png)
+
 
 ### Fixture
 
@@ -95,6 +97,8 @@ main(int argc, const char **argv)
     return rx_main(0, NULL, argc, argv) == RX_SUCCESS ? 0 : 1;
 }
 ```
+
+![failed](img/failed.png)
 
 
 ## Documentation
